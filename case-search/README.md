@@ -5,11 +5,9 @@
 Windows
 --------
 
-1. Install Python 2.7.9
-2. Add Python to your System Path by navigating to Control Panel > System. Click on "Advanced System Settings" (on the left). 
-    Click on "Environment Variables" (bottom). Under "System variables" find "Path" and edit it. Add `path\to\your\python\installation` and `path\to\your\python\installation\Scripts` to your Path. Note that entries to the Path are delimited by ";". 
-    If you use Git Bash you should add your Python installation to the path there as well by adding the following lines to your .bashrc : `PATH=$PATH:/c/Python27/` and `PATH=$PATH:/c/Python27/Scripts`.
-3. Install [virtualenv](https://github.com/pypa/virtualenv) by running `pip install virtualenv` via cmd.
+1. Install the latest version of Python (note that this project was originally written in Python 3.8.3) and [Visual Studio Code](https://code.visualstudio.com/docs/python/python-tutorial). Using Visual Studio Code obscures some of the Python messiness and helps you get started faster.
+2. The above VS Code instructions explain how to get started using virtual environments as well.
+3. Anyways, one thing to note is that for some reason all commands run through the VS Code integrated terminal for some reason use `py -m` instead of `python`, and require preface with `py -m` where they otherwise wouldn't on a Linux system. E.g. `py -m pip install <some package>` instead of `pip install <some package>`, `py hello.py` instead of `python hello.py`.
 4. Follow the virtualenv setup instructions to create a virtualenv in the root of your clone of this repository. For example purposes, let's say you create a virtualenv named "env".
 5. Activate the virtualenv by running `source env/Scripts/activate`.  
 6. Run `pip install -r requirements.txt` to install the dependencies.
