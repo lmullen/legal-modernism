@@ -1,4 +1,6 @@
 from requests import get
+from cases import functions
 
-r = get('https://requests.readthedocs.io/en/master/')
-print(r.status_code)
+h = functions._generate_request_headers()
+print(h)
+
