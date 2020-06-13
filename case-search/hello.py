@@ -1,6 +1,6 @@
 from requests import get
-from cases import functions
+import cases.sources.case_dot_law.utils as case_dot_law
 
-h = functions._generate_request_headers()
+h = case_dot_law.generate_request_headers() 
 print(h)
 
