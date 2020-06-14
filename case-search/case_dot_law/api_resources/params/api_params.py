@@ -8,4 +8,5 @@ class ApiParams:
        for k, v in attrs.items():
            url += "&{0}={1}".format(k, v)
 
-       print(url)
+    #    print(url)
+       return url # Return for testing, not substantive, purposes.
