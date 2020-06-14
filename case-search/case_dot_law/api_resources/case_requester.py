@@ -5,4 +5,5 @@ class CaseRequester(ApiRequester):
         super().__init__("cases")
     
     def get(self):
-        print(self.url)
+        # print(self.url)
+        super().get(self.url)
