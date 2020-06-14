@@ -1,6 +1,9 @@
 from requests import get
-import cases.sources.case_dot_law.utils as case_dot_law
+from case_dot_law.cases import Cases
 
-h = case_dot_law.generate_request_headers() 
-print(h)
+# h = case_dot_law.generate_request_headers() 
+# print(h)
+
+c = Cases()
+c.get("54 F.3d 241")
 
