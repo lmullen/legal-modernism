@@ -13,3 +13,5 @@ def test_append_question_mark():
     print(res)
 
     assert "?" in res 
+
+def test_disinclude_empty_params():
