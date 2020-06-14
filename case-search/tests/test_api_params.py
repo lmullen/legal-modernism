@@ -8,6 +8,7 @@ def test_append_question_mark():
 
     test_params.attr1 = "blah"
 
-    res = test_params.append(test_url)
+    res = test_params.append(test_url).url
+    print(res)
 
     assert "?" in res 
