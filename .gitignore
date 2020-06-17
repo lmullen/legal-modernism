@@ -60,3 +60,7 @@ venv.bak/
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+# Sample data
+adj2edge/in.csv
+adj2edge/out.csv
