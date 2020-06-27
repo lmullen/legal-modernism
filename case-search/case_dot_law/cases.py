@@ -1,8 +1,9 @@
-import case_dot_law.api_requester as api_requester # pylint: disable=E0611
+from case_dot_law.api_resources.case_requester import CaseRequester # pylint: disable=E0611
 
 class Cases():
     def __init__(self):
-        self.requestor = api_requester.ApiRequester("cases")
+        self.requestor = CaseRequester() 
 
     def get(self, guid, full=False):
-        self.requestor.get(guid) 
+        self.requestor.get() 
+    
