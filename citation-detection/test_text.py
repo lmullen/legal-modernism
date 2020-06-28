@@ -24,6 +24,10 @@ simple_reporter_test = "Brock v. Cathedral Bluffs Shale Oil Co., 796 F.2d 533, 5
     The MANAGEMENT POLICIES never has been published in the Code of Federal Regulations."
 # The Wilderness Soc. v. Norton, 434 F.3d 584, 596 (D.C. Cir. 2006)
 
+revd_test_0 = "Lompe v. Sunridge Partners, LLC, 54 F. Supp. 3d 1252 (D. Wyo. 2014), rev'd 818 F.3d 1041 (10th Cir. 2016)" 
+
+combined_reporter_supp= "Vinh Tan Nguyen v. Holder, 763 F.3d 1022, 1029 (9th Cir. 2014)...stuff stuff stuff. See Texas v. United States, 86 F. Supp. 3d 591"
+
 many_citations_0 = "The Courts of Appeals are divided over whether §§1252(a)(2)(C) and (D) preclude judicial review of factual challenges to a CAT order. \
     Most Courts of Appeals have sided with the Government; the Seventh and Ninth Circuits have gone the other way. \
     Compare Gourdet v. Holder, 587 F.3d 1, 5 (CA1 2009); Ortiz-Franco v. Holder, 782 F.3d 81, 88 (CA2 2015); \
