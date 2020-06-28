@@ -10,8 +10,10 @@ federal_reporter_regex = r'([0-9]{1,3}\s[A-Z].[0-3]d\s[0-9]{1,3})'
 federal_supp_regex = r'([0-9]{1,3}\s[A-Z].\sSupp\.\s[0-4][a-e]\s[0-9]{1,3})'
 # Matches things like 134 F. Supp. 2d 178
 
+federal_short = r'([0-9]{1,3}\s[A-Z].[0-3]d\sat)'
+
 def combine_regex():
-    combined = "|".join([federal_reporter_regex, federal_supp_regex])
+    combined = "|".join([federal_reporter_regex, federal_supp_regex, federal_short])
     return combined
 
 def extract(t):
@@ -22,6 +24,6 @@ def extract(t):
 test_match = re.compile(combine_regex())
 
 # print(test_text_0)
-raw_res = test_match.findall(combined_reporter_supp)
+raw_res = test_match.findall(short_cite_0)
 stripped_res = [extract(x) for x in raw_res] 
 print(stripped_res)
