@@ -17,3 +17,5 @@ test_text_4 = "Congress’ purpose as reflected in the language of the Clean Wat
     The Act restructures federal regulation by insisting that a person wishing to discharge any pollution into navigable waters first obtain EPA’s permission to do so. \
     See id., at 203–205; Milwaukee v. Illinois, 451 U.S. 304, 310–311 (1981)."
 # County of Maui v. Hawaii Wildlife Fund, 590 U.S. __ (2020)
+
+multi_supp_test = "Blah Texas v. United States, 86 F. Supp. 3d 591 stuff stuff stuff more stuff French v. McLean, 54 F. Supp. 3d 1146 (D. Mont. 2014)"
