@@ -19,3 +19,24 @@ test_text_4 = "Congress’ purpose as reflected in the language of the Clean Wat
 # County of Maui v. Hawaii Wildlife Fund, 590 U.S. __ (2020)
 
 multi_supp_test = "Blah Texas v. United States, 86 F. Supp. 3d 591 stuff stuff stuff more stuff French v. McLean, 54 F. Supp. 3d 1146 (D. Mont. 2014)"
+
+simple_reporter_test = "Brock v. Cathedral Bluffs Shale Oil Co., 796 F.2d 533, 538-39 (D.C. Cir. 1986) (internal citations omitted). \
+    The MANAGEMENT POLICIES never has been published in the Code of Federal Regulations."
+# The Wilderness Soc. v. Norton, 434 F.3d 584, 596 (D.C. Cir. 2006)
+
+many_citations_0 = "The Courts of Appeals are divided over whether §§1252(a)(2)(C) and (D) preclude judicial review of factual challenges to a CAT order. \
+    Most Courts of Appeals have sided with the Government; the Seventh and Ninth Circuits have gone the other way. \
+    Compare Gourdet v. Holder, 587 F.3d 1, 5 (CA1 2009); Ortiz-Franco v. Holder, 782 F.3d 81, 88 (CA2 2015); \
+    Pieschacon-Villegas v. Attorney General of U. S., 671 F.3d 303, 309–310 (CA3 2011); Oxygene v. Lynch, 813 F.3d 541, 545 (CA4 2016); \
+    Escudero-Arciniega v. Holder, 702 F.3d 781, 785 (CA5 2012); Tran v. Gonzales, 447 F.3d 937, 943 (CA6 2006); \
+    Lovan v. Holder, 574 F.3d 990, 998 (CA8 2009); Cole v. United States Attorney General, 712 F.3d 517, 532 (CA11 2013), \
+    with Wanjiru v. Holder, 705 F.3d 258, 264 (CA7 2013); Vinh Tan Nguyen v. Holder, 763 F.3d 1022, 1029 (CA9 2014)."
+# Nasrallah v. Barr, 590 U.S. __ (2020)
+
+forthcoming_scotus = "In those cases, a court of appeals may review constitutional or legal challenges to a final order of removal, \
+    but the court of appeals may not review factual challenges to a final order of removal. §§1252(a)(2)(C)–(D); \
+    see Guerrero-Lasprilla v. Barr, 589 U. S. ___, ___–___ (2020) (slip op., at 11–13)."
+# Nasrallah v. Barr, 590 U.S. __ (2020)
+
+short_cite_0 = "It \"does not complain about what the agency has done but rather about what the agency has yet to do,\" United Mine Workers, 190 F.3d at 549."
+# The Wilderness Soc. v. Norton, 434 F.3d 584, 589 (D.C. Cir. 2006)
