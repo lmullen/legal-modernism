@@ -20,7 +20,7 @@ catchall = r'([\d]{1,3}\s[a-zA-Z0-9\.]+\s[\d]{1,4})'
 
 def combine_regex():
     # combined = "|".join([federal_reporter_regex, federal_supp_regex, federal_short, us_reports])
-    combined = "|".join([federal_reporter_regex, catchall])
+    combined = "|".join([federal_reporter_regex, catchall]) # Must join with some other regex to work. No idea why. 
 
     return combined
 
@@ -32,10 +32,15 @@ def extract(t):
 
 
 test_match = re.compile(combine_regex())
-# test_match = re.compile(us_reports)
-# test_match = re.compile(catchall)
 
-# print(test_text_0)
-raw_res = test_match.findall(test_text_4)
+raw_res = test_match.findall(test_text_3)
 stripped_res = [extract(x) for x in raw_res]
 print(stripped_res)
+
+
+def process(t):
+    regex = re.compile(combine_regex())
+
+    raw_res = regex.findall(test_text_0)
+    stripped_res = [extract(x) for x in raw_res]
+    return stripped_res
