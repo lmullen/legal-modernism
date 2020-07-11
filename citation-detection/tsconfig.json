@@ -1,0 +1,28 @@
+{
+    "compilerOptions": {
+        "outDir": "build",
+        "module": "commonjs",
+        "target": "es6",
+        "lib": ["es6", "dom"],
+        "moduleResolution": "node",
+        "sourceMap": true,
+        // "watch": true,
+        "sourceRoot": "src",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "types": ["reflect-metadata"],
+        "preserveConstEnums": true,
+        "forceConsistentCasingInFileNames": true,
+        "allowUnreachableCode": true,
+        "jsx": "preserve",
+        "allowJs": true
+    },
+    "include": [
+        "src/*",
+        "src/jobs/*.ts",
+        "src/tests/*/*.ts"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}
