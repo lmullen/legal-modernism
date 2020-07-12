@@ -2,8 +2,8 @@
     "compilerOptions": {
         "outDir": "build",
         "module": "commonjs",
-        "target": "es6",
-        "lib": ["es6", "dom"],
+        "target": "es2020",
+        "lib": ["es6", "dom", "es2020"],
         "moduleResolution": "node",
         "sourceMap": true,
         // "watch": true,

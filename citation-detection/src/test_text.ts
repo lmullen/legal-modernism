@@ -5,7 +5,7 @@ let testText0 = "The District Court found that the States were likely to succeed
 let testText1 = "The question raised and decided in Oakley v. Aspinwall, 3 Comst. 547, 9 L. O. 45 as to the effect of a judge taking part in the proceedings,"
 // Henry Whittaker, Practice and Pleading Under the Codes, Original and Amended (1852)
 
-let testText2 = "from bed and board only. (M'Intosh v. M'Intosh, sp. t., 12 How. 289; Smith v. Smith, 4 Paige, 92;" 
+let testText2 = "from bed and board only. (M'Intosh v. M'Intosh, sp. t., 12 How. 289; Smith v. Smith, 4 Paige, 92;"
 // John L. Tillinghast, Practice, Pleadings, and Forms in Civil Actions in Courts of Record in the State of New York, 74 (2nd ed. 1865)
 
 let testText3 = "see Code, § 129, 167; Phillips v. Gorham, 17 N. Y. 274"
@@ -18,13 +18,13 @@ let testText4 = "Congress’ purpose as reflected in the language of the Clean W
     See id., at 203–205; Milwaukee v. Illinois, 451 U.S. 304, 310–311 (1981)."
 // County of Maui v. Hawaii Wildlife Fund, 590 U.S. __ (2020)
 
-let multiSuppTest= "Blah Texas v. United States, 86 F. Supp. 3d 591 stuff stuff stuff more stuff French v. McLean, 54 F. Supp. 3d 1146 (D. Mont. 2014)"
+let multiSuppTest = "Blah Texas v. United States, 86 F. Supp. 3d 591 stuff stuff stuff more stuff French v. McLean, 54 F. Supp. 3d 1146 (D. Mont. 2014)"
 
 let simpleReporterTest = "Brock v. Cathedral Bluffs Shale Oil Co., 796 F.2d 533, 538-39 (D.C. Cir. 1986) (internal citations omitted). \
     The MANAGEMENT POLICIES never has been published in the Code of Federal Regulations."
 // The Wilderness Soc. v. Norton, 434 F.3d 584, 596 (D.C. Cir. 2006)
 
-let revdTest0 = "Lompe v. Sunridge Partners, LLC, 54 F. Supp. 3d 1252 (D. Wyo. 2014), rev'd 818 F.3d 1041 (10th Cir. 2016)" 
+let revdTest0 = "Lompe v. Sunridge Partners, LLC, 54 F. Supp. 3d 1252 (D. Wyo. 2014), rev'd 818 F.3d 1041 (10th Cir. 2016)"
 
 let combinedReporterSupp = "Vinh Tan Nguyen v. Holder, 763 F.3d 1022, 1029 (9th Cir. 2014)...stuff stuff stuff. See Texas v. United States, 86 F. Supp. 3d 591"
 
@@ -42,5 +42,7 @@ let forthcomingSCOTUS = "In those cases, a court of appeals may review constitut
     see Guerrero-Lasprilla v. Barr, 589 U. S. ___, ___–___ (2020) (slip op., at 11–13)."
 // Nasrallah v. Barr, 590 U.S. __ (2020)
 
-let shortCite0= "It \"does not complain about what the agency has done but rather about what the agency has yet to do,\" United Mine Workers, 190 F.3d at 549."
+let shortCite0 = "It \"does not complain about what the agency has done but rather about what the agency has yet to do,\" United Mine Workers, 190 F.3d at 549."
 // The Wilderness Soc. v. Norton, 434 F.3d 584, 589 (D.C. Cir. 2006)
+
+export { testText0, testText1, testText2, testText3, testText4, multiSuppTest, simpleReporterTest, revdTest0, combinedReporterSupp, manyCitations0, forthcomingSCOTUS, shortCite0 };
