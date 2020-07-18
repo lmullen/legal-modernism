@@ -11,7 +11,7 @@
     "build": "npm run clean && npm run compile",
     "build:dev": "npm run clean && npm run compile:dev",
     "start": "node ./build/app.js",
-    "test": "npm run build && alsatian \"./build/tests/*/*.js\"",
+    "test": "npm run build && alsatian \"./build/tests/*.js\"",
     "restart": "npm run build && npm start ",
     "reinstall": "rm -rf node_modules && npm cache clean && npm install",
     "migrate-heroku": "node ./node_modules/.bin/knex migrate:latest"
