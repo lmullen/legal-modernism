@@ -18,6 +18,7 @@ export class MatchTests {
         let res = await extractMatches(testText5);
         Expect(res.length).toEqual(2);
         Expect(res[0]).toEqual("7 East, 405");
+        Expect(res[1]).toEqual("4 Taunt. 557");
     }
 
     // @AsyncTest()

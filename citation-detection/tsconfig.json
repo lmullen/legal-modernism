@@ -19,6 +19,7 @@
     },
     "include": [
         "src/*",
+        "src/*/*",
         "src/jobs/*.ts",
         "src/tests/*/*.ts",
         "src/tests/*"
