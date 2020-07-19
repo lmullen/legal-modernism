@@ -16,7 +16,12 @@ let testText4 = "Congress’ purpose as reflected in the language of the Clean W
     See EPA v. California ex rel. State Water Resources Control Bd., 426 U.S. 200, 202–203 (1976). \
     The Act restructures federal regulation by insisting that a person wishing to discharge any pollution into navigable waters first obtain EPA’s permission to do so. \
     See id., at 203–205; Milwaukee v. Illinois, 451 U.S. 304, 310–311 (1981)."
-// County of Maui v. Hawaii Wildlife Fund, 590 U.S. __ (2020)
+// County of Maui v. Hawaii Wildlife Fund, 590 U.S. __ (2020)"3 Comst. 547"
+
+let testText5 = "And their bail will be exonerated upon application in time. (Robertson v. Patterson, 7 East, 405.) \
+    (2.) But not after proceedings on the bail-bond (Bryan v. Woodward, 4 Taunt. 557.)"
+ 
+// John L. Tillinghast, Practice, Pleadings, and Forms in Civil Actions in Courts of Record in the State of New York, Vol. 1, 550 (2nd ed. 1865)
 
 let multiSuppTest = "Blah Texas v. United States, 86 F. Supp. 3d 591 stuff stuff stuff more stuff French v. McLean, 54 F. Supp. 3d 1146 (D. Mont. 2014)"
 
@@ -45,4 +50,4 @@ let forthcomingSCOTUS = "In those cases, a court of appeals may review constitut
 let shortCite0 = "It \"does not complain about what the agency has done but rather about what the agency has yet to do,\" United Mine Workers, 190 F.3d at 549."
 // The Wilderness Soc. v. Norton, 434 F.3d 584, 589 (D.C. Cir. 2006)
 
-export { testText0, testText1, testText2, testText3, testText4, multiSuppTest, simpleReporterTest, revdTest0, combinedReporterSupp, manyCitations0, forthcomingSCOTUS, shortCite0 };
+export { testText0, testText1, testText2, testText3, testText4, testText5, multiSuppTest, simpleReporterTest, revdTest0, combinedReporterSupp, manyCitations0, forthcomingSCOTUS, shortCite0 };
