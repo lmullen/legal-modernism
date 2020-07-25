@@ -13,7 +13,7 @@ type reporter = {
     jurisdictions: any[]
 };
 
-function reporterInRange(r: reporter) {
+export function reporterInRange(r: reporter) {
     if (r.startYear > 1900) {
         return false;
     }
@@ -37,9 +37,7 @@ async function main() {
         formatted.push(camelCase(r));
     }
 
-    console.log(formatted[0]);
-
-    // let inRange: reporter[] = _.filter(res.data.results, reporterInRange);
+    let inRange: reporter[] = _.filter(formatted, reporterInRange);
 
     // console.log(inRange);
 
