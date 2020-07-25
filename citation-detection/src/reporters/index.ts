@@ -27,17 +27,21 @@ function reporterInRange(r: reporter) {
 
 async function main() {
     let res = await requester.get("/reporters");
-    console.log(res.data);
+    // console.log(res.data);
     // console.log(res.data.results.length);
     // console.log(lastItem(res.data.results));
 
-    res.data.results.forEach((r) => {
-        r = camelCase(r);
-    });
+    let formatted = [];
 
-    let inRange: reporter[] = _.filter(res.data.results, reporterInRange);
+    for(let r of res.data.results) {
+        formatted.push(camelCase(r));
+    }
 
-    console.log(inRange);
+    console.log(formatted[0]);
+
+    // let inRange: reporter[] = _.filter(res.data.results, reporterInRange);
+
+    // console.log(inRange);
 
 }
 
