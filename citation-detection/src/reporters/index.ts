@@ -1,6 +1,7 @@
 import * as _ from "lodash";
+import * as fs from "fs";
 
-import { lastItem, camelCase } from "../utils";
+import { lastItem, camelCase, promise } from "../utils";
 import requester from "../caseDotLaw/requester";
 
 type reporter = {
@@ -25,22 +26,44 @@ export function reporterInRange(r: reporter) {
     return true;
 }
 
-async function main() {
-    let res = await requester.get("/reporters");
-    // console.log(res.data);
-    // console.log(res.data.results.length);
-    // console.log(lastItem(res.data.results));
-
-    let formatted = [];
-
-    for(let r of res.data.results) {
-        formatted.push(camelCase(r));
+function makeNextUrl(next: string) {
+    if (!next) {
+        return null;
     }
 
-    let inRange: reporter[] = _.filter(formatted, reporterInRange);
+    let split = next.split("?");
 
-    // console.log(inRange);
+    return "/reporters?" + split[1];
+}
 
+async function main() {
+    let next = "something";
+    let res = await requester.get("/reporters/?cursor=cD1Db25uZWN0aWN1dCtDaXJjdWl0K0NvdXJ0K1JlcG9ydHMmbz0y");
+    let actualResp = res.data;
+    next = makeNextUrl(actualResp.next);
+    // console.log(next);
+    let list: reporter[] = [];
+
+    while (next) {
+        res = await requester.get(next);
+        let actualResp = res.data;
+        let formatted = [];
+
+        for (let r of res.data.results) {
+            formatted.push(camelCase(r));
+        }
+
+        let inRange: reporter[] = _.filter(formatted, reporterInRange);
+        list = list.concat(inRange);
+
+        next = makeNextUrl(actualResp.next);
+        console.log(next);
+    }
+
+    console.log(list);
+
+    let listAsJSON = JSON.stringify(list);
+    await promise(fs.writeFile.bind(fs, "myjsonfile.json", listAsJSON, "utf8")); 
 }
 
 main();

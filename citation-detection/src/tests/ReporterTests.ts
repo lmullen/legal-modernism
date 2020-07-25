@@ -10,6 +10,7 @@ export class ReporterTests {
     @TestCase(1899, 1900, true)
     @TestCase(1791, 2050, true)
     @TestCase(1901, 2011, false)
+    @TestCase(1691, 1801, true)
     async testReporterInRange(startDate: number, endDate: number, expectedRes: boolean) {
         let x = {
             startYear: startDate,
