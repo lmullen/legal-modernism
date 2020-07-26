@@ -1,0 +1,30 @@
+{
+    "compilerOptions": {
+        "outDir": "build",
+        "module": "commonjs",
+        "target": "es2020",
+        "lib": ["es6", "dom", "es2020"],
+        "moduleResolution": "node",
+        "sourceMap": true,
+        // "watch": true,
+        "sourceRoot": "src",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "types": ["reflect-metadata"],
+        "preserveConstEnums": true,
+        "forceConsistentCasingInFileNames": true,
+        "allowUnreachableCode": true,
+        "jsx": "preserve",
+        "allowJs": true
+    },
+    "include": [
+        "src/*",
+        "src/*/*",
+        "src/jobs/*.ts",
+        "src/tests/*/*.ts",
+        "src/tests/*"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}
