@@ -1,1 +1,3152 @@
-[{"id":172,"url":"https://api.case.law/v1/reporters/172/","fullName":"Jones and Spencer's Superior Court Reports","shortName":"Jones and Spencer's Super. Ct. Rep.","startYear":1830,"endYear":1892,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ny/","id":1,"slug":"ny","name":"N.Y.","name_long":"New York","whitelisted":false}]},{"id":476,"url":"https://api.case.law/v1/reporters/476/","fullName":"Kansas Reports","shortName":"Kan.","startYear":1858,"endYear":2016,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/kan/","id":43,"slug":"kan","name":"Kan.","name_long":"Kansas","whitelisted":false}]},{"id":713,"url":"https://api.case.law/v1/reporters/713/","fullName":"Kentucky Opinions, containing the unreported opinions of the Court of Appeals","shortName":"Ky. Op.","startYear":1861,"endYear":1886,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ky/","id":26,"slug":"ky","name":"Ky.","name_long":"Kentucky","whitelisted":false}]},{"id":305,"url":"https://api.case.law/v1/reporters/305/","fullName":"Kentucky Reports","shortName":"Ky.","startYear":1718,"endYear":1951,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ky/","id":26,"slug":"ky","name":"Ky.","name_long":"Kentucky","whitelisted":false}]},{"id":139,"url":"https://api.case.law/v1/reporters/139/","fullName":"Keyes' Reports","shortName":"Keyes","startYear":1863,"endYear":1868,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ny/","id":1,"slug":"ny","name":"N.Y.","name_long":"New York","whitelisted":false}]},{"id":9,"url":"https://api.case.law/v1/reporters/9/","fullName":"Lansing's Chancery Reports","shortName":"Lans. Ch.","startYear":1824,"endYear":1826,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ny/","id":1,"slug":"ny","name":"N.Y.","name_long":"New York","whitelisted":false}]},{"id":111,"url":"https://api.case.law/v1/reporters/111/","fullName":"Lansing's Reports","shortName":"Lans.","startYear":1867,"endYear":1873,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ny/","id":1,"slug":"ny","name":"N.Y.","name_long":"New York","whitelisted":false}]},{"id":956,"url":"https://api.case.law/v1/reporters/956/","fullName":"Law Times (New Series)","shortName":"Law Times (N.S.)","startYear":1876,"endYear":1879,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/pa/","id":6,"slug":"pa","name":"Pa.","name_long":"Pennsylvania","whitelisted":false}]},{"id":955,"url":"https://api.case.law/v1/reporters/955/","fullName":"Legal Chronicle reports of Cases decided in the Supreme Court of Pennsylvania (Foster)","shortName":"Foster","startYear":1870,"endYear":1875,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/pa/","id":6,"slug":"pa","name":"Pa.","name_long":"Pennsylvania","whitelisted":false}]},{"id":725,"url":"https://api.case.law/v1/reporters/725/","fullName":"Legal points decided by the Second circuit court of Louisiana (Gunby's Reports)","shortName":"Gunby","startYear":1885,"endYear":1885,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/la/","id":10,"slug":"la","name":"La.","name_long":"Louisiana","whitelisted":false}]},{"id":152,"url":"https://api.case.law/v1/reporters/152/","fullName":"Liquor Tax Law Reports","shortName":"Liquor Tax Rep.","startYear":1896,"endYear":1905,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ny/","id":1,"slug":"ny","name":"N.Y.","name_long":"New York","whitelisted":false}]},{"id":113,"url":"https://api.case.law/v1/reporters/113/","fullName":"Lockwood's Reversed Cases","shortName":"Lock. Rev. Cas.","startYear":1799,"endYear":1836,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ny/","id":1,"slug":"ny","name":"N.Y.","name_long":"New York","whitelisted":false}]},{"id":998,"url":"https://api.case.law/v1/reporters/998/","fullName":"Louisiana Annual Reports","shortName":"La. Ann.","startYear":1846,"endYear":1900,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/la/","id":10,"slug":"la","name":"La.","name_long":"Louisiana","whitelisted":false}]},{"id":339,"url":"https://api.case.law/v1/reporters/339/","fullName":"Louisiana Reports","shortName":"La.","startYear":1830,"endYear":1972,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/la/","id":10,"slug":"la","name":"La.","name_long":"Louisiana","whitelisted":false}]},{"id":1030,"url":"https://api.case.law/v1/reporters/1030/","fullName":"Louisiana Reports","shortName":"La.","startYear":1830,"endYear":1838,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/la/","id":10,"slug":"la","name":"La.","name_long":"Louisiana","whitelisted":false}]},{"id":467,"url":"https://api.case.law/v1/reporters/467/","fullName":"Maine Reports","shortName":"Me.","startYear":1820,"endYear":1965,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/me/","id":42,"slug":"me","name":"Me.","name_long":"Maine","whitelisted":false}]},{"id":759,"url":"https://api.case.law/v1/reporters/759/","fullName":"Mandamus cases decided in the Supreme court of Michigan","shortName":"McGrath","startYear":1843,"endYear":1898,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/mich/","id":49,"slug":"mich","name":"Mich.","name_long":"Michigan","whitelisted":false}]},{"id":992,"url":"https://api.case.law/v1/reporters/992/","fullName":"Martin (Louisiana Term Reports)","shortName":"Mart. (o.s.)","startYear":1809,"endYear":1830,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/la/","id":10,"slug":"la","name":"La.","name_long":"Louisiana","whitelisted":false}]},{"id":993,"url":"https://api.case.law/v1/reporters/993/","fullName":"Martin (Louisiana Term Reports)","shortName":"Mart. (n.s.)","startYear":1821,"endYear":1830,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/la/","id":10,"slug":"la","name":"La.","name_long":"Louisiana","whitelisted":false}]},{"id":524,"url":"https://api.case.law/v1/reporters/524/","fullName":"Maryland Reports","shortName":"Md.","startYear":1851,"endYear":2017,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/md/","id":50,"slug":"md","name":"Md.","name_long":"Maryland","whitelisted":false}]},{"id":743,"url":"https://api.case.law/v1/reporters/743/","fullName":"Massachusetts Land Court decisions, 1898-1908","shortName":"Davis L. Ct. Cas.","startYear":1898,"endYear":1927,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/mass/","id":4,"slug":"mass","name":"Mass.","name_long":"Massachusetts","whitelisted":false}]},{"id":478,"url":"https://api.case.law/v1/reporters/478/","fullName":"Massachusetts Reports","shortName":"Mass.","startYear":1768,"endYear":2017,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/mass/","id":4,"slug":"mass","name":"Mass.","name_long":"Massachusetts","whitelisted":false}]},{"id":747,"url":"https://api.case.law/v1/reporters/747/","fullName":"Michigan appeals reports; cases decided in the Michigan Court of Appeals.","shortName":"Mich. App. ","startYear":1888,"endYear":2016,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/mich/","id":49,"slug":"mich","name":"Mich.","name_long":"Michigan","whitelisted":false}]},{"id":760,"url":"https://api.case.law/v1/reporters/760/","fullName":"Michigan nisi prius cases, decided by the state and federal courts in Michigan","shortName":"Howell N.P.","startYear":1868,"endYear":1884,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/mich/","id":49,"slug":"mich","name":"Mich.","name_long":"Michigan","whitelisted":false}]},{"id":520,"url":"https://api.case.law/v1/reporters/520/","fullName":"Michigan Reports","shortName":"Mich.","startYear":1841,"endYear":2016,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/mich/","id":49,"slug":"mich","name":"Mich.","name_long":"Michigan","whitelisted":false}]},{"id":150,"url":"https://api.case.law/v1/reporters/150/","fullName":"Mills' Surrogate's Reports","shortName":"Mills Surr.","startYear":1890,"endYear":1917,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ny/","id":1,"slug":"ny","name":"N.Y.","name_long":"New York","whitelisted":false}]},{"id":394,"url":"https://api.case.law/v1/reporters/394/","fullName":"Minnesota Reports","shortName":"Minn.","startYear":1830,"endYear":1982,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/minn/","id":36,"slug":"minn","name":"Minn.","name_long":"Minnesota","whitelisted":false}]},{"id":581,"url":"https://api.case.law/v1/reporters/581/","fullName":"Minor","shortName":"Minor","startYear":1820,"endYear":1826,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ala/","id":23,"slug":"ala","name":"Ala.","name_long":"Alabama","whitelisted":false}]},{"id":767,"url":"https://api.case.law/v1/reporters/767/","fullName":"Mississippi Decisions: containing the unreported opinions of the Supreme Court of Mississippi","shortName":"Miss. Dec.","startYear":1861,"endYear":1887,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/miss/","id":16,"slug":"miss","name":"Miss.","name_long":"Mississippi","whitelisted":false}]},{"id":283,"url":"https://api.case.law/v1/reporters/283/","fullName":"Mississippi Reports","shortName":"Miss.","startYear":1818,"endYear":1966,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/miss/","id":16,"slug":"miss","name":"Miss.","name_long":"Mississippi","whitelisted":false}]},{"id":766,"url":"https://api.case.law/v1/reporters/766/","fullName":"Mississippi State Cases; being criminal cases decided in the High court of errors and appeals","shortName":"Mor. St. Cas.","startYear":1872,"endYear":1872,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/miss/","id":16,"slug":"miss","name":"Miss.","name_long":"Mississippi","whitelisted":false}]},{"id":398,"url":"https://api.case.law/v1/reporters/398/","fullName":"Missouri Appeal Reports","shortName":"Mo. App.","startYear":1876,"endYear":1994,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/mo/","id":37,"slug":"mo","name":"Mo.","name_long":"Missouri","whitelisted":false}]},{"id":673,"url":"https://api.case.law/v1/reporters/673/","fullName":"Missouri Reports","shortName":"Mo.","startYear":1821,"endYear":1956,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/mo/","id":37,"slug":"mo","name":"Mo.","name_long":"Missouri","whitelisted":false}]},{"id":289,"url":"https://api.case.law/v1/reporters/289/","fullName":"Montana Reports","shortName":"Mont.","startYear":1868,"endYear":2017,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/mont/","id":20,"slug":"mont","name":"Mont.","name_long":"Montana","whitelisted":false}]},{"id":539,"url":"https://api.case.law/v1/reporters/539/","fullName":"Nebraska Reports","shortName":"Neb.","startYear":1871,"endYear":2008,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/neb/","id":51,"slug":"neb","name":"Neb.","name_long":"Nebraska","whitelisted":false}]},{"id":518,"url":"https://api.case.law/v1/reporters/518/","fullName":"Nevada Reports","shortName":"Nev.","startYear":1865,"endYear":2013,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/nev/","id":48,"slug":"nev","name":"Nev.","name_long":"Nevada","whitelisted":false}]},{"id":489,"url":"https://api.case.law/v1/reporters/489/","fullName":"New Hampshire Reports","shortName":"N.H.","startYear":1816,"endYear":2017,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/nh/","id":47,"slug":"nh","name":"N.H.","name_long":"New Hampshire","whitelisted":false}]},{"id":559,"url":"https://api.case.law/v1/reporters/559/","fullName":"New Jersey Equity Reports","shortName":"N.J. Eq.","startYear":1830,"endYear":1948,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/nj/","id":24,"slug":"nj","name":"N.J.","name_long":"New Jersey","whitelisted":false}]},{"id":551,"url":"https://api.case.law/v1/reporters/551/","fullName":"New Jersey Law Reports","shortName":"N.J.L.","startYear":1789,"endYear":1948,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/nj/","id":24,"slug":"nj","name":"N.J.","name_long":"New Jersey","whitelisted":false}]},{"id":558,"url":"https://api.case.law/v1/reporters/558/","fullName":"New Jersey Reports","shortName":"N.J.","startYear":1878,"endYear":2018,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/nj/","id":24,"slug":"nj","name":"N.J.","name_long":"New Jersey","whitelisted":false}]},{"id":554,"url":"https://api.case.law/v1/reporters/554/","fullName":"New Mexico Reports","shortName":"N.M.","startYear":1852,"endYear":2011,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/nm/","id":52,"slug":"nm","name":"N.M.","name_long":"New Mexico","whitelisted":true}]},{"id":143,"url":"https://api.case.law/v1/reporters/143/","fullName":"New York Criminal Reports","shortName":"N.Y. Crim.","startYear":1810,"endYear":1924,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ny/","id":1,"slug":"ny","name":"N.Y.","name_long":"New York","whitelisted":false}]},{"id":65,"url":"https://api.case.law/v1/reporters/65/","fullName":"New York Miscellaneous Reports","shortName":"Misc.","startYear":1808,"endYear":1955,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ny/","id":1,"slug":"ny","name":"N.Y.","name_long":"New York","whitelisted":false}]},{"id":77,"url":"https://api.case.law/v1/reporters/77/","fullName":"New York Miscellaneous Reports","shortName":"Misc.2d","startYear":1878,"endYear":2003,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ny/","id":1,"slug":"ny","name":"N.Y.","name_long":"New York","whitelisted":false}]},{"id":20,"url":"https://api.case.law/v1/reporters/20/","fullName":"New York Reports","shortName":"N.Y.","startYear":1800,"endYear":1997,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ny/","id":1,"slug":"ny","name":"N.Y.","name_long":"New York","whitelisted":false}]},{"id":160,"url":"https://api.case.law/v1/reporters/160/","fullName":"New York State Reporter","shortName":"N.Y. St. Rptr.","startYear":1833,"endYear":1898,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ny/","id":1,"slug":"ny","name":"N.Y.","name_long":"New York","whitelisted":false}]},{"id":549,"url":"https://api.case.law/v1/reporters/549/","fullName":"North Carolina Reports","shortName":"N.C.","startYear":1778,"endYear":2017,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/nc/","id":5,"slug":"nc","name":"N.C.","name_long":"North Carolina","whitelisted":true}]},{"id":286,"url":"https://api.case.law/v1/reporters/286/","fullName":"North Dakota Reports","shortName":"N.D.","startYear":1807,"endYear":1953,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/nd/","id":18,"slug":"nd","name":"N.D.","name_long":"North Dakota","whitelisted":false}]},{"id":1071,"url":"https://api.case.law/v1/reporters/1071/","fullName":"Ohio Circuit Court Decisions","shortName":"Ohio C.C. Dec.","startYear":1891,"endYear":1923,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ohio/","id":22,"slug":"ohio","name":"Ohio","name_long":"Ohio","whitelisted":false}]},{"id":775,"url":"https://api.case.law/v1/reporters/775/","fullName":"Ohio Circuit Court Reports (new series)","shortName":"Ohio C.C. (N.S.)","startYear":1892,"endYear":1917,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ohio/","id":22,"slug":"ohio","name":"Ohio","name_long":"Ohio","whitelisted":false}]},{"id":1072,"url":"https://api.case.law/v1/reporters/1072/","fullName":"Ohio Circuit Decisions","shortName":"Ohio Cir. Dec.","startYear":1879,"endYear":1909,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ohio/","id":22,"slug":"ohio","name":"Ohio","name_long":"Ohio","whitelisted":false}]},{"id":776,"url":"https://api.case.law/v1/reporters/776/","fullName":"Ohio nisi prius and general term reports","shortName":"Ohio Nisi Prius","startYear":1881,"endYear":1908,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ohio/","id":22,"slug":"ohio","name":"Ohio","name_long":"Ohio","whitelisted":false}]},{"id":777,"url":"https://api.case.law/v1/reporters/777/","fullName":"Ohio nisi prius and general term reports (new series)","shortName":"Ohio Nisi Prius (N.S.)","startYear":1894,"endYear":1934,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ohio/","id":22,"slug":"ohio","name":"Ohio","name_long":"Ohio","whitelisted":false}]},{"id":548,"url":"https://api.case.law/v1/reporters/548/","fullName":"Ohio State Reports","shortName":"Ohio St.","startYear":1840,"endYear":1851,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ohio/","id":22,"slug":"ohio","name":"Ohio","name_long":"Ohio","whitelisted":false}]},{"id":544,"url":"https://api.case.law/v1/reporters/544/","fullName":"Ohio State Reports, New Service","shortName":"Ohio St. (n.s.)","startYear":1852,"endYear":1964,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ohio/","id":22,"slug":"ohio","name":"Ohio","name_long":"Ohio","whitelisted":false}]},{"id":270,"url":"https://api.case.law/v1/reporters/270/","fullName":"Oklahoma Reports","shortName":"Okla.","startYear":1890,"endYear":1953,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/okla/","id":13,"slug":"okla","name":"Okla.","name_long":"Oklahoma","whitelisted":false}]},{"id":288,"url":"https://api.case.law/v1/reporters/288/","fullName":"Oregon Reports","shortName":"Or.","startYear":1847,"endYear":2017,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/or/","id":19,"slug":"or","name":"Or.","name_long":"Oregon","whitelisted":false}]},{"id":5,"url":"https://api.case.law/v1/reporters/5/","fullName":"Paige's Chancery Reports","shortName":"Paige Ch.","startYear":1828,"endYear":1845,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ny/","id":1,"slug":"ny","name":"N.Y.","name_long":"New York","whitelisted":false}]},{"id":129,"url":"https://api.case.law/v1/reporters/129/","fullName":"Parker's Criminal Reports","shortName":"Park. Crim. Rep.","startYear":1823,"endYear":1868,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ny/","id":1,"slug":"ny","name":"N.Y.","name_long":"New York","whitelisted":false}]},{"id":825,"url":"https://api.case.law/v1/reporters/825/","fullName":"Pennsylvania Justices' Law Reporter","shortName":"Pa. Just. L. Rep.","startYear":1900,"endYear":1903,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/pa/","id":6,"slug":"pa","name":"Pa.","name_long":"Pennsylvania","whitelisted":false}]},{"id":409,"url":"https://api.case.law/v1/reporters/409/","fullName":"Pennsylvania State Reports","shortName":"Pa.","startYear":1845,"endYear":2017,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/pa/","id":6,"slug":"pa","name":"Pa.","name_long":"Pennsylvania","whitelisted":false}]},{"id":357,"url":"https://api.case.law/v1/reporters/357/","fullName":"Pennsylvania Superior Court Reports","shortName":"Pa. Super. Ct.","startYear":1895,"endYear":1998,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/pa/","id":6,"slug":"pa","name":"Pa.","name_long":"Pennsylvania","whitelisted":false}]},{"id":828,"url":"https://api.case.law/v1/reporters/828/","fullName":"Pennsylvania Supreme Court Reports (Pennypacker)","shortName":"Pennyp.","startYear":1880,"endYear":1884,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/pa/","id":6,"slug":"pa","name":"Pa.","name_long":"Pennsylvania","whitelisted":false}]},{"id":653,"url":"https://api.case.law/v1/reporters/653/","fullName":"Pinney","shortName":"Pin.","startYear":1839,"endYear":1852,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/wis/","id":46,"slug":"wis","name":"Wis.","name_long":"Wisconsin","whitelisted":false}]},{"id":584,"url":"https://api.case.law/v1/reporters/584/","fullName":"Porter","shortName":"Port.","startYear":1834,"endYear":1839,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ala/","id":23,"slug":"ala","name":"Ala.","name_long":"Alabama","whitelisted":false}]},{"id":1077,"url":"https://api.case.law/v1/reporters/1077/","fullName":"Porto Rico Federal Reports","shortName":"P.R. Fed.","startYear":1900,"endYear":1924,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/us/","id":39,"slug":"us","name":"U.S.","name_long":"United States","whitelisted":false}]},{"id":151,"url":"https://api.case.law/v1/reporters/151/","fullName":"Power's Surrogate's Reports","shortName":"Pow. Surr.","startYear":1890,"endYear":1894,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ny/","id":1,"slug":"ny","name":"N.Y.","name_long":"New York","whitelisted":false}]},{"id":749,"url":"https://api.case.law/v1/reporters/749/","fullName":"Practice reports. Cases decided in the Supreme court of Michigan in 1896, in which written opinions were not filed.","shortName":"Mich. Pr.","startYear":1896,"endYear":1896,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/mich/","id":49,"slug":"mich","name":"Mich.","name_long":"Michigan","whitelisted":false}]},{"id":304,"url":"https://api.case.law/v1/reporters/304/","fullName":"Puerto Rico Reports","shortName":"P.R.","startYear":1894,"endYear":1972,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/pr/","id":25,"slug":"pr","name":"P.R.","name_long":"Puerto Rico","whitelisted":false}]},{"id":130,"url":"https://api.case.law/v1/reporters/130/","fullName":"Redfield's Reports","shortName":"Redf.","startYear":1846,"endYear":1882,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ny/","id":1,"slug":"ny","name":"N.Y.","name_long":"New York","whitelisted":false}]},{"id":684,"url":"https://api.case.law/v1/reporters/684/","fullName":"Reports of Cases Adjudged in the Court of Appeals of the District of Columbia","shortName":"App. D.C.","startYear":1893,"endYear":2015,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/dc/","id":56,"slug":"dc","name":"D.C.","name_long":"District of Columbia","whitelisted":false}]},{"id":778,"url":"https://api.case.law/v1/reporters/778/","fullName":"Reports of cases adjudged in the Superior Court of Cincinnati at special and general terms (Disney)","shortName":"Disney (Ohio)","startYear":1853,"endYear":1859,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ohio/","id":22,"slug":"ohio","name":"Ohio","name_long":"Ohio","whitelisted":false}]},{"id":835,"url":"https://api.case.law/v1/reporters/835/","fullName":"Reports of cases adjudged in the Supreme Court of Pennsylvania (Binney)","shortName":"Binn.","startYear":1799,"endYear":1814,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/pa/","id":6,"slug":"pa","name":"Pa.","name_long":"Pennsylvania","whitelisted":false}]},{"id":839,"url":"https://api.case.law/v1/reporters/839/","fullName":"Reports of cases adjudged in the Supreme Court of Pennsylvania (Penrose & Watts)","shortName":"Pen. & W.","startYear":1829,"endYear":1832,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/pa/","id":6,"slug":"pa","name":"Pa.","name_long":"Pennsylvania","whitelisted":false}]},{"id":838,"url":"https://api.case.law/v1/reporters/838/","fullName":"Reports of cases adjudged in the Supreme Court of Pennsylvania (Rawle)","shortName":"Rawle","startYear":1821,"endYear":1835,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/pa/","id":6,"slug":"pa","name":"Pa.","name_long":"Pennsylvania","whitelisted":false}]},{"id":836,"url":"https://api.case.law/v1/reporters/836/","fullName":"Reports of cases adjudged in the Supreme Court of Pennsylvania (Sergeant & Rawle)","shortName":"Serg. & Rawl.","startYear":1813,"endYear":1835,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/pa/","id":6,"slug":"pa","name":"Pa.","name_long":"Pennsylvania","whitelisted":false}]},{"id":837,"url":"https://api.case.law/v1/reporters/837/","fullName":"Reports of cases adjudged in the Supreme Court of Pennsylvania (Watts & Sergeant)","shortName":"Watts & Serg.","startYear":1841,"endYear":1845,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/pa/","id":6,"slug":"pa","name":"Pa.","name_long":"Pennsylvania","whitelisted":false}]},{"id":840,"url":"https://api.case.law/v1/reporters/840/","fullName":"Reports of cases adjudged in the Supreme Court of Pennsylvania (Wharton)","shortName":"Whart.","startYear":1826,"endYear":1841,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/pa/","id":6,"slug":"pa","name":"Pa.","name_long":"Pennsylvania","whitelisted":false}]},{"id":834,"url":"https://api.case.law/v1/reporters/834/","fullName":"Reports of cases adjudged in the Supreme Court of Pennsylvania (Yeates)","shortName":"Yeates","startYear":1791,"endYear":1808,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/pa/","id":6,"slug":"pa","name":"Pa.","name_long":"Pennsylvania","whitelisted":false}]},{"id":779,"url":"https://api.case.law/v1/reporters/779/","fullName":"Reports of cases argued and adjudged in the Superior Court of Cincinnati","shortName":"Handy","startYear":1854,"endYear":1855,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ohio/","id":22,"slug":"ohio","name":"Ohio","name_long":"Ohio","whitelisted":false}]},{"id":841,"url":"https://api.case.law/v1/reporters/841/","fullName":"Reports of cases argued and adjudged in the Supreme Court of Pennsylvania (Grant)","shortName":"Grant","startYear":1814,"endYear":1864,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/pa/","id":6,"slug":"pa","name":"Pa.","name_long":"Pennsylvania","whitelisted":false}]},{"id":780,"url":"https://api.case.law/v1/reporters/780/","fullName":"Reports of cases argued and determined in the circuit courts of Ohio","shortName":"Jahn","startYear":1869,"endYear":1901,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ohio/","id":22,"slug":"ohio","name":"Ohio","name_long":"Ohio","whitelisted":false}]},{"id":727,"url":"https://api.case.law/v1/reporters/727/","fullName":"Reports of cases argued and determined in the Court of Appeals of Maryland","shortName":"Gill","startYear":1842,"endYear":1851,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/md/","id":50,"slug":"md","name":"Md.","name_long":"Maryland","whitelisted":false}]},{"id":728,"url":"https://api.case.law/v1/reporters/728/","fullName":"Reports of cases argued and determined in the Court of Appeals of Maryland","shortName":"G. & J.","startYear":1827,"endYear":1842,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/md/","id":50,"slug":"md","name":"Md.","name_long":"Maryland","whitelisted":false}]},{"id":761,"url":"https://api.case.law/v1/reporters/761/","fullName":"Reports of cases argued and determined in the court of chancery of the state of michigan","shortName":"Walk. Ch.","startYear":1842,"endYear":1845,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/mich/","id":49,"slug":"mich","name":"Mich.","name_long":"Michigan","whitelisted":false}]},{"id":731,"url":"https://api.case.law/v1/reporters/731/","fullName":"Reports of cases argued and determined in the General Court and Court of Appeals of the State of Maryland, form 1800 ... [to 1826]","shortName":"H. & J.","startYear":1800,"endYear":1826,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/md/","id":50,"slug":"md","name":"Md.","name_long":"Maryland","whitelisted":false}]},{"id":647,"url":"https://api.case.law/v1/reporters/647/","fullName":"Reports of Cases Argued and Determined in the Superior Court at Indianapolis","shortName":"Wilson","startYear":1871,"endYear":1874,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ind/","id":14,"slug":"ind","name":"Ind.","name_long":"Indiana","whitelisted":false}]},{"id":764,"url":"https://api.case.law/v1/reporters/764/","fullName":"Reports of cases argued and determined in the superior court of chancery of the state of mississippi","shortName":"Miss. (S. & M. Ch.)","startYear":1840,"endYear":1844,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/miss/","id":16,"slug":"miss","name":"Miss.","name_long":"Mississippi","whitelisted":false}]},{"id":641,"url":"https://api.case.law/v1/reporters/641/","fullName":"Reports of cases argued and Determined in the Supreme Court of Iowa","shortName":"Morris","startYear":1839,"endYear":1846,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/iowa/","id":45,"slug":"iowa","name":"Iowa","name_long":"Iowa","whitelisted":false}]},{"id":842,"url":"https://api.case.law/v1/reporters/842/","fullName":"Reports of cases argued and determined in the Supreme Court of Pennsylvania","shortName":"Watts","startYear":1832,"endYear":1840,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/pa/","id":6,"slug":"pa","name":"Pa.","name_long":"Pennsylvania","whitelisted":false}]},{"id":755,"url":"https://api.case.law/v1/reporters/755/","fullName":"Reports of cases argued and determined in the Supreme Court of the District of Columbia (District of Columbia - reported by Mackey)","shortName":"D.C.","startYear":1801,"endYear":1893,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/dc/","id":56,"slug":"dc","name":"D.C.","name_long":"District of Columbia","whitelisted":false}]},{"id":744,"url":"https://api.case.law/v1/reporters/744/","fullName":"Reports of cases argued and determined in the Supreme Court of the state of Michigan","shortName":"Doug.","startYear":1843,"endYear":1847,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/mich/","id":49,"slug":"mich","name":"Mich.","name_long":"Michigan","whitelisted":false}]},{"id":677,"url":"https://api.case.law/v1/reporters/677/","fullName":"Reports of Cases Argued and Determined in the United States Superior Court for the Territory of Arkansas, from 1820 to 1836","shortName":"Ark. Terr. Rep.","startYear":1820,"endYear":1855,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ark/","id":34,"slug":"ark","name":"Ark.","name_long":"Arkansas","whitelisted":true}]},{"id":721,"url":"https://api.case.law/v1/reporters/721/","fullName":"Reports of cases argued and determined in the various Courts of Appeal of the state of Louisiana (McGloin)","shortName":"McGl.","startYear":1881,"endYear":1884,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/la/","id":10,"slug":"la","name":"La.","name_long":"Louisiana","whitelisted":false}]},{"id":693,"url":"https://api.case.law/v1/reporters/693/","fullName":"Reports of cases arising upon applications for letters-patent for inventions determined in the Circuit and Supreme Court of the District of Columbia (MacArthur's Patent Cases)","shortName":"D.C. (patent)","startYear":1841,"endYear":1859,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/dc/","id":56,"slug":"dc","name":"D.C.","name_long":"District of Columbia","whitelisted":false}]},{"id":751,"url":"https://api.case.law/v1/reporters/751/","fullName":"Reports of cases at law and in chancery, decided by the Supreme court of Ohio, during the years 1831, 1832, 1833, 1834.","shortName":"Wright","startYear":1831,"endYear":1883,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ohio/","id":22,"slug":"ohio","name":"Ohio","name_long":"Ohio","whitelisted":false}]},{"id":782,"url":"https://api.case.law/v1/reporters/782/","fullName":"Reports of cases at law and in chancery Ohio","shortName":"Ohio Ch.","startYear":1831,"endYear":1834,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ohio/","id":22,"slug":"ohio","name":"Ohio","name_long":"Ohio","whitelisted":false}]},{"id":1001,"url":"https://api.case.law/v1/reporters/1001/","fullName":"Reports of cases, civil and criminal, argued and adjudged in the Circuit court of the District of Columbia for the county of Washington","shortName":"Hay. & Haz.","startYear":1840,"endYear":1882,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/dc/","id":56,"slug":"dc","name":"D.C.","name_long":"District of Columbia","whitelisted":false}]},{"id":843,"url":"https://api.case.law/v1/reporters/843/","fullName":"Reports of cases decided by the judges of the supreme court of Pennsylvania, in the court of nisi prius","shortName":"Brightly","startYear":1809,"endYear":1851,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/pa/","id":6,"slug":"pa","name":"Pa.","name_long":"Pennsylvania","whitelisted":false}]},{"id":844,"url":"https://api.case.law/v1/reporters/844/","fullName":"Reports of cases decided by the supreme court of pennsylvania which have been omitted from the regular reports","shortName":"Walker","startYear":1849,"endYear":1887,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/pa/","id":6,"slug":"pa","name":"Pa.","name_long":"Pennsylvania","whitelisted":false}]},{"id":700,"url":"https://api.case.law/v1/reporters/700/","fullName":"Reports of cases decided in the Courts of Appeals of the state of Kansas","shortName":"Kan. App.","startYear":1895,"endYear":1901,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/kan/","id":43,"slug":"kan","name":"Kan.","name_long":"Kansas","whitelisted":false}]},{"id":734,"url":"https://api.case.law/v1/reporters/734/","fullName":"Reports of cases decided in the High court of chancery of Maryland. [1811-1832]","shortName":"Md. Ch.","startYear":1797,"endYear":1832,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/md/","id":50,"slug":"md","name":"Md.","name_long":"Maryland","whitelisted":false}]},{"id":733,"url":"https://api.case.law/v1/reporters/733/","fullName":"Reports of cases decided in the High Court of Chancery of Maryland : containing cases from the year 1847 to [1854]","shortName":"Md. Ch.","startYear":1841,"endYear":1853,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/md/","id":50,"slug":"md","name":"Md.","name_long":"Maryland","whitelisted":false}]},{"id":765,"url":"https://api.case.law/v1/reporters/765/","fullName":"Reports of cases decided in the Superior Court of Chancery of the state of Mississippi","shortName":"Freem. Ch.","startYear":1844,"endYear":1844,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/miss/","id":16,"slug":"miss","name":"Miss.","name_long":"Mississippi","whitelisted":false}]},{"id":763,"url":"https://api.case.law/v1/reporters/763/","fullName":"Reports of Cases Determined in the Court of Chancery of the State of Michigan","shortName":"Harr. Ch.","startYear":1839,"endYear":1841,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/mich/","id":49,"slug":"mich","name":"Mich.","name_long":"Michigan","whitelisted":false}]},{"id":846,"url":"https://api.case.law/v1/reporters/846/","fullName":"Reports of cases determined in the district court for the city and county of Philadelphia","shortName":"Miles","startYear":1825,"endYear":1842,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/pa/","id":6,"slug":"pa","name":"Pa.","name_long":"Pennsylvania","whitelisted":false}]},{"id":678,"url":"https://api.case.law/v1/reporters/678/","fullName":"Reports of Cases Determined in the District Courts of the State of California","shortName":"Cal. Dist. Ct.","startYear":1854,"endYear":1858,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/cal/","id":30,"slug":"cal","name":"Cal.","name_long":"California","whitelisted":false}]},{"id":699,"url":"https://api.case.law/v1/reporters/699/","fullName":"Reports of cases determined in the Supreme court of the territory of Kansas (McCahon)","shortName":"McCahon","startYear":1858,"endYear":1868,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/kan/","id":43,"slug":"kan","name":"Kan.","name_long":"Kansas","whitelisted":false}]},{"id":642,"url":"https://api.case.law/v1/reporters/642/","fullName":"Reports of Cases in Law and Equity, Determined in the Supreme Court of the State of Iowa","shortName":"Greene","startYear":1847,"endYear":1854,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/iowa/","id":45,"slug":"iowa","name":"Iowa","name_long":"Iowa","whitelisted":false}]},{"id":566,"url":"https://api.case.law/v1/reporters/566/","fullName":"Reports of Cases in the Probate Court of the City and County of San Francisco, from January 1, 1872, to December 31, 1879, Milton H. Myrick, Probate Judge","shortName":"Myrick","startYear":1872,"endYear":1879,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/cal/","id":30,"slug":"cal","name":"Cal.","name_long":"California","whitelisted":false}]},{"id":697,"url":"https://api.case.law/v1/reporters/697/","fullName":"Reports of causes determined in the United States District Court for the District of Hawaii.","shortName":"D. Haw.","startYear":1900,"endYear":1916,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/haw/","id":40,"slug":"haw","name":"Haw.","name_long":"Hawaii","whitelisted":false}]},{"id":739,"url":"https://api.case.law/v1/reporters/739/","fullName":"Reports of contested election cases in the Senate and House of Representatives of the commonwealth of Massachusetts for the year 1886-1897","shortName":"Rep. Cont. Elect. Case.","startYear":1886,"endYear":1897,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/mass/","id":4,"slug":"mass","name":"Mass.","name_long":"Massachusetts","whitelisted":false}]},{"id":738,"url":"https://api.case.law/v1/reporters/738/","fullName":"Reports of controverted elections in the House of representatives, of the commonwealth of Massachusetts...","shortName":"Rep. Cont. El.","startYear":1781,"endYear":1852,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/mass/","id":4,"slug":"mass","name":"Mass.","name_long":"Massachusetts","whitelisted":false}]},{"id":660,"url":"https://api.case.law/v1/reporters/660/","fullName":"Reports of Criminal Trials in the Circuit, State and United States Courts, held in Richmond, Virginia","shortName":"Howison","startYear":1850,"endYear":1851,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/va/","id":7,"slug":"va","name":"Va.","name_long":"Virginia","whitelisted":false}]},{"id":567,"url":"https://api.case.law/v1/reporters/567/","fullName":"Reports of Decisions in Probate, by James V. Coffey, Judge of the Superior Court in and for the City and County of San Francisco, State of California. Reported and Annotated by Peter V. Ross and Jeremiah V. Coffey","shortName":"Coffey","startYear":1880,"endYear":1915,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/cal/","id":30,"slug":"cal","name":"Cal.","name_long":"California","whitelisted":false}]},{"id":637,"url":"https://api.case.law/v1/reporters/637/","fullName":"Reports of Decisions Made in the Superior Courts of the Eastern District of Georgia","shortName":"Charlton","startYear":1811,"endYear":1837,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ga/","id":3,"slug":"ga","name":"Ga.","name_long":"Georgia","whitelisted":false}]},{"id":783,"url":"https://api.case.law/v1/reporters/783/","fullName":"Reports of select cases argued and determined in the Probate court of Hamilton county, Ohio","shortName":"Goebel","startYear":1885,"endYear":1890,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ohio/","id":22,"slug":"ohio","name":"Ohio","name_long":"Ohio","whitelisted":false}]},{"id":959,"url":"https://api.case.law/v1/reporters/959/","fullName":"Reports of some of the criminal cases on primary hearing, before Richard Vaux, recorder of the city of Philadelphia","shortName":"Vaux","startYear":1846,"endYear":1846,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/pa/","id":6,"slug":"pa","name":"Pa.","name_long":"Pennsylvania","whitelisted":false}]},{"id":640,"url":"https://api.case.law/v1/reporters/640/","fullName":"Reports of the Decisions of the Supreme Court of Iowa","shortName":"Bradf.","startYear":1839,"endYear":1841,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/iowa/","id":45,"slug":"iowa","name":"Iowa","name_long":"Iowa","whitelisted":false}]},{"id":276,"url":"https://api.case.law/v1/reporters/276/","fullName":"Rhode Island Reports","shortName":"R.I.","startYear":1828,"endYear":1981,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ri/","id":15,"slug":"ri","name":"R.I.","name_long":"Rhode Island","whitelisted":false}]},{"id":174,"url":"https://api.case.law/v1/reporters/174/","fullName":"Robertson's Superior Court Reports","shortName":"Robertson's Super. Ct. Rep.","startYear":1837,"endYear":1869,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ny/","id":1,"slug":"ny","name":"N.Y.","name_long":"New York","whitelisted":false}]},{"id":997,"url":"https://api.case.law/v1/reporters/997/","fullName":"Robinson","shortName":"Rob.","startYear":1841,"endYear":1846,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/la/","id":10,"slug":"la","name":"La.","name_long":"Louisiana","whitelisted":false}]},{"id":3,"url":"https://api.case.law/v1/reporters/3/","fullName":"Sandford's Chancery Reports","shortName":"Sand. Ch.","startYear":1843,"endYear":1847,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ny/","id":1,"slug":"ny","name":"N.Y.","name_long":"New York","whitelisted":false}]},{"id":171,"url":"https://api.case.law/v1/reporters/171/","fullName":"Sandford's Superior Court Reports","shortName":"Sandford Super. Ct. Rep.","startYear":1839,"endYear":1852,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ny/","id":1,"slug":"ny","name":"N.Y.","name_long":"New York","whitelisted":false}]},{"id":4,"url":"https://api.case.law/v1/reporters/4/","fullName":"Saratoga Chancery Sentinel","shortName":"Sarat. Ch. Sent.","startYear":1841,"endYear":1847,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ny/","id":1,"slug":"ny","name":"N.Y.","name_long":"New York","whitelisted":false}]},{"id":138,"url":"https://api.case.law/v1/reporters/138/","fullName":"Selden's Notes of Cases","shortName":"Seld. Notes","startYear":1852,"endYear":1854,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ny/","id":1,"slug":"ny","name":"N.Y.","name_long":"New York","whitelisted":false}]},{"id":960,"url":"https://api.case.law/v1/reporters/960/","fullName":"Select cases in equity and at law","shortName":"Parsons","startYear":1841,"endYear":1850,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/pa/","id":6,"slug":"pa","name":"Pa.","name_long":"Pennsylvania","whitelisted":false}]},{"id":141,"url":"https://api.case.law/v1/reporters/141/","fullName":"Silvernail's Court of Appeals Reports","shortName":"Silv. Ct. App.","startYear":1886,"endYear":1892,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ny/","id":1,"slug":"ny","name":"N.Y.","name_long":"New York","whitelisted":false}]},{"id":142,"url":"https://api.case.law/v1/reporters/142/","fullName":"Silvernail's Supreme Court Reports","shortName":"Silv. Sup.","startYear":1884,"endYear":1890,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ny/","id":1,"slug":"ny","name":"N.Y.","name_long":"New York","whitelisted":false}]},{"id":645,"url":"https://api.case.law/v1/reporters/645/","fullName":"Smith","shortName":"Smith","startYear":1848,"endYear":1849,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ind/","id":14,"slug":"ind","name":"Ind.","name_long":"Indiana","whitelisted":false}]},{"id":1085,"url":"https://api.case.law/v1/reporters/1085/","fullName":"South Carolina Equity Reports","shortName":"S.C. Eq.","startYear":1784,"endYear":1868,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/sc/","id":59,"slug":"sc","name":"S.C.","name_long":"South Carolina","whitelisted":false}]},{"id":1084,"url":"https://api.case.law/v1/reporters/1084/","fullName":"South Carolina Law Reports","shortName":"S.C.L.","startYear":1783,"endYear":1868,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/sc/","id":59,"slug":"sc","name":"S.C.","name_long":"South Carolina","whitelisted":false}]},{"id":282,"url":"https://api.case.law/v1/reporters/282/","fullName":"South Carolina Reports","shortName":"S.C.","startYear":1868,"endYear":2017,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/sc/","id":59,"slug":"sc","name":"S.C.","name_long":"South Carolina","whitelisted":false}]},{"id":667,"url":"https://api.case.law/v1/reporters/667/","fullName":"South Dakota Reports","shortName":"S.D.","startYear":1890,"endYear":1976,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/sd/","id":54,"slug":"sd","name":"S.D.","name_long":"South Dakota","whitelisted":false}]},{"id":610,"url":"https://api.case.law/v1/reporters/610/","fullName":"South Western Reporter","shortName":"S.W.","startYear":1900,"endYear":1927,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/regional/","id":9,"slug":"regional","name":"Regional","name_long":"Regional","whitelisted":false}]},{"id":582,"url":"https://api.case.law/v1/reporters/582/","fullName":"Stewart","shortName":"Stew.","startYear":1827,"endYear":1831,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ala/","id":23,"slug":"ala","name":"Ala.","name_long":"Alabama","whitelisted":false}]},{"id":583,"url":"https://api.case.law/v1/reporters/583/","fullName":"Stewart and Porter","shortName":"Stew. & P.","startYear":1831,"endYear":1834,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ala/","id":23,"slug":"ala","name":"Ala.","name_long":"Alabama","whitelisted":false}]},{"id":110,"url":"https://api.case.law/v1/reporters/110/","fullName":"Supreme Court Reports (Hun)","shortName":"N.Y. Sup. Ct.","startYear":1873,"endYear":1895,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ny/","id":1,"slug":"ny","name":"N.Y.","name_long":"New York","whitelisted":false}]},{"id":173,"url":"https://api.case.law/v1/reporters/173/","fullName":"Sweeney's Superior Court Reports","shortName":"Sweeney Super. Ct. Rep.","startYear":1869,"endYear":1871,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ny/","id":1,"slug":"ny","name":"N.Y.","name_long":"New York","whitelisted":false}]},{"id":595,"url":"https://api.case.law/v1/reporters/595/","fullName":"Synopses of the Decisions of the Supreme Court of the State of Texas: rendered, upon applications for writs of habeas corpus, original and on appeal, arising from restraints by conscript and other military authorities, during the terms in 1862, 1863, 1864,","shortName":"Robards","startYear":1862,"endYear":1865,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/tex/","id":32,"slug":"tex","name":"Tex.","name_long":"Texas","whitelisted":false}]},{"id":927,"url":"https://api.case.law/v1/reporters/927/","fullName":"Tennessee Cases with Notes and Annotations","shortName":"Tenn. Cas.","startYear":1847,"endYear":1894,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/tenn/","id":11,"slug":"tenn","name":"Tenn.","name_long":"Tennessee","whitelisted":false}]},{"id":928,"url":"https://api.case.law/v1/reporters/928/","fullName":"Tennessee Chancery Reports","shortName":"Tenn. Ch. R.","startYear":1872,"endYear":1878,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/tenn/","id":11,"slug":"tenn","name":"Tenn.","name_long":"Tennessee","whitelisted":false}]},{"id":277,"url":"https://api.case.law/v1/reporters/277/","fullName":"Tennessee Reports","shortName":"Tenn.","startYear":1791,"endYear":1972,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/tenn/","id":11,"slug":"tenn","name":"Tenn.","name_long":"Tennessee","whitelisted":false}]},{"id":590,"url":"https://api.case.law/v1/reporters/590/","fullName":"Texas Civil Appeals Reports","shortName":"Tex. Civ. App.","startYear":1889,"endYear":1912,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/tex/","id":32,"slug":"tex","name":"Tex.","name_long":"Texas","whitelisted":false}]},{"id":586,"url":"https://api.case.law/v1/reporters/586/","fullName":"Texas Court of Appeals Reports","shortName":"Tex. Ct. App.","startYear":1876,"endYear":1892,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/tex/","id":32,"slug":"tex","name":"Tex.","name_long":"Texas","whitelisted":false}]},{"id":588,"url":"https://api.case.law/v1/reporters/588/","fullName":"Texas Criminal Reports","shortName":"Tex. Crim.","startYear":1892,"endYear":1967,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/tex/","id":32,"slug":"tex","name":"Tex.","name_long":"Texas","whitelisted":false}]},{"id":593,"url":"https://api.case.law/v1/reporters/593/","fullName":"Texas Law Reporter","shortName":"Tex. L. R.","startYear":1844,"endYear":1885,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/tex/","id":32,"slug":"tex","name":"Tex.","name_long":"Texas","whitelisted":false}]},{"id":347,"url":"https://api.case.law/v1/reporters/347/","fullName":"Texas Reports","shortName":"Tex.","startYear":1846,"endYear":1964,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/tex/","id":32,"slug":"tex","name":"Tex.","name_long":"Texas","whitelisted":false}]},{"id":592,"url":"https://api.case.law/v1/reporters/592/","fullName":"Texas Unreported Cases (Posey)","shortName":"Posey","startYear":1879,"endYear":1885,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/tex/","id":32,"slug":"tex","name":"Tex.","name_long":"Texas","whitelisted":false}]},{"id":784,"url":"https://api.case.law/v1/reporters/784/","fullName":"The Cincinnati Superior court reporter","shortName":"Cin. Sup. Ct. Rep.","startYear":1868,"endYear":1873,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ohio/","id":22,"slug":"ohio","name":"Ohio","name_long":"Ohio","whitelisted":false}]},{"id":762,"url":"https://api.case.law/v1/reporters/762/","fullName":"The Michigan Nisi Prius Reports","shortName":"Mich. N.P. R.","startYear":1864,"endYear":1871,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/mich/","id":49,"slug":"mich","name":"Mich.","name_long":"Michigan","whitelisted":false}]},{"id":953,"url":"https://api.case.law/v1/reporters/953/","fullName":"The Ohio Law Abstract","shortName":"Ohio Law Abs.","startYear":1846,"endYear":1964,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ohio/","id":22,"slug":"ohio","name":"Ohio","name_long":"Ohio","whitelisted":false}]},{"id":134,"url":"https://api.case.law/v1/reporters/134/","fullName":"Thompson & Cook's Supreme Court Reports","shortName":"Thomp. & Cook","startYear":1873,"endYear":1875,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ny/","id":1,"slug":"ny","name":"N.Y.","name_long":"New York","whitelisted":false}]},{"id":746,"url":"https://api.case.law/v1/reporters/746/","fullName":"Transactions of the Supreme Court of the territory of Michigan","shortName":"Blume Sup. Ct. Trans.","startYear":1805,"endYear":1938,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/mich/","id":49,"slug":"mich","name":"Mich.","name_long":"Michigan","whitelisted":false}]},{"id":140,"url":"https://api.case.law/v1/reporters/140/","fullName":"Transcript Appeals","shortName":"Trans. App.","startYear":1867,"endYear":1868,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ny/","id":1,"slug":"ny","name":"N.Y.","name_long":"New York","whitelisted":false}]},{"id":146,"url":"https://api.case.law/v1/reporters/146/","fullName":"Tucker's Surrogate's Reports","shortName":"Tuck. Surr.","startYear":1870,"endYear":1870,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ny/","id":1,"slug":"ny","name":"N.Y.","name_long":"New York","whitelisted":false}]},{"id":664,"url":"https://api.case.law/v1/reporters/664/","fullName":"Tyler","shortName":"Tyl.","startYear":1800,"endYear":1803,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/vt/","id":17,"slug":"vt","name":"Vt.","name_long":"Vermont","whitelisted":false}]},{"id":983,"url":"https://api.case.law/v1/reporters/983/","fullName":"United States Reports","shortName":"U.S.","startYear":1754,"endYear":2013,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/us/","id":39,"slug":"us","name":"U.S.","name_long":"United States","whitelisted":false}]},{"id":726,"url":"https://api.case.law/v1/reporters/726/","fullName":"Unreported cases heard and determined by the Supreme Court of Louisiana, from January 8, 1877, to April, 1880","shortName":"Mann. Unrep. Cas.","startYear":1880,"endYear":1880,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/la/","id":10,"slug":"la","name":"La.","name_long":"Louisiana","whitelisted":false}]},{"id":745,"url":"https://api.case.law/v1/reporters/745/","fullName":"Unreported opinions of the Supreme court of Michigan, 1836-1843, edited by William Wirt Blume","shortName":"Blume Unrep. Op.","startYear":1838,"endYear":1842,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/mich/","id":49,"slug":"mich","name":"Mich.","name_long":"Michigan","whitelisted":false}]},{"id":926,"url":"https://api.case.law/v1/reporters/926/","fullName":"Unreported Tennessee Cases","shortName":"Unrep. Tenn. Cas.","startYear":1847,"endYear":1869,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/tenn/","id":11,"slug":"tenn","name":"Tenn.","name_long":"Tennessee","whitelisted":false}]},{"id":269,"url":"https://api.case.law/v1/reporters/269/","fullName":"Utah Reports","shortName":"Utah","startYear":1861,"endYear":1953,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/utah/","id":12,"slug":"utah","name":"Utah","name_long":"Utah","whitelisted":false}]},{"id":284,"url":"https://api.case.law/v1/reporters/284/","fullName":"Vermont Reports","shortName":"Vt.","startYear":1826,"endYear":2016,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/vt/","id":17,"slug":"vt","name":"Vt.","name_long":"Vermont","whitelisted":false}]},{"id":948,"url":"https://api.case.law/v1/reporters/948/","fullName":"Virginia Circuit Court Opinions","shortName":"Va. Cir.","startYear":1856,"endYear":2016,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/va/","id":7,"slug":"va","name":"Va.","name_long":"Virginia","whitelisted":false}]},{"id":950,"url":"https://api.case.law/v1/reporters/950/","fullName":"Virginia Decisions","shortName":"Va. Dec.","startYear":1871,"endYear":1900,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/va/","id":7,"slug":"va","name":"Va.","name_long":"Virginia","whitelisted":false}]},{"id":534,"url":"https://api.case.law/v1/reporters/534/","fullName":"Virginia Reports","shortName":"Va.","startYear":1779,"endYear":2004,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/va/","id":7,"slug":"va","name":"Va.","name_long":"Virginia","whitelisted":false}]},{"id":945,"url":"https://api.case.law/v1/reporters/945/","fullName":"Virginia Reports","shortName":"Va. (Patt. & Heath)","startYear":1855,"endYear":1857,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/va/","id":7,"slug":"va","name":"Va.","name_long":"Virginia","whitelisted":false}]},{"id":405,"url":"https://api.case.law/v1/reporters/405/","fullName":"Washington Reports","shortName":"Wash.","startYear":1889,"endYear":1981,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/wash/","id":38,"slug":"wash","name":"Wash.","name_long":"Washington","whitelisted":false}]},{"id":658,"url":"https://api.case.law/v1/reporters/658/","fullName":"Washington Territory Reports","shortName":"Wash. Terr.","startYear":1854,"endYear":1888,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/wash/","id":38,"slug":"wash","name":"Wash.","name_long":"Washington","whitelisted":false}]},{"id":120,"url":"https://api.case.law/v1/reporters/120/","fullName":"Wendell's Reports","shortName":"Wend.","startYear":1824,"endYear":1841,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ny/","id":1,"slug":"ny","name":"N.Y.","name_long":"New York","whitelisted":false}]},{"id":89,"url":"https://api.case.law/v1/reporters/89/","fullName":"West's New York Supplement","shortName":"N.Y.S.","startYear":1832,"endYear":1990,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ny/","id":1,"slug":"ny","name":"N.Y.","name_long":"New York","whitelisted":false}]},{"id":370,"url":"https://api.case.law/v1/reporters/370/","fullName":"West Virginia Supreme Court","shortName":"W. Va.","startYear":1864,"endYear":2017,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/w-va/","id":35,"slug":"w-va","name":"W. Va.","name_long":"West Virginia","whitelisted":false}]},{"id":145,"url":"https://api.case.law/v1/reporters/145/","fullName":"Wheeler's Criminal Cases","shortName":"Wheel. Cr. Cas.","startYear":1791,"endYear":1825,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/ny/","id":1,"slug":"ny","name":"N.Y.","name_long":"New York","whitelisted":false}]},{"id":483,"url":"https://api.case.law/v1/reporters/483/","fullName":"Wisconsin Reports","shortName":"Wis.","startYear":1853,"endYear":1957,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/wis/","id":46,"slug":"wis","name":"Wis.","name_long":"Wisconsin","whitelisted":false}]},{"id":361,"url":"https://api.case.law/v1/reporters/361/","fullName":"Wyoming Reports","shortName":"Wyo.","startYear":1870,"endYear":1959,"jurisdictions":[{"url":"https://api.case.law/v1/jurisdictions/wyo/","id":33,"slug":"wyo","name":"Wyo.","name_long":"Wyoming","whitelisted":false}]}]
+[
+    {
+       "id": 172,
+       "url": "https://api.case.law/v1/reporters/172/",
+       "fullName": "Jones and Spencer's Superior Court Reports",
+       "shortName": "Jones and Spencer's Super. Ct. Rep.",
+       "startYear": 1830,
+       "endYear": 1892,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ny/",
+             "id": 1,
+             "slug": "ny",
+             "name": "N.Y.",
+             "name_long": "New York",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 476,
+       "url": "https://api.case.law/v1/reporters/476/",
+       "fullName": "Kansas Reports",
+       "shortName": "Kan.",
+       "startYear": 1858,
+       "endYear": 2016,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/kan/",
+             "id": 43,
+             "slug": "kan",
+             "name": "Kan.",
+             "name_long": "Kansas",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 713,
+       "url": "https://api.case.law/v1/reporters/713/",
+       "fullName": "Kentucky Opinions, containing the unreported opinions of the Court of Appeals",
+       "shortName": "Ky. Op.",
+       "startYear": 1861,
+       "endYear": 1886,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ky/",
+             "id": 26,
+             "slug": "ky",
+             "name": "Ky.",
+             "name_long": "Kentucky",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 305,
+       "url": "https://api.case.law/v1/reporters/305/",
+       "fullName": "Kentucky Reports",
+       "shortName": "Ky.",
+       "startYear": 1718,
+       "endYear": 1951,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ky/",
+             "id": 26,
+             "slug": "ky",
+             "name": "Ky.",
+             "name_long": "Kentucky",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 139,
+       "url": "https://api.case.law/v1/reporters/139/",
+       "fullName": "Keyes' Reports",
+       "shortName": "Keyes",
+       "startYear": 1863,
+       "endYear": 1868,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ny/",
+             "id": 1,
+             "slug": "ny",
+             "name": "N.Y.",
+             "name_long": "New York",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 9,
+       "url": "https://api.case.law/v1/reporters/9/",
+       "fullName": "Lansing's Chancery Reports",
+       "shortName": "Lans. Ch.",
+       "startYear": 1824,
+       "endYear": 1826,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ny/",
+             "id": 1,
+             "slug": "ny",
+             "name": "N.Y.",
+             "name_long": "New York",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 111,
+       "url": "https://api.case.law/v1/reporters/111/",
+       "fullName": "Lansing's Reports",
+       "shortName": "Lans.",
+       "startYear": 1867,
+       "endYear": 1873,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ny/",
+             "id": 1,
+             "slug": "ny",
+             "name": "N.Y.",
+             "name_long": "New York",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 956,
+       "url": "https://api.case.law/v1/reporters/956/",
+       "fullName": "Law Times (New Series)",
+       "shortName": "Law Times (N.S.)",
+       "startYear": 1876,
+       "endYear": 1879,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/pa/",
+             "id": 6,
+             "slug": "pa",
+             "name": "Pa.",
+             "name_long": "Pennsylvania",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 955,
+       "url": "https://api.case.law/v1/reporters/955/",
+       "fullName": "Legal Chronicle reports of Cases decided in the Supreme Court of Pennsylvania (Foster)",
+       "shortName": "Foster",
+       "startYear": 1870,
+       "endYear": 1875,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/pa/",
+             "id": 6,
+             "slug": "pa",
+             "name": "Pa.",
+             "name_long": "Pennsylvania",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 725,
+       "url": "https://api.case.law/v1/reporters/725/",
+       "fullName": "Legal points decided by the Second circuit court of Louisiana (Gunby's Reports)",
+       "shortName": "Gunby",
+       "startYear": 1885,
+       "endYear": 1885,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/la/",
+             "id": 10,
+             "slug": "la",
+             "name": "La.",
+             "name_long": "Louisiana",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 152,
+       "url": "https://api.case.law/v1/reporters/152/",
+       "fullName": "Liquor Tax Law Reports",
+       "shortName": "Liquor Tax Rep.",
+       "startYear": 1896,
+       "endYear": 1905,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ny/",
+             "id": 1,
+             "slug": "ny",
+             "name": "N.Y.",
+             "name_long": "New York",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 113,
+       "url": "https://api.case.law/v1/reporters/113/",
+       "fullName": "Lockwood's Reversed Cases",
+       "shortName": "Lock. Rev. Cas.",
+       "startYear": 1799,
+       "endYear": 1836,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ny/",
+             "id": 1,
+             "slug": "ny",
+             "name": "N.Y.",
+             "name_long": "New York",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 998,
+       "url": "https://api.case.law/v1/reporters/998/",
+       "fullName": "Louisiana Annual Reports",
+       "shortName": "La. Ann.",
+       "startYear": 1846,
+       "endYear": 1900,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/la/",
+             "id": 10,
+             "slug": "la",
+             "name": "La.",
+             "name_long": "Louisiana",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 339,
+       "url": "https://api.case.law/v1/reporters/339/",
+       "fullName": "Louisiana Reports",
+       "shortName": "La.",
+       "startYear": 1830,
+       "endYear": 1972,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/la/",
+             "id": 10,
+             "slug": "la",
+             "name": "La.",
+             "name_long": "Louisiana",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 1030,
+       "url": "https://api.case.law/v1/reporters/1030/",
+       "fullName": "Louisiana Reports",
+       "shortName": "La.",
+       "startYear": 1830,
+       "endYear": 1838,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/la/",
+             "id": 10,
+             "slug": "la",
+             "name": "La.",
+             "name_long": "Louisiana",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 467,
+       "url": "https://api.case.law/v1/reporters/467/",
+       "fullName": "Maine Reports",
+       "shortName": "Me.",
+       "startYear": 1820,
+       "endYear": 1965,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/me/",
+             "id": 42,
+             "slug": "me",
+             "name": "Me.",
+             "name_long": "Maine",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 759,
+       "url": "https://api.case.law/v1/reporters/759/",
+       "fullName": "Mandamus cases decided in the Supreme court of Michigan",
+       "shortName": "McGrath",
+       "startYear": 1843,
+       "endYear": 1898,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/mich/",
+             "id": 49,
+             "slug": "mich",
+             "name": "Mich.",
+             "name_long": "Michigan",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 992,
+       "url": "https://api.case.law/v1/reporters/992/",
+       "fullName": "Martin (Louisiana Term Reports)",
+       "shortName": "Mart. (o.s.)",
+       "startYear": 1809,
+       "endYear": 1830,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/la/",
+             "id": 10,
+             "slug": "la",
+             "name": "La.",
+             "name_long": "Louisiana",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 993,
+       "url": "https://api.case.law/v1/reporters/993/",
+       "fullName": "Martin (Louisiana Term Reports)",
+       "shortName": "Mart. (n.s.)",
+       "startYear": 1821,
+       "endYear": 1830,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/la/",
+             "id": 10,
+             "slug": "la",
+             "name": "La.",
+             "name_long": "Louisiana",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 524,
+       "url": "https://api.case.law/v1/reporters/524/",
+       "fullName": "Maryland Reports",
+       "shortName": "Md.",
+       "startYear": 1851,
+       "endYear": 2017,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/md/",
+             "id": 50,
+             "slug": "md",
+             "name": "Md.",
+             "name_long": "Maryland",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 743,
+       "url": "https://api.case.law/v1/reporters/743/",
+       "fullName": "Massachusetts Land Court decisions, 1898-1908",
+       "shortName": "Davis L. Ct. Cas.",
+       "startYear": 1898,
+       "endYear": 1927,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/mass/",
+             "id": 4,
+             "slug": "mass",
+             "name": "Mass.",
+             "name_long": "Massachusetts",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 478,
+       "url": "https://api.case.law/v1/reporters/478/",
+       "fullName": "Massachusetts Reports",
+       "shortName": "Mass.",
+       "startYear": 1768,
+       "endYear": 2017,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/mass/",
+             "id": 4,
+             "slug": "mass",
+             "name": "Mass.",
+             "name_long": "Massachusetts",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 747,
+       "url": "https://api.case.law/v1/reporters/747/",
+       "fullName": "Michigan appeals reports; cases decided in the Michigan Court of Appeals.",
+       "shortName": "Mich. App. ",
+       "startYear": 1888,
+       "endYear": 2016,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/mich/",
+             "id": 49,
+             "slug": "mich",
+             "name": "Mich.",
+             "name_long": "Michigan",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 760,
+       "url": "https://api.case.law/v1/reporters/760/",
+       "fullName": "Michigan nisi prius cases, decided by the state and federal courts in Michigan",
+       "shortName": "Howell N.P.",
+       "startYear": 1868,
+       "endYear": 1884,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/mich/",
+             "id": 49,
+             "slug": "mich",
+             "name": "Mich.",
+             "name_long": "Michigan",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 520,
+       "url": "https://api.case.law/v1/reporters/520/",
+       "fullName": "Michigan Reports",
+       "shortName": "Mich.",
+       "startYear": 1841,
+       "endYear": 2016,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/mich/",
+             "id": 49,
+             "slug": "mich",
+             "name": "Mich.",
+             "name_long": "Michigan",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 150,
+       "url": "https://api.case.law/v1/reporters/150/",
+       "fullName": "Mills' Surrogate's Reports",
+       "shortName": "Mills Surr.",
+       "startYear": 1890,
+       "endYear": 1917,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ny/",
+             "id": 1,
+             "slug": "ny",
+             "name": "N.Y.",
+             "name_long": "New York",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 394,
+       "url": "https://api.case.law/v1/reporters/394/",
+       "fullName": "Minnesota Reports",
+       "shortName": "Minn.",
+       "startYear": 1830,
+       "endYear": 1982,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/minn/",
+             "id": 36,
+             "slug": "minn",
+             "name": "Minn.",
+             "name_long": "Minnesota",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 581,
+       "url": "https://api.case.law/v1/reporters/581/",
+       "fullName": "Minor",
+       "shortName": "Minor",
+       "startYear": 1820,
+       "endYear": 1826,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ala/",
+             "id": 23,
+             "slug": "ala",
+             "name": "Ala.",
+             "name_long": "Alabama",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 767,
+       "url": "https://api.case.law/v1/reporters/767/",
+       "fullName": "Mississippi Decisions: containing the unreported opinions of the Supreme Court of Mississippi",
+       "shortName": "Miss. Dec.",
+       "startYear": 1861,
+       "endYear": 1887,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/miss/",
+             "id": 16,
+             "slug": "miss",
+             "name": "Miss.",
+             "name_long": "Mississippi",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 283,
+       "url": "https://api.case.law/v1/reporters/283/",
+       "fullName": "Mississippi Reports",
+       "shortName": "Miss.",
+       "startYear": 1818,
+       "endYear": 1966,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/miss/",
+             "id": 16,
+             "slug": "miss",
+             "name": "Miss.",
+             "name_long": "Mississippi",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 766,
+       "url": "https://api.case.law/v1/reporters/766/",
+       "fullName": "Mississippi State Cases; being criminal cases decided in the High court of errors and appeals",
+       "shortName": "Mor. St. Cas.",
+       "startYear": 1872,
+       "endYear": 1872,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/miss/",
+             "id": 16,
+             "slug": "miss",
+             "name": "Miss.",
+             "name_long": "Mississippi",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 398,
+       "url": "https://api.case.law/v1/reporters/398/",
+       "fullName": "Missouri Appeal Reports",
+       "shortName": "Mo. App.",
+       "startYear": 1876,
+       "endYear": 1994,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/mo/",
+             "id": 37,
+             "slug": "mo",
+             "name": "Mo.",
+             "name_long": "Missouri",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 673,
+       "url": "https://api.case.law/v1/reporters/673/",
+       "fullName": "Missouri Reports",
+       "shortName": "Mo.",
+       "startYear": 1821,
+       "endYear": 1956,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/mo/",
+             "id": 37,
+             "slug": "mo",
+             "name": "Mo.",
+             "name_long": "Missouri",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 289,
+       "url": "https://api.case.law/v1/reporters/289/",
+       "fullName": "Montana Reports",
+       "shortName": "Mont.",
+       "startYear": 1868,
+       "endYear": 2017,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/mont/",
+             "id": 20,
+             "slug": "mont",
+             "name": "Mont.",
+             "name_long": "Montana",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 539,
+       "url": "https://api.case.law/v1/reporters/539/",
+       "fullName": "Nebraska Reports",
+       "shortName": "Neb.",
+       "startYear": 1871,
+       "endYear": 2008,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/neb/",
+             "id": 51,
+             "slug": "neb",
+             "name": "Neb.",
+             "name_long": "Nebraska",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 518,
+       "url": "https://api.case.law/v1/reporters/518/",
+       "fullName": "Nevada Reports",
+       "shortName": "Nev.",
+       "startYear": 1865,
+       "endYear": 2013,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/nev/",
+             "id": 48,
+             "slug": "nev",
+             "name": "Nev.",
+             "name_long": "Nevada",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 489,
+       "url": "https://api.case.law/v1/reporters/489/",
+       "fullName": "New Hampshire Reports",
+       "shortName": "N.H.",
+       "startYear": 1816,
+       "endYear": 2017,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/nh/",
+             "id": 47,
+             "slug": "nh",
+             "name": "N.H.",
+             "name_long": "New Hampshire",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 559,
+       "url": "https://api.case.law/v1/reporters/559/",
+       "fullName": "New Jersey Equity Reports",
+       "shortName": "N.J. Eq.",
+       "startYear": 1830,
+       "endYear": 1948,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/nj/",
+             "id": 24,
+             "slug": "nj",
+             "name": "N.J.",
+             "name_long": "New Jersey",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 551,
+       "url": "https://api.case.law/v1/reporters/551/",
+       "fullName": "New Jersey Law Reports",
+       "shortName": "N.J.L.",
+       "startYear": 1789,
+       "endYear": 1948,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/nj/",
+             "id": 24,
+             "slug": "nj",
+             "name": "N.J.",
+             "name_long": "New Jersey",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 558,
+       "url": "https://api.case.law/v1/reporters/558/",
+       "fullName": "New Jersey Reports",
+       "shortName": "N.J.",
+       "startYear": 1878,
+       "endYear": 2018,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/nj/",
+             "id": 24,
+             "slug": "nj",
+             "name": "N.J.",
+             "name_long": "New Jersey",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 554,
+       "url": "https://api.case.law/v1/reporters/554/",
+       "fullName": "New Mexico Reports",
+       "shortName": "N.M.",
+       "startYear": 1852,
+       "endYear": 2011,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/nm/",
+             "id": 52,
+             "slug": "nm",
+             "name": "N.M.",
+             "name_long": "New Mexico",
+             "whitelisted": true
+          }
+       ]
+    },
+    {
+       "id": 143,
+       "url": "https://api.case.law/v1/reporters/143/",
+       "fullName": "New York Criminal Reports",
+       "shortName": "N.Y. Crim.",
+       "startYear": 1810,
+       "endYear": 1924,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ny/",
+             "id": 1,
+             "slug": "ny",
+             "name": "N.Y.",
+             "name_long": "New York",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 65,
+       "url": "https://api.case.law/v1/reporters/65/",
+       "fullName": "New York Miscellaneous Reports",
+       "shortName": "Misc.",
+       "startYear": 1808,
+       "endYear": 1955,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ny/",
+             "id": 1,
+             "slug": "ny",
+             "name": "N.Y.",
+             "name_long": "New York",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 77,
+       "url": "https://api.case.law/v1/reporters/77/",
+       "fullName": "New York Miscellaneous Reports",
+       "shortName": "Misc.2d",
+       "startYear": 1878,
+       "endYear": 2003,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ny/",
+             "id": 1,
+             "slug": "ny",
+             "name": "N.Y.",
+             "name_long": "New York",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 20,
+       "url": "https://api.case.law/v1/reporters/20/",
+       "fullName": "New York Reports",
+       "shortName": "N.Y.",
+       "startYear": 1800,
+       "endYear": 1997,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ny/",
+             "id": 1,
+             "slug": "ny",
+             "name": "N.Y.",
+             "name_long": "New York",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 160,
+       "url": "https://api.case.law/v1/reporters/160/",
+       "fullName": "New York State Reporter",
+       "shortName": "N.Y. St. Rptr.",
+       "startYear": 1833,
+       "endYear": 1898,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ny/",
+             "id": 1,
+             "slug": "ny",
+             "name": "N.Y.",
+             "name_long": "New York",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 549,
+       "url": "https://api.case.law/v1/reporters/549/",
+       "fullName": "North Carolina Reports",
+       "shortName": "N.C.",
+       "startYear": 1778,
+       "endYear": 2017,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/nc/",
+             "id": 5,
+             "slug": "nc",
+             "name": "N.C.",
+             "name_long": "North Carolina",
+             "whitelisted": true
+          }
+       ]
+    },
+    {
+       "id": 286,
+       "url": "https://api.case.law/v1/reporters/286/",
+       "fullName": "North Dakota Reports",
+       "shortName": "N.D.",
+       "startYear": 1807,
+       "endYear": 1953,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/nd/",
+             "id": 18,
+             "slug": "nd",
+             "name": "N.D.",
+             "name_long": "North Dakota",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 1071,
+       "url": "https://api.case.law/v1/reporters/1071/",
+       "fullName": "Ohio Circuit Court Decisions",
+       "shortName": "Ohio C.C. Dec.",
+       "startYear": 1891,
+       "endYear": 1923,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ohio/",
+             "id": 22,
+             "slug": "ohio",
+             "name": "Ohio",
+             "name_long": "Ohio",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 775,
+       "url": "https://api.case.law/v1/reporters/775/",
+       "fullName": "Ohio Circuit Court Reports (new series)",
+       "shortName": "Ohio C.C. (N.S.)",
+       "startYear": 1892,
+       "endYear": 1917,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ohio/",
+             "id": 22,
+             "slug": "ohio",
+             "name": "Ohio",
+             "name_long": "Ohio",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 1072,
+       "url": "https://api.case.law/v1/reporters/1072/",
+       "fullName": "Ohio Circuit Decisions",
+       "shortName": "Ohio Cir. Dec.",
+       "startYear": 1879,
+       "endYear": 1909,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ohio/",
+             "id": 22,
+             "slug": "ohio",
+             "name": "Ohio",
+             "name_long": "Ohio",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 776,
+       "url": "https://api.case.law/v1/reporters/776/",
+       "fullName": "Ohio nisi prius and general term reports",
+       "shortName": "Ohio Nisi Prius",
+       "startYear": 1881,
+       "endYear": 1908,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ohio/",
+             "id": 22,
+             "slug": "ohio",
+             "name": "Ohio",
+             "name_long": "Ohio",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 777,
+       "url": "https://api.case.law/v1/reporters/777/",
+       "fullName": "Ohio nisi prius and general term reports (new series)",
+       "shortName": "Ohio Nisi Prius (N.S.)",
+       "startYear": 1894,
+       "endYear": 1934,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ohio/",
+             "id": 22,
+             "slug": "ohio",
+             "name": "Ohio",
+             "name_long": "Ohio",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 548,
+       "url": "https://api.case.law/v1/reporters/548/",
+       "fullName": "Ohio State Reports",
+       "shortName": "Ohio St.",
+       "startYear": 1840,
+       "endYear": 1851,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ohio/",
+             "id": 22,
+             "slug": "ohio",
+             "name": "Ohio",
+             "name_long": "Ohio",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 544,
+       "url": "https://api.case.law/v1/reporters/544/",
+       "fullName": "Ohio State Reports, New Service",
+       "shortName": "Ohio St. (n.s.)",
+       "startYear": 1852,
+       "endYear": 1964,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ohio/",
+             "id": 22,
+             "slug": "ohio",
+             "name": "Ohio",
+             "name_long": "Ohio",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 270,
+       "url": "https://api.case.law/v1/reporters/270/",
+       "fullName": "Oklahoma Reports",
+       "shortName": "Okla.",
+       "startYear": 1890,
+       "endYear": 1953,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/okla/",
+             "id": 13,
+             "slug": "okla",
+             "name": "Okla.",
+             "name_long": "Oklahoma",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 288,
+       "url": "https://api.case.law/v1/reporters/288/",
+       "fullName": "Oregon Reports",
+       "shortName": "Or.",
+       "startYear": 1847,
+       "endYear": 2017,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/or/",
+             "id": 19,
+             "slug": "or",
+             "name": "Or.",
+             "name_long": "Oregon",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 5,
+       "url": "https://api.case.law/v1/reporters/5/",
+       "fullName": "Paige's Chancery Reports",
+       "shortName": "Paige Ch.",
+       "startYear": 1828,
+       "endYear": 1845,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ny/",
+             "id": 1,
+             "slug": "ny",
+             "name": "N.Y.",
+             "name_long": "New York",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 129,
+       "url": "https://api.case.law/v1/reporters/129/",
+       "fullName": "Parker's Criminal Reports",
+       "shortName": "Park. Crim. Rep.",
+       "startYear": 1823,
+       "endYear": 1868,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ny/",
+             "id": 1,
+             "slug": "ny",
+             "name": "N.Y.",
+             "name_long": "New York",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 825,
+       "url": "https://api.case.law/v1/reporters/825/",
+       "fullName": "Pennsylvania Justices' Law Reporter",
+       "shortName": "Pa. Just. L. Rep.",
+       "startYear": 1900,
+       "endYear": 1903,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/pa/",
+             "id": 6,
+             "slug": "pa",
+             "name": "Pa.",
+             "name_long": "Pennsylvania",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 409,
+       "url": "https://api.case.law/v1/reporters/409/",
+       "fullName": "Pennsylvania State Reports",
+       "shortName": "Pa.",
+       "startYear": 1845,
+       "endYear": 2017,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/pa/",
+             "id": 6,
+             "slug": "pa",
+             "name": "Pa.",
+             "name_long": "Pennsylvania",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 357,
+       "url": "https://api.case.law/v1/reporters/357/",
+       "fullName": "Pennsylvania Superior Court Reports",
+       "shortName": "Pa. Super. Ct.",
+       "startYear": 1895,
+       "endYear": 1998,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/pa/",
+             "id": 6,
+             "slug": "pa",
+             "name": "Pa.",
+             "name_long": "Pennsylvania",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 828,
+       "url": "https://api.case.law/v1/reporters/828/",
+       "fullName": "Pennsylvania Supreme Court Reports (Pennypacker)",
+       "shortName": "Pennyp.",
+       "startYear": 1880,
+       "endYear": 1884,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/pa/",
+             "id": 6,
+             "slug": "pa",
+             "name": "Pa.",
+             "name_long": "Pennsylvania",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 653,
+       "url": "https://api.case.law/v1/reporters/653/",
+       "fullName": "Pinney",
+       "shortName": "Pin.",
+       "startYear": 1839,
+       "endYear": 1852,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/wis/",
+             "id": 46,
+             "slug": "wis",
+             "name": "Wis.",
+             "name_long": "Wisconsin",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 584,
+       "url": "https://api.case.law/v1/reporters/584/",
+       "fullName": "Porter",
+       "shortName": "Port.",
+       "startYear": 1834,
+       "endYear": 1839,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ala/",
+             "id": 23,
+             "slug": "ala",
+             "name": "Ala.",
+             "name_long": "Alabama",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 1077,
+       "url": "https://api.case.law/v1/reporters/1077/",
+       "fullName": "Porto Rico Federal Reports",
+       "shortName": "P.R. Fed.",
+       "startYear": 1900,
+       "endYear": 1924,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/us/",
+             "id": 39,
+             "slug": "us",
+             "name": "U.S.",
+             "name_long": "United States",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 151,
+       "url": "https://api.case.law/v1/reporters/151/",
+       "fullName": "Power's Surrogate's Reports",
+       "shortName": "Pow. Surr.",
+       "startYear": 1890,
+       "endYear": 1894,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ny/",
+             "id": 1,
+             "slug": "ny",
+             "name": "N.Y.",
+             "name_long": "New York",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 749,
+       "url": "https://api.case.law/v1/reporters/749/",
+       "fullName": "Practice reports. Cases decided in the Supreme court of Michigan in 1896, in which written opinions were not filed.",
+       "shortName": "Mich. Pr.",
+       "startYear": 1896,
+       "endYear": 1896,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/mich/",
+             "id": 49,
+             "slug": "mich",
+             "name": "Mich.",
+             "name_long": "Michigan",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 304,
+       "url": "https://api.case.law/v1/reporters/304/",
+       "fullName": "Puerto Rico Reports",
+       "shortName": "P.R.",
+       "startYear": 1894,
+       "endYear": 1972,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/pr/",
+             "id": 25,
+             "slug": "pr",
+             "name": "P.R.",
+             "name_long": "Puerto Rico",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 130,
+       "url": "https://api.case.law/v1/reporters/130/",
+       "fullName": "Redfield's Reports",
+       "shortName": "Redf.",
+       "startYear": 1846,
+       "endYear": 1882,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ny/",
+             "id": 1,
+             "slug": "ny",
+             "name": "N.Y.",
+             "name_long": "New York",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 684,
+       "url": "https://api.case.law/v1/reporters/684/",
+       "fullName": "Reports of Cases Adjudged in the Court of Appeals of the District of Columbia",
+       "shortName": "App. D.C.",
+       "startYear": 1893,
+       "endYear": 2015,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/dc/",
+             "id": 56,
+             "slug": "dc",
+             "name": "D.C.",
+             "name_long": "District of Columbia",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 778,
+       "url": "https://api.case.law/v1/reporters/778/",
+       "fullName": "Reports of cases adjudged in the Superior Court of Cincinnati at special and general terms (Disney)",
+       "shortName": "Disney (Ohio)",
+       "startYear": 1853,
+       "endYear": 1859,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ohio/",
+             "id": 22,
+             "slug": "ohio",
+             "name": "Ohio",
+             "name_long": "Ohio",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 835,
+       "url": "https://api.case.law/v1/reporters/835/",
+       "fullName": "Reports of cases adjudged in the Supreme Court of Pennsylvania (Binney)",
+       "shortName": "Binn.",
+       "startYear": 1799,
+       "endYear": 1814,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/pa/",
+             "id": 6,
+             "slug": "pa",
+             "name": "Pa.",
+             "name_long": "Pennsylvania",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 839,
+       "url": "https://api.case.law/v1/reporters/839/",
+       "fullName": "Reports of cases adjudged in the Supreme Court of Pennsylvania (Penrose & Watts)",
+       "shortName": "Pen. & W.",
+       "startYear": 1829,
+       "endYear": 1832,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/pa/",
+             "id": 6,
+             "slug": "pa",
+             "name": "Pa.",
+             "name_long": "Pennsylvania",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 838,
+       "url": "https://api.case.law/v1/reporters/838/",
+       "fullName": "Reports of cases adjudged in the Supreme Court of Pennsylvania (Rawle)",
+       "shortName": "Rawle",
+       "startYear": 1821,
+       "endYear": 1835,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/pa/",
+             "id": 6,
+             "slug": "pa",
+             "name": "Pa.",
+             "name_long": "Pennsylvania",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 836,
+       "url": "https://api.case.law/v1/reporters/836/",
+       "fullName": "Reports of cases adjudged in the Supreme Court of Pennsylvania (Sergeant & Rawle)",
+       "shortName": "Serg. & Rawl.",
+       "startYear": 1813,
+       "endYear": 1835,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/pa/",
+             "id": 6,
+             "slug": "pa",
+             "name": "Pa.",
+             "name_long": "Pennsylvania",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 837,
+       "url": "https://api.case.law/v1/reporters/837/",
+       "fullName": "Reports of cases adjudged in the Supreme Court of Pennsylvania (Watts & Sergeant)",
+       "shortName": "Watts & Serg.",
+       "startYear": 1841,
+       "endYear": 1845,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/pa/",
+             "id": 6,
+             "slug": "pa",
+             "name": "Pa.",
+             "name_long": "Pennsylvania",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 840,
+       "url": "https://api.case.law/v1/reporters/840/",
+       "fullName": "Reports of cases adjudged in the Supreme Court of Pennsylvania (Wharton)",
+       "shortName": "Whart.",
+       "startYear": 1826,
+       "endYear": 1841,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/pa/",
+             "id": 6,
+             "slug": "pa",
+             "name": "Pa.",
+             "name_long": "Pennsylvania",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 834,
+       "url": "https://api.case.law/v1/reporters/834/",
+       "fullName": "Reports of cases adjudged in the Supreme Court of Pennsylvania (Yeates)",
+       "shortName": "Yeates",
+       "startYear": 1791,
+       "endYear": 1808,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/pa/",
+             "id": 6,
+             "slug": "pa",
+             "name": "Pa.",
+             "name_long": "Pennsylvania",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 779,
+       "url": "https://api.case.law/v1/reporters/779/",
+       "fullName": "Reports of cases argued and adjudged in the Superior Court of Cincinnati",
+       "shortName": "Handy",
+       "startYear": 1854,
+       "endYear": 1855,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ohio/",
+             "id": 22,
+             "slug": "ohio",
+             "name": "Ohio",
+             "name_long": "Ohio",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 841,
+       "url": "https://api.case.law/v1/reporters/841/",
+       "fullName": "Reports of cases argued and adjudged in the Supreme Court of Pennsylvania (Grant)",
+       "shortName": "Grant",
+       "startYear": 1814,
+       "endYear": 1864,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/pa/",
+             "id": 6,
+             "slug": "pa",
+             "name": "Pa.",
+             "name_long": "Pennsylvania",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 780,
+       "url": "https://api.case.law/v1/reporters/780/",
+       "fullName": "Reports of cases argued and determined in the circuit courts of Ohio",
+       "shortName": "Jahn",
+       "startYear": 1869,
+       "endYear": 1901,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ohio/",
+             "id": 22,
+             "slug": "ohio",
+             "name": "Ohio",
+             "name_long": "Ohio",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 727,
+       "url": "https://api.case.law/v1/reporters/727/",
+       "fullName": "Reports of cases argued and determined in the Court of Appeals of Maryland",
+       "shortName": "Gill",
+       "startYear": 1842,
+       "endYear": 1851,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/md/",
+             "id": 50,
+             "slug": "md",
+             "name": "Md.",
+             "name_long": "Maryland",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 728,
+       "url": "https://api.case.law/v1/reporters/728/",
+       "fullName": "Reports of cases argued and determined in the Court of Appeals of Maryland",
+       "shortName": "G. & J.",
+       "startYear": 1827,
+       "endYear": 1842,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/md/",
+             "id": 50,
+             "slug": "md",
+             "name": "Md.",
+             "name_long": "Maryland",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 761,
+       "url": "https://api.case.law/v1/reporters/761/",
+       "fullName": "Reports of cases argued and determined in the court of chancery of the state of michigan",
+       "shortName": "Walk. Ch.",
+       "startYear": 1842,
+       "endYear": 1845,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/mich/",
+             "id": 49,
+             "slug": "mich",
+             "name": "Mich.",
+             "name_long": "Michigan",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 731,
+       "url": "https://api.case.law/v1/reporters/731/",
+       "fullName": "Reports of cases argued and determined in the General Court and Court of Appeals of the State of Maryland, form 1800 ... [to 1826]",
+       "shortName": "H. & J.",
+       "startYear": 1800,
+       "endYear": 1826,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/md/",
+             "id": 50,
+             "slug": "md",
+             "name": "Md.",
+             "name_long": "Maryland",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 647,
+       "url": "https://api.case.law/v1/reporters/647/",
+       "fullName": "Reports of Cases Argued and Determined in the Superior Court at Indianapolis",
+       "shortName": "Wilson",
+       "startYear": 1871,
+       "endYear": 1874,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ind/",
+             "id": 14,
+             "slug": "ind",
+             "name": "Ind.",
+             "name_long": "Indiana",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 764,
+       "url": "https://api.case.law/v1/reporters/764/",
+       "fullName": "Reports of cases argued and determined in the superior court of chancery of the state of mississippi",
+       "shortName": "Miss. (S. & M. Ch.)",
+       "startYear": 1840,
+       "endYear": 1844,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/miss/",
+             "id": 16,
+             "slug": "miss",
+             "name": "Miss.",
+             "name_long": "Mississippi",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 641,
+       "url": "https://api.case.law/v1/reporters/641/",
+       "fullName": "Reports of cases argued and Determined in the Supreme Court of Iowa",
+       "shortName": "Morris",
+       "startYear": 1839,
+       "endYear": 1846,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/iowa/",
+             "id": 45,
+             "slug": "iowa",
+             "name": "Iowa",
+             "name_long": "Iowa",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 842,
+       "url": "https://api.case.law/v1/reporters/842/",
+       "fullName": "Reports of cases argued and determined in the Supreme Court of Pennsylvania",
+       "shortName": "Watts",
+       "startYear": 1832,
+       "endYear": 1840,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/pa/",
+             "id": 6,
+             "slug": "pa",
+             "name": "Pa.",
+             "name_long": "Pennsylvania",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 755,
+       "url": "https://api.case.law/v1/reporters/755/",
+       "fullName": "Reports of cases argued and determined in the Supreme Court of the District of Columbia (District of Columbia - reported by Mackey)",
+       "shortName": "D.C.",
+       "startYear": 1801,
+       "endYear": 1893,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/dc/",
+             "id": 56,
+             "slug": "dc",
+             "name": "D.C.",
+             "name_long": "District of Columbia",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 744,
+       "url": "https://api.case.law/v1/reporters/744/",
+       "fullName": "Reports of cases argued and determined in the Supreme Court of the state of Michigan",
+       "shortName": "Doug.",
+       "startYear": 1843,
+       "endYear": 1847,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/mich/",
+             "id": 49,
+             "slug": "mich",
+             "name": "Mich.",
+             "name_long": "Michigan",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 677,
+       "url": "https://api.case.law/v1/reporters/677/",
+       "fullName": "Reports of Cases Argued and Determined in the United States Superior Court for the Territory of Arkansas, from 1820 to 1836",
+       "shortName": "Ark. Terr. Rep.",
+       "startYear": 1820,
+       "endYear": 1855,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ark/",
+             "id": 34,
+             "slug": "ark",
+             "name": "Ark.",
+             "name_long": "Arkansas",
+             "whitelisted": true
+          }
+       ]
+    },
+    {
+       "id": 721,
+       "url": "https://api.case.law/v1/reporters/721/",
+       "fullName": "Reports of cases argued and determined in the various Courts of Appeal of the state of Louisiana (McGloin)",
+       "shortName": "McGl.",
+       "startYear": 1881,
+       "endYear": 1884,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/la/",
+             "id": 10,
+             "slug": "la",
+             "name": "La.",
+             "name_long": "Louisiana",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 693,
+       "url": "https://api.case.law/v1/reporters/693/",
+       "fullName": "Reports of cases arising upon applications for letters-patent for inventions determined in the Circuit and Supreme Court of the District of Columbia (MacArthur's Patent Cases)",
+       "shortName": "D.C. (patent)",
+       "startYear": 1841,
+       "endYear": 1859,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/dc/",
+             "id": 56,
+             "slug": "dc",
+             "name": "D.C.",
+             "name_long": "District of Columbia",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 751,
+       "url": "https://api.case.law/v1/reporters/751/",
+       "fullName": "Reports of cases at law and in chancery, decided by the Supreme court of Ohio, during the years 1831, 1832, 1833, 1834.",
+       "shortName": "Wright",
+       "startYear": 1831,
+       "endYear": 1883,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ohio/",
+             "id": 22,
+             "slug": "ohio",
+             "name": "Ohio",
+             "name_long": "Ohio",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 782,
+       "url": "https://api.case.law/v1/reporters/782/",
+       "fullName": "Reports of cases at law and in chancery Ohio",
+       "shortName": "Ohio Ch.",
+       "startYear": 1831,
+       "endYear": 1834,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ohio/",
+             "id": 22,
+             "slug": "ohio",
+             "name": "Ohio",
+             "name_long": "Ohio",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 1001,
+       "url": "https://api.case.law/v1/reporters/1001/",
+       "fullName": "Reports of cases, civil and criminal, argued and adjudged in the Circuit court of the District of Columbia for the county of Washington",
+       "shortName": "Hay. & Haz.",
+       "startYear": 1840,
+       "endYear": 1882,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/dc/",
+             "id": 56,
+             "slug": "dc",
+             "name": "D.C.",
+             "name_long": "District of Columbia",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 843,
+       "url": "https://api.case.law/v1/reporters/843/",
+       "fullName": "Reports of cases decided by the judges of the supreme court of Pennsylvania, in the court of nisi prius",
+       "shortName": "Brightly",
+       "startYear": 1809,
+       "endYear": 1851,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/pa/",
+             "id": 6,
+             "slug": "pa",
+             "name": "Pa.",
+             "name_long": "Pennsylvania",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 844,
+       "url": "https://api.case.law/v1/reporters/844/",
+       "fullName": "Reports of cases decided by the supreme court of pennsylvania which have been omitted from the regular reports",
+       "shortName": "Walker",
+       "startYear": 1849,
+       "endYear": 1887,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/pa/",
+             "id": 6,
+             "slug": "pa",
+             "name": "Pa.",
+             "name_long": "Pennsylvania",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 700,
+       "url": "https://api.case.law/v1/reporters/700/",
+       "fullName": "Reports of cases decided in the Courts of Appeals of the state of Kansas",
+       "shortName": "Kan. App.",
+       "startYear": 1895,
+       "endYear": 1901,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/kan/",
+             "id": 43,
+             "slug": "kan",
+             "name": "Kan.",
+             "name_long": "Kansas",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 734,
+       "url": "https://api.case.law/v1/reporters/734/",
+       "fullName": "Reports of cases decided in the High court of chancery of Maryland. [1811-1832]",
+       "shortName": "Md. Ch.",
+       "startYear": 1797,
+       "endYear": 1832,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/md/",
+             "id": 50,
+             "slug": "md",
+             "name": "Md.",
+             "name_long": "Maryland",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 733,
+       "url": "https://api.case.law/v1/reporters/733/",
+       "fullName": "Reports of cases decided in the High Court of Chancery of Maryland : containing cases from the year 1847 to [1854]",
+       "shortName": "Md. Ch.",
+       "startYear": 1841,
+       "endYear": 1853,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/md/",
+             "id": 50,
+             "slug": "md",
+             "name": "Md.",
+             "name_long": "Maryland",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 765,
+       "url": "https://api.case.law/v1/reporters/765/",
+       "fullName": "Reports of cases decided in the Superior Court of Chancery of the state of Mississippi",
+       "shortName": "Freem. Ch.",
+       "startYear": 1844,
+       "endYear": 1844,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/miss/",
+             "id": 16,
+             "slug": "miss",
+             "name": "Miss.",
+             "name_long": "Mississippi",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 763,
+       "url": "https://api.case.law/v1/reporters/763/",
+       "fullName": "Reports of Cases Determined in the Court of Chancery of the State of Michigan",
+       "shortName": "Harr. Ch.",
+       "startYear": 1839,
+       "endYear": 1841,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/mich/",
+             "id": 49,
+             "slug": "mich",
+             "name": "Mich.",
+             "name_long": "Michigan",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 846,
+       "url": "https://api.case.law/v1/reporters/846/",
+       "fullName": "Reports of cases determined in the district court for the city and county of Philadelphia",
+       "shortName": "Miles",
+       "startYear": 1825,
+       "endYear": 1842,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/pa/",
+             "id": 6,
+             "slug": "pa",
+             "name": "Pa.",
+             "name_long": "Pennsylvania",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 678,
+       "url": "https://api.case.law/v1/reporters/678/",
+       "fullName": "Reports of Cases Determined in the District Courts of the State of California",
+       "shortName": "Cal. Dist. Ct.",
+       "startYear": 1854,
+       "endYear": 1858,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/cal/",
+             "id": 30,
+             "slug": "cal",
+             "name": "Cal.",
+             "name_long": "California",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 699,
+       "url": "https://api.case.law/v1/reporters/699/",
+       "fullName": "Reports of cases determined in the Supreme court of the territory of Kansas (McCahon)",
+       "shortName": "McCahon",
+       "startYear": 1858,
+       "endYear": 1868,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/kan/",
+             "id": 43,
+             "slug": "kan",
+             "name": "Kan.",
+             "name_long": "Kansas",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 642,
+       "url": "https://api.case.law/v1/reporters/642/",
+       "fullName": "Reports of Cases in Law and Equity, Determined in the Supreme Court of the State of Iowa",
+       "shortName": "Greene",
+       "startYear": 1847,
+       "endYear": 1854,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/iowa/",
+             "id": 45,
+             "slug": "iowa",
+             "name": "Iowa",
+             "name_long": "Iowa",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 566,
+       "url": "https://api.case.law/v1/reporters/566/",
+       "fullName": "Reports of Cases in the Probate Court of the City and County of San Francisco, from January 1, 1872, to December 31, 1879, Milton H. Myrick, Probate Judge",
+       "shortName": "Myrick",
+       "startYear": 1872,
+       "endYear": 1879,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/cal/",
+             "id": 30,
+             "slug": "cal",
+             "name": "Cal.",
+             "name_long": "California",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 697,
+       "url": "https://api.case.law/v1/reporters/697/",
+       "fullName": "Reports of causes determined in the United States District Court for the District of Hawaii.",
+       "shortName": "D. Haw.",
+       "startYear": 1900,
+       "endYear": 1916,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/haw/",
+             "id": 40,
+             "slug": "haw",
+             "name": "Haw.",
+             "name_long": "Hawaii",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 739,
+       "url": "https://api.case.law/v1/reporters/739/",
+       "fullName": "Reports of contested election cases in the Senate and House of Representatives of the commonwealth of Massachusetts for the year 1886-1897",
+       "shortName": "Rep. Cont. Elect. Case.",
+       "startYear": 1886,
+       "endYear": 1897,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/mass/",
+             "id": 4,
+             "slug": "mass",
+             "name": "Mass.",
+             "name_long": "Massachusetts",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 738,
+       "url": "https://api.case.law/v1/reporters/738/",
+       "fullName": "Reports of controverted elections in the House of representatives, of the commonwealth of Massachusetts...",
+       "shortName": "Rep. Cont. El.",
+       "startYear": 1781,
+       "endYear": 1852,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/mass/",
+             "id": 4,
+             "slug": "mass",
+             "name": "Mass.",
+             "name_long": "Massachusetts",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 660,
+       "url": "https://api.case.law/v1/reporters/660/",
+       "fullName": "Reports of Criminal Trials in the Circuit, State and United States Courts, held in Richmond, Virginia",
+       "shortName": "Howison",
+       "startYear": 1850,
+       "endYear": 1851,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/va/",
+             "id": 7,
+             "slug": "va",
+             "name": "Va.",
+             "name_long": "Virginia",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 567,
+       "url": "https://api.case.law/v1/reporters/567/",
+       "fullName": "Reports of Decisions in Probate, by James V. Coffey, Judge of the Superior Court in and for the City and County of San Francisco, State of California. Reported and Annotated by Peter V. Ross and Jeremiah V. Coffey",
+       "shortName": "Coffey",
+       "startYear": 1880,
+       "endYear": 1915,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/cal/",
+             "id": 30,
+             "slug": "cal",
+             "name": "Cal.",
+             "name_long": "California",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 637,
+       "url": "https://api.case.law/v1/reporters/637/",
+       "fullName": "Reports of Decisions Made in the Superior Courts of the Eastern District of Georgia",
+       "shortName": "Charlton",
+       "startYear": 1811,
+       "endYear": 1837,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ga/",
+             "id": 3,
+             "slug": "ga",
+             "name": "Ga.",
+             "name_long": "Georgia",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 783,
+       "url": "https://api.case.law/v1/reporters/783/",
+       "fullName": "Reports of select cases argued and determined in the Probate court of Hamilton county, Ohio",
+       "shortName": "Goebel",
+       "startYear": 1885,
+       "endYear": 1890,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ohio/",
+             "id": 22,
+             "slug": "ohio",
+             "name": "Ohio",
+             "name_long": "Ohio",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 959,
+       "url": "https://api.case.law/v1/reporters/959/",
+       "fullName": "Reports of some of the criminal cases on primary hearing, before Richard Vaux, recorder of the city of Philadelphia",
+       "shortName": "Vaux",
+       "startYear": 1846,
+       "endYear": 1846,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/pa/",
+             "id": 6,
+             "slug": "pa",
+             "name": "Pa.",
+             "name_long": "Pennsylvania",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 640,
+       "url": "https://api.case.law/v1/reporters/640/",
+       "fullName": "Reports of the Decisions of the Supreme Court of Iowa",
+       "shortName": "Bradf.",
+       "startYear": 1839,
+       "endYear": 1841,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/iowa/",
+             "id": 45,
+             "slug": "iowa",
+             "name": "Iowa",
+             "name_long": "Iowa",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 276,
+       "url": "https://api.case.law/v1/reporters/276/",
+       "fullName": "Rhode Island Reports",
+       "shortName": "R.I.",
+       "startYear": 1828,
+       "endYear": 1981,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ri/",
+             "id": 15,
+             "slug": "ri",
+             "name": "R.I.",
+             "name_long": "Rhode Island",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 174,
+       "url": "https://api.case.law/v1/reporters/174/",
+       "fullName": "Robertson's Superior Court Reports",
+       "shortName": "Robertson's Super. Ct. Rep.",
+       "startYear": 1837,
+       "endYear": 1869,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ny/",
+             "id": 1,
+             "slug": "ny",
+             "name": "N.Y.",
+             "name_long": "New York",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 997,
+       "url": "https://api.case.law/v1/reporters/997/",
+       "fullName": "Robinson",
+       "shortName": "Rob.",
+       "startYear": 1841,
+       "endYear": 1846,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/la/",
+             "id": 10,
+             "slug": "la",
+             "name": "La.",
+             "name_long": "Louisiana",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 3,
+       "url": "https://api.case.law/v1/reporters/3/",
+       "fullName": "Sandford's Chancery Reports",
+       "shortName": "Sand. Ch.",
+       "startYear": 1843,
+       "endYear": 1847,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ny/",
+             "id": 1,
+             "slug": "ny",
+             "name": "N.Y.",
+             "name_long": "New York",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 171,
+       "url": "https://api.case.law/v1/reporters/171/",
+       "fullName": "Sandford's Superior Court Reports",
+       "shortName": "Sandford Super. Ct. Rep.",
+       "startYear": 1839,
+       "endYear": 1852,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ny/",
+             "id": 1,
+             "slug": "ny",
+             "name": "N.Y.",
+             "name_long": "New York",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 4,
+       "url": "https://api.case.law/v1/reporters/4/",
+       "fullName": "Saratoga Chancery Sentinel",
+       "shortName": "Sarat. Ch. Sent.",
+       "startYear": 1841,
+       "endYear": 1847,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ny/",
+             "id": 1,
+             "slug": "ny",
+             "name": "N.Y.",
+             "name_long": "New York",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 138,
+       "url": "https://api.case.law/v1/reporters/138/",
+       "fullName": "Selden's Notes of Cases",
+       "shortName": "Seld. Notes",
+       "startYear": 1852,
+       "endYear": 1854,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ny/",
+             "id": 1,
+             "slug": "ny",
+             "name": "N.Y.",
+             "name_long": "New York",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 960,
+       "url": "https://api.case.law/v1/reporters/960/",
+       "fullName": "Select cases in equity and at law",
+       "shortName": "Parsons",
+       "startYear": 1841,
+       "endYear": 1850,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/pa/",
+             "id": 6,
+             "slug": "pa",
+             "name": "Pa.",
+             "name_long": "Pennsylvania",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 141,
+       "url": "https://api.case.law/v1/reporters/141/",
+       "fullName": "Silvernail's Court of Appeals Reports",
+       "shortName": "Silv. Ct. App.",
+       "startYear": 1886,
+       "endYear": 1892,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ny/",
+             "id": 1,
+             "slug": "ny",
+             "name": "N.Y.",
+             "name_long": "New York",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 142,
+       "url": "https://api.case.law/v1/reporters/142/",
+       "fullName": "Silvernail's Supreme Court Reports",
+       "shortName": "Silv. Sup.",
+       "startYear": 1884,
+       "endYear": 1890,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ny/",
+             "id": 1,
+             "slug": "ny",
+             "name": "N.Y.",
+             "name_long": "New York",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 645,
+       "url": "https://api.case.law/v1/reporters/645/",
+       "fullName": "Smith",
+       "shortName": "Smith",
+       "startYear": 1848,
+       "endYear": 1849,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ind/",
+             "id": 14,
+             "slug": "ind",
+             "name": "Ind.",
+             "name_long": "Indiana",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 1085,
+       "url": "https://api.case.law/v1/reporters/1085/",
+       "fullName": "South Carolina Equity Reports",
+       "shortName": "S.C. Eq.",
+       "startYear": 1784,
+       "endYear": 1868,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/sc/",
+             "id": 59,
+             "slug": "sc",
+             "name": "S.C.",
+             "name_long": "South Carolina",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 1084,
+       "url": "https://api.case.law/v1/reporters/1084/",
+       "fullName": "South Carolina Law Reports",
+       "shortName": "S.C.L.",
+       "startYear": 1783,
+       "endYear": 1868,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/sc/",
+             "id": 59,
+             "slug": "sc",
+             "name": "S.C.",
+             "name_long": "South Carolina",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 282,
+       "url": "https://api.case.law/v1/reporters/282/",
+       "fullName": "South Carolina Reports",
+       "shortName": "S.C.",
+       "startYear": 1868,
+       "endYear": 2017,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/sc/",
+             "id": 59,
+             "slug": "sc",
+             "name": "S.C.",
+             "name_long": "South Carolina",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 667,
+       "url": "https://api.case.law/v1/reporters/667/",
+       "fullName": "South Dakota Reports",
+       "shortName": "S.D.",
+       "startYear": 1890,
+       "endYear": 1976,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/sd/",
+             "id": 54,
+             "slug": "sd",
+             "name": "S.D.",
+             "name_long": "South Dakota",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 610,
+       "url": "https://api.case.law/v1/reporters/610/",
+       "fullName": "South Western Reporter",
+       "shortName": "S.W.",
+       "startYear": 1900,
+       "endYear": 1927,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/regional/",
+             "id": 9,
+             "slug": "regional",
+             "name": "Regional",
+             "name_long": "Regional",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 582,
+       "url": "https://api.case.law/v1/reporters/582/",
+       "fullName": "Stewart",
+       "shortName": "Stew.",
+       "startYear": 1827,
+       "endYear": 1831,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ala/",
+             "id": 23,
+             "slug": "ala",
+             "name": "Ala.",
+             "name_long": "Alabama",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 583,
+       "url": "https://api.case.law/v1/reporters/583/",
+       "fullName": "Stewart and Porter",
+       "shortName": "Stew. & P.",
+       "startYear": 1831,
+       "endYear": 1834,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ala/",
+             "id": 23,
+             "slug": "ala",
+             "name": "Ala.",
+             "name_long": "Alabama",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 110,
+       "url": "https://api.case.law/v1/reporters/110/",
+       "fullName": "Supreme Court Reports (Hun)",
+       "shortName": "N.Y. Sup. Ct.",
+       "startYear": 1873,
+       "endYear": 1895,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ny/",
+             "id": 1,
+             "slug": "ny",
+             "name": "N.Y.",
+             "name_long": "New York",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 173,
+       "url": "https://api.case.law/v1/reporters/173/",
+       "fullName": "Sweeney's Superior Court Reports",
+       "shortName": "Sweeney Super. Ct. Rep.",
+       "startYear": 1869,
+       "endYear": 1871,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ny/",
+             "id": 1,
+             "slug": "ny",
+             "name": "N.Y.",
+             "name_long": "New York",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 595,
+       "url": "https://api.case.law/v1/reporters/595/",
+       "fullName": "Synopses of the Decisions of the Supreme Court of the State of Texas: rendered, upon applications for writs of habeas corpus, original and on appeal, arising from restraints by conscript and other military authorities, during the terms in 1862, 1863, 1864,",
+       "shortName": "Robards",
+       "startYear": 1862,
+       "endYear": 1865,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/tex/",
+             "id": 32,
+             "slug": "tex",
+             "name": "Tex.",
+             "name_long": "Texas",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 927,
+       "url": "https://api.case.law/v1/reporters/927/",
+       "fullName": "Tennessee Cases with Notes and Annotations",
+       "shortName": "Tenn. Cas.",
+       "startYear": 1847,
+       "endYear": 1894,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/tenn/",
+             "id": 11,
+             "slug": "tenn",
+             "name": "Tenn.",
+             "name_long": "Tennessee",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 928,
+       "url": "https://api.case.law/v1/reporters/928/",
+       "fullName": "Tennessee Chancery Reports",
+       "shortName": "Tenn. Ch. R.",
+       "startYear": 1872,
+       "endYear": 1878,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/tenn/",
+             "id": 11,
+             "slug": "tenn",
+             "name": "Tenn.",
+             "name_long": "Tennessee",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 277,
+       "url": "https://api.case.law/v1/reporters/277/",
+       "fullName": "Tennessee Reports",
+       "shortName": "Tenn.",
+       "startYear": 1791,
+       "endYear": 1972,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/tenn/",
+             "id": 11,
+             "slug": "tenn",
+             "name": "Tenn.",
+             "name_long": "Tennessee",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 590,
+       "url": "https://api.case.law/v1/reporters/590/",
+       "fullName": "Texas Civil Appeals Reports",
+       "shortName": "Tex. Civ. App.",
+       "startYear": 1889,
+       "endYear": 1912,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/tex/",
+             "id": 32,
+             "slug": "tex",
+             "name": "Tex.",
+             "name_long": "Texas",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 586,
+       "url": "https://api.case.law/v1/reporters/586/",
+       "fullName": "Texas Court of Appeals Reports",
+       "shortName": "Tex. Ct. App.",
+       "startYear": 1876,
+       "endYear": 1892,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/tex/",
+             "id": 32,
+             "slug": "tex",
+             "name": "Tex.",
+             "name_long": "Texas",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 588,
+       "url": "https://api.case.law/v1/reporters/588/",
+       "fullName": "Texas Criminal Reports",
+       "shortName": "Tex. Crim.",
+       "startYear": 1892,
+       "endYear": 1967,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/tex/",
+             "id": 32,
+             "slug": "tex",
+             "name": "Tex.",
+             "name_long": "Texas",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 593,
+       "url": "https://api.case.law/v1/reporters/593/",
+       "fullName": "Texas Law Reporter",
+       "shortName": "Tex. L. R.",
+       "startYear": 1844,
+       "endYear": 1885,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/tex/",
+             "id": 32,
+             "slug": "tex",
+             "name": "Tex.",
+             "name_long": "Texas",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 347,
+       "url": "https://api.case.law/v1/reporters/347/",
+       "fullName": "Texas Reports",
+       "shortName": "Tex.",
+       "startYear": 1846,
+       "endYear": 1964,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/tex/",
+             "id": 32,
+             "slug": "tex",
+             "name": "Tex.",
+             "name_long": "Texas",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 592,
+       "url": "https://api.case.law/v1/reporters/592/",
+       "fullName": "Texas Unreported Cases (Posey)",
+       "shortName": "Posey",
+       "startYear": 1879,
+       "endYear": 1885,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/tex/",
+             "id": 32,
+             "slug": "tex",
+             "name": "Tex.",
+             "name_long": "Texas",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 784,
+       "url": "https://api.case.law/v1/reporters/784/",
+       "fullName": "The Cincinnati Superior court reporter",
+       "shortName": "Cin. Sup. Ct. Rep.",
+       "startYear": 1868,
+       "endYear": 1873,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ohio/",
+             "id": 22,
+             "slug": "ohio",
+             "name": "Ohio",
+             "name_long": "Ohio",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 762,
+       "url": "https://api.case.law/v1/reporters/762/",
+       "fullName": "The Michigan Nisi Prius Reports",
+       "shortName": "Mich. N.P. R.",
+       "startYear": 1864,
+       "endYear": 1871,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/mich/",
+             "id": 49,
+             "slug": "mich",
+             "name": "Mich.",
+             "name_long": "Michigan",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 953,
+       "url": "https://api.case.law/v1/reporters/953/",
+       "fullName": "The Ohio Law Abstract",
+       "shortName": "Ohio Law Abs.",
+       "startYear": 1846,
+       "endYear": 1964,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ohio/",
+             "id": 22,
+             "slug": "ohio",
+             "name": "Ohio",
+             "name_long": "Ohio",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 134,
+       "url": "https://api.case.law/v1/reporters/134/",
+       "fullName": "Thompson & Cook's Supreme Court Reports",
+       "shortName": "Thomp. & Cook",
+       "startYear": 1873,
+       "endYear": 1875,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ny/",
+             "id": 1,
+             "slug": "ny",
+             "name": "N.Y.",
+             "name_long": "New York",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 746,
+       "url": "https://api.case.law/v1/reporters/746/",
+       "fullName": "Transactions of the Supreme Court of the territory of Michigan",
+       "shortName": "Blume Sup. Ct. Trans.",
+       "startYear": 1805,
+       "endYear": 1938,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/mich/",
+             "id": 49,
+             "slug": "mich",
+             "name": "Mich.",
+             "name_long": "Michigan",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 140,
+       "url": "https://api.case.law/v1/reporters/140/",
+       "fullName": "Transcript Appeals",
+       "shortName": "Trans. App.",
+       "startYear": 1867,
+       "endYear": 1868,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ny/",
+             "id": 1,
+             "slug": "ny",
+             "name": "N.Y.",
+             "name_long": "New York",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 146,
+       "url": "https://api.case.law/v1/reporters/146/",
+       "fullName": "Tucker's Surrogate's Reports",
+       "shortName": "Tuck. Surr.",
+       "startYear": 1870,
+       "endYear": 1870,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ny/",
+             "id": 1,
+             "slug": "ny",
+             "name": "N.Y.",
+             "name_long": "New York",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 664,
+       "url": "https://api.case.law/v1/reporters/664/",
+       "fullName": "Tyler",
+       "shortName": "Tyl.",
+       "startYear": 1800,
+       "endYear": 1803,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/vt/",
+             "id": 17,
+             "slug": "vt",
+             "name": "Vt.",
+             "name_long": "Vermont",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 983,
+       "url": "https://api.case.law/v1/reporters/983/",
+       "fullName": "United States Reports",
+       "shortName": "U.S.",
+       "startYear": 1754,
+       "endYear": 2013,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/us/",
+             "id": 39,
+             "slug": "us",
+             "name": "U.S.",
+             "name_long": "United States",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 726,
+       "url": "https://api.case.law/v1/reporters/726/",
+       "fullName": "Unreported cases heard and determined by the Supreme Court of Louisiana, from January 8, 1877, to April, 1880",
+       "shortName": "Mann. Unrep. Cas.",
+       "startYear": 1880,
+       "endYear": 1880,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/la/",
+             "id": 10,
+             "slug": "la",
+             "name": "La.",
+             "name_long": "Louisiana",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 745,
+       "url": "https://api.case.law/v1/reporters/745/",
+       "fullName": "Unreported opinions of the Supreme court of Michigan, 1836-1843, edited by William Wirt Blume",
+       "shortName": "Blume Unrep. Op.",
+       "startYear": 1838,
+       "endYear": 1842,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/mich/",
+             "id": 49,
+             "slug": "mich",
+             "name": "Mich.",
+             "name_long": "Michigan",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 926,
+       "url": "https://api.case.law/v1/reporters/926/",
+       "fullName": "Unreported Tennessee Cases",
+       "shortName": "Unrep. Tenn. Cas.",
+       "startYear": 1847,
+       "endYear": 1869,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/tenn/",
+             "id": 11,
+             "slug": "tenn",
+             "name": "Tenn.",
+             "name_long": "Tennessee",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 269,
+       "url": "https://api.case.law/v1/reporters/269/",
+       "fullName": "Utah Reports",
+       "shortName": "Utah",
+       "startYear": 1861,
+       "endYear": 1953,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/utah/",
+             "id": 12,
+             "slug": "utah",
+             "name": "Utah",
+             "name_long": "Utah",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 284,
+       "url": "https://api.case.law/v1/reporters/284/",
+       "fullName": "Vermont Reports",
+       "shortName": "Vt.",
+       "startYear": 1826,
+       "endYear": 2016,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/vt/",
+             "id": 17,
+             "slug": "vt",
+             "name": "Vt.",
+             "name_long": "Vermont",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 948,
+       "url": "https://api.case.law/v1/reporters/948/",
+       "fullName": "Virginia Circuit Court Opinions",
+       "shortName": "Va. Cir.",
+       "startYear": 1856,
+       "endYear": 2016,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/va/",
+             "id": 7,
+             "slug": "va",
+             "name": "Va.",
+             "name_long": "Virginia",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 950,
+       "url": "https://api.case.law/v1/reporters/950/",
+       "fullName": "Virginia Decisions",
+       "shortName": "Va. Dec.",
+       "startYear": 1871,
+       "endYear": 1900,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/va/",
+             "id": 7,
+             "slug": "va",
+             "name": "Va.",
+             "name_long": "Virginia",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 534,
+       "url": "https://api.case.law/v1/reporters/534/",
+       "fullName": "Virginia Reports",
+       "shortName": "Va.",
+       "startYear": 1779,
+       "endYear": 2004,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/va/",
+             "id": 7,
+             "slug": "va",
+             "name": "Va.",
+             "name_long": "Virginia",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 945,
+       "url": "https://api.case.law/v1/reporters/945/",
+       "fullName": "Virginia Reports",
+       "shortName": "Va. (Patt. & Heath)",
+       "startYear": 1855,
+       "endYear": 1857,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/va/",
+             "id": 7,
+             "slug": "va",
+             "name": "Va.",
+             "name_long": "Virginia",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 405,
+       "url": "https://api.case.law/v1/reporters/405/",
+       "fullName": "Washington Reports",
+       "shortName": "Wash.",
+       "startYear": 1889,
+       "endYear": 1981,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/wash/",
+             "id": 38,
+             "slug": "wash",
+             "name": "Wash.",
+             "name_long": "Washington",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 658,
+       "url": "https://api.case.law/v1/reporters/658/",
+       "fullName": "Washington Territory Reports",
+       "shortName": "Wash. Terr.",
+       "startYear": 1854,
+       "endYear": 1888,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/wash/",
+             "id": 38,
+             "slug": "wash",
+             "name": "Wash.",
+             "name_long": "Washington",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 120,
+       "url": "https://api.case.law/v1/reporters/120/",
+       "fullName": "Wendell's Reports",
+       "shortName": "Wend.",
+       "startYear": 1824,
+       "endYear": 1841,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ny/",
+             "id": 1,
+             "slug": "ny",
+             "name": "N.Y.",
+             "name_long": "New York",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 89,
+       "url": "https://api.case.law/v1/reporters/89/",
+       "fullName": "West's New York Supplement",
+       "shortName": "N.Y.S.",
+       "startYear": 1832,
+       "endYear": 1990,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ny/",
+             "id": 1,
+             "slug": "ny",
+             "name": "N.Y.",
+             "name_long": "New York",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 370,
+       "url": "https://api.case.law/v1/reporters/370/",
+       "fullName": "West Virginia Supreme Court",
+       "shortName": "W. Va.",
+       "startYear": 1864,
+       "endYear": 2017,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/w-va/",
+             "id": 35,
+             "slug": "w-va",
+             "name": "W. Va.",
+             "name_long": "West Virginia",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 145,
+       "url": "https://api.case.law/v1/reporters/145/",
+       "fullName": "Wheeler's Criminal Cases",
+       "shortName": "Wheel. Cr. Cas.",
+       "startYear": 1791,
+       "endYear": 1825,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/ny/",
+             "id": 1,
+             "slug": "ny",
+             "name": "N.Y.",
+             "name_long": "New York",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 483,
+       "url": "https://api.case.law/v1/reporters/483/",
+       "fullName": "Wisconsin Reports",
+       "shortName": "Wis.",
+       "startYear": 1853,
+       "endYear": 1957,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/wis/",
+             "id": 46,
+             "slug": "wis",
+             "name": "Wis.",
+             "name_long": "Wisconsin",
+             "whitelisted": false
+          }
+       ]
+    },
+    {
+       "id": 361,
+       "url": "https://api.case.law/v1/reporters/361/",
+       "fullName": "Wyoming Reports",
+       "shortName": "Wyo.",
+       "startYear": 1870,
+       "endYear": 1959,
+       "jurisdictions": [
+          {
+             "url": "https://api.case.law/v1/jurisdictions/wyo/",
+             "id": 33,
+             "slug": "wyo",
+             "name": "Wyo.",
+             "name_long": "Wyoming",
+             "whitelisted": false
+          }
+       ]
+    }
+ ]

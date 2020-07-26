@@ -66,4 +66,26 @@ async function main() {
     await promise(fs.writeFile.bind(fs, "myjsonfile.json", listAsJSON, "utf8")); 
 }
 
-main();
+
+async function justFirstPage(){
+    let res = await requester.get("/reporters/");
+    // let actualResp = res.data;
+
+    let formatted = [];
+    let list: reporter[] = [];
+
+    for (let r of res.data.results) {
+        formatted.push(camelCase(r));
+    }
+
+    let inRange: reporter[] = _.filter(formatted, reporterInRange);
+    list = list.concat(inRange);
+
+
+    let listAsJSON = JSON.stringify(list);
+    await promise(fs.writeFile.bind(fs, "myjsonfile0.json", listAsJSON, "utf8")); 
+}
+
+justFirstPage();
+
+// main();
