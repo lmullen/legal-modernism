@@ -37,17 +37,25 @@ function makeNextUrl(next: string) {
 }
 
 async function main() {
-    let next = "something";
-    let res = await requester.get("/reporters/?cursor=cD1Db25uZWN0aWN1dCtDaXJjdWl0K0NvdXJ0K1JlcG9ydHMmbz0y");
+    // let next = "something";
+    let res = await requester.get("/reporters/");
     let actualResp = res.data;
-    next = makeNextUrl(actualResp.next);
+    let next = makeNextUrl(actualResp.next);
     // console.log(next);
     let list: reporter[] = [];
+    let formatted = [];
+
+    for (let r of res.data.results) {
+        formatted.push(camelCase(r));
+    }
+
+    let inRange: reporter[] = _.filter(formatted, reporterInRange);
+    list = list.concat(inRange);
 
     while (next) {
+        formatted = [];
         res = await requester.get(next);
-        let actualResp = res.data;
-        let formatted = [];
+        actualResp = res.data;
 
         for (let r of res.data.results) {
             formatted.push(camelCase(r));
@@ -63,11 +71,11 @@ async function main() {
     console.log(list);
 
     let listAsJSON = JSON.stringify(list);
-    await promise(fs.writeFile.bind(fs, "myjsonfile.json", listAsJSON, "utf8")); 
+    await promise(fs.writeFile.bind(fs, "reporter-list.json", listAsJSON, "utf8"));
 }
 
 
-async function justFirstPage(){
+async function justFirstPage() {
     let res = await requester.get("/reporters/");
     // let actualResp = res.data;
 
@@ -83,9 +91,9 @@ async function justFirstPage(){
 
 
     let listAsJSON = JSON.stringify(list);
-    await promise(fs.writeFile.bind(fs, "myjsonfile0.json", listAsJSON, "utf8")); 
+    await promise(fs.writeFile.bind(fs, "reporter-list.json", listAsJSON, "utf8"));
 }
 
-justFirstPage();
+// justFirstPage();
 
-// main();
+main();
