@@ -3,16 +3,7 @@ import * as fs from "fs";
 
 import { lastItem, camelCase, promise } from "../utils";
 import requester from "../caseDotLaw/requester";
-
-type reporter = {
-    id: number,
-    url: string,
-    fullName: string,
-    shortName: string,
-    startYear: number,
-    endYear: number,
-    jurisdictions: any[]
-};
+import { reporter } from "./types";
 
 export function reporterInRange(r: reporter) {
     if (r.startYear > 1900) {
