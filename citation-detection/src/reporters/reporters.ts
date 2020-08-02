@@ -88,6 +88,11 @@ let reporterList = [
         regEx: /[\d]{1,3}\sBarb\.\s[\d]{1,4}/g 
     },
     {
+        name: "Blackford",
+        caseDotLawID: 643,
+        regEx: null 
+    },
+    {
         name: "Howard's Practice Reports",
         caseDotLawID: 35,
         regEx: /[\d]{1,3}\sHow\.\sPr\.\s(R\.\s)?[\d]{1,4}/g
