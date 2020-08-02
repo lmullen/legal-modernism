@@ -18,6 +18,30 @@ let reporterList = [
         regEx: /[\d]{1,3}\sAbb\.\sPr\.\s(R\.\s)?(\(n\.s\.\)\s)?[\d]{1,4}/g
     },
     {
+        name: "Dallam",
+        caseDotLawID: 929,
+        // alternateIDs: [989],
+        regEx: null 
+    },
+    {
+        name: "Aikens",
+        caseDotLawID: 661,
+        // alternateIDs: [989],
+        regEx: null 
+    },
+    {
+        name: "Alabama Reports",
+        caseDotLawID: 296,
+        // alternateIDs: [989],
+        regEx: /[\d]{1,3}\sAla\.\s[\d]{1,4}/g 
+    },
+    {
+        name: "Alaska Federal Reports",
+        caseDotLawID: 597,
+        // alternateIDs: [989],
+        regEx: null 
+    },
+    {
         name: "Howard's Practice Reports",
         caseDotLawID: 35,
         regEx: /[\d]{1,3}\sHow\.\sPr\.\s(R\.\s)?[\d]{1,4}/g
