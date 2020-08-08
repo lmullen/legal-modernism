@@ -156,7 +156,12 @@ let reporterList = [
     {
         name: "Ohio State", //@TODO Go through ToA and put unrepresented reporters in here.
         caseDotLawID: 781,
-        regEx: null
+        regEx: /[\d]{1,3}\sOhio\sSt\.\s[\d]{1,4}/g
+    },
+    {
+        name: "Supreme Court of Pennsylvania -- Monaghan",
+        caseDotLawID: 790,
+        regEx: null 
     },
     {
         name: "Howard's Practice Reports",
