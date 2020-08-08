@@ -93,6 +93,36 @@ let reporterList = [
         regEx: null 
     },
     {
+        name: "Bosworth",
+        caseDotLawID: 175,
+        regEx: null 
+    },
+    {
+        name: "Bradford's Reports",
+        caseDotLawID: 131,
+        regEx: null 
+    },
+   {
+        name: "Brayton",
+        caseDotLawID: 663,
+        regEx: null 
+    },
+   {
+        name: "Burnett",
+        caseDotLawID: 656,
+        regEx: null 
+    },
+   {
+        name: "Decisions of the Hon. John Cadwalader",
+        caseDotLawID: 788,
+        regEx: null 
+    },
+  {
+        name: "Caines' Cases", //sic
+        caseDotLawID: 124,
+        regEx: /[\d]{1,3}\sCai\.\s[\d]{1,4}/g 
+    },
+    {
         name: "Howard's Practice Reports",
         caseDotLawID: 35,
         regEx: /[\d]{1,3}\sHow\.\sPr\.\s(R\.\s)?[\d]{1,4}/g
