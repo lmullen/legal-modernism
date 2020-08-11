@@ -161,7 +161,47 @@ let reporterList = [
     {
         name: "Supreme Court of Pennsylvania -- Monaghan",
         caseDotLawID: 790,
-        regEx: null 
+        regEx: null
+    },
+    {
+        name: "Supreme Court of Pennsylvania -- Unreported (Sadler)",
+        caseDotLawID: 803,
+        regEx: null
+    },
+    {
+        name: "Chandler",
+        caseDotLawID: 654,
+        regEx: null
+    },
+    {
+        name: "Charlton's Reports",
+        caseDotLawID: 180,
+        regEx: null
+    },
+    {
+        name: "Chipman, D",
+        caseDotLawID: 662,
+        regEx: null
+    },
+    {
+        name: "New York City Court Reports",
+        caseDotLawID: 169,
+        regEx: null
+    },
+    {
+        name: "Clarke's Chancery Reports",
+        caseDotLawID: 6,
+        regEx: null
+    },
+    {
+        name: "Coleman & Caines' Cases",
+        caseDotLawID: 125,
+        regEx: null
+    },
+    {
+        name: "Coleman's Cases",
+        caseDotLawID: 127,
+        regEx: null
     },
     {
         name: "Howard's Practice Reports",
