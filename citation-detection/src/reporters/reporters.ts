@@ -204,10 +204,90 @@ let reporterList = [
         regEx: null
     },
     {
+        name: "Colorado Court of Appeals Reports",
+        caseDotLawID: 600,
+        regEx: null
+    },
+    {
+        name: "Colorado Law Reporter",
+        caseDotLawID: 675,
+        regEx: null
+    },
+    {
+        name: "Colorado Reports",
+        caseDotLawID: 344,
+        regEx: null
+    },
+    {
+        name: "Colorado Nisi Prius Decisions",
+        caseDotLawID: 681,
+        regEx: null
+    },
+    {
+        name: "Condensed Reports of Decisions in Civil Causes in the Court of Appeals (Willson)",
+        caseDotLawID: 1073,
+        regEx: null
+    },
+    {
+        name: "Condensed Reports of Decisions in Civil Causes in the Court of Appeals (White & Wilson)",
+        caseDotLawID: 591,
+        regEx: null
+    },
+    {
+        name: "Connecticut Reports",
+        caseDotLawID: 178,
+        regEx: /[\d]{1,3}\sConn\.\s[\d]{1,4}/g
+    },
+    {
+        name: "Connoly's Surrogate's Reports",
+        caseDotLawID: 148,
+        regEx: null
+    },
+    {
+        name: "Court of Claims Reports",
+        caseDotLawID: 415,
+        regEx: null
+    },
+    {
+        name: "Cowen's Reports",
+        caseDotLawID: 121,
+        regEx: /[\d]{1,3}\sCow\.\s[\d]{1,4}/g
+    },
+    {
+        name: "Dakota Reports",
+        caseDotLawID: 668,
+        regEx: null
+    },
+    {
+        name: "Daly's Common Pleas Reports",
+        caseDotLawID: 166,
+        regEx: null
+    },
+    {
+        name: "Day's Reports",
+        caseDotLawID: 177,
+        regEx: null
+    },
+    {
+        name: "Decisions of the Honorable John J. Pearson, judge of the twelvth judicial district", //sic
+        caseDotLawID: 808,
+        regEx: null
+    },
+    {
+        name: "New Hampshire Supreme Court", 
+        caseDotLawID: 671,
+        regEx: null
+    },
+ {
+        name: "Decisions of the Superior Courts of the State of Georgia", 
+        caseDotLawID: 181,
+        regEx: null
+    },
+    {
         name: "Howard's Practice Reports",
         caseDotLawID: 35,
         regEx: /[\d]{1,3}\sHow\.\sPr\.\s(R\.\s)?[\d]{1,4}/g
-    },
+    }
 
     // [\d]{1,3}\sAbb\.\sPr\.(\sR\.\s)?(\s\(n\.s\.\))?\s[\d]{1,4}
 
