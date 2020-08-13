@@ -274,13 +274,103 @@ let reporterList = [
         regEx: null
     },
     {
-        name: "New Hampshire Supreme Court", 
+        name: "New Hampshire Supreme Court",
         caseDotLawID: 671,
         regEx: null
     },
- {
-        name: "Decisions of the Superior Courts of the State of Georgia", 
+    {
+        name: "Decisions of the Superior Courts of the State of Georgia",
         caseDotLawID: 181,
+        regEx: null
+    },
+    {
+        name: "Delaware Cases",
+        caseDotLawID: 199,
+        regEx: null
+    },
+    {
+        name: "Delaware Chancery Reports",
+        caseDotLawID: 200,
+        regEx: null
+    },
+    {
+        name: "Delaware Reports",
+        caseDotLawID: 198,
+        regEx: null
+    },
+    {
+        name: "Demarent's Surrogate's Reports",
+        caseDotLawID: 147,
+        regEx: null
+    },
+    {
+        name: "Denio's Reports",
+        caseDotLawID: 114,
+        regEx: /[\d]{1,3}\sDenio(,)?(\.)?\s[\d]{1,4}/g
+    },
+    {
+        name: "Dudley's Georgia Reports",
+        caseDotLawID: 179,
+        regEx: null
+    },
+    {
+        name: "Duer's Superior Court Reports",
+        caseDotLawID: 176,
+        regEx: /[\d]{1,3}\sDuer(,)?(\.)?\s[\d]{1,4}/g
+    },
+    {
+        name: "Edmond's Select Cases",
+        caseDotLawID: 117,
+        regEx: null
+    },
+    {
+        name: "E.D. Smith's Common Pleas Reports",
+        caseDotLawID: 167,
+        regEx: /[\d]{1,3}\sE\.(\s)?D\.\sSmith(,)?(\.)?\s[\d]{1,4}/g
+    },
+    {
+        name: "Edward's Chancery Reports",
+        caseDotLawID: 1,
+        regEx: /[\d]{1,3}\sEdw\.\s[\d]{1,4}/g
+    },
+    {
+        name: "Puerto Rico Supreme Court",
+        caseDotLawID: 786,
+        regEx: null
+    },
+    {
+        name: "Federal Cases",
+        caseDotLawID: 942,
+        regEx: null
+    },
+    {
+        name: "Federal Reporter",
+        caseDotLawID: 943,
+        regEx: null
+    },
+    {
+        name: "Federal Rules Decisions",
+        caseDotLawID: 981,
+        regEx: null
+    },
+    {
+        name: "Federal Supplement",
+        caseDotLawID: 982,
+        regEx: null
+    },
+    {
+        name: "Florida Reports",
+        caseDotLawID: 391,
+        regEx: /[\d]{1,3}\sFla\.\s[\d]{1,4}/g
+    },
+    {
+        name: "Georgia Law Reporter",
+        caseDotLawID: 639,
+        regEx: null
+    },
+    {
+        name: "Georgia Reports",
+        caseDotLawID: 360,
         regEx: null
     },
     {
