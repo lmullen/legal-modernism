@@ -374,6 +374,56 @@ let reporterList = [
         regEx: null
     },
     {
+        name: "Gibbon's Surrogate's Reports",
+        caseDotLawID: 149,
+        regEx: null
+    },
+    {
+        name: "Hall's Superior Court Reports",
+        caseDotLawID: 170,
+        regEx: null
+    },
+    {
+        name: "Harris and Gill",
+        caseDotLawID: 729,
+        regEx: null
+    },
+    {
+        name: "Hawaii Reports",
+        caseDotLawID: 423,
+        regEx: null
+    },
+    {
+        name: "Hill and Denio Supplement (Labor)",
+        caseDotLawID: 115,
+        regEx: null
+    },
+    {
+        name: "Hill's Reports",
+        caseDotLawID: 116,
+        regEx: /[\d]{1,3}\sHill(,)?\s[\d]{1,4}/g
+    },
+    {
+        name: "Hilton's Common Pleas Reports",
+        caseDotLawID: 168,
+        regEx: /[\d]{1,3}\sHilt(,)?(\.)?\s[\d]{1,4}/g
+    },
+    {
+        name: "Hoffman's Chancery Reports",
+        caseDotLawID: 7,
+        regEx: null 
+    },
+    {
+        name: "Hopkin's Chancery Reports",
+        caseDotLawID: 8,
+        regEx: null 
+    },
+    {
+        name: "Howard's Appeal Cases",
+        caseDotLawID: 136,
+        regEx: 
+    },
+    {
         name: "Howard's Practice Reports",
         caseDotLawID: 35,
         regEx: /[\d]{1,3}\sHow\.\sPr\.\s(R\.\s)?[\d]{1,4}/g
