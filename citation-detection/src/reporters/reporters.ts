@@ -411,29 +411,30 @@ let reporterList = [
     {
         name: "Hoffman's Chancery Reports",
         caseDotLawID: 7,
-        regEx: null 
+        regEx: null
     },
     {
         name: "Hopkin's Chancery Reports",
         caseDotLawID: 8,
-        regEx: null 
+        regEx: null
     },
     {
         name: "Howard's Appeal Cases",
         caseDotLawID: 136,
-        regEx: 
+        regEx: null
     },
     {
         name: "Howard's Practice Reports",
         caseDotLawID: 35,
-        regEx: /[\d]{1,3}\sHow\.\sPr\.\s(R\.\s)?[\d]{1,4}/g
-    }
-
-    // [\d]{1,3}\sAbb\.\sPr\.(\sR\.\s)?(\s\(n\.s\.\))?\s[\d]{1,4}
-
+        alternateIDs: [991],
+        regEx: /[\d]{1,3}\sHow\.\sPr\.\s(R\.\s)?(n\.s\.)?[\d]{1,4}/g
+    },
+    {
+        name: "Idaho Reports",
+        caseDotLawID: 306,
+        regEx: null
+    },
 
 ];
 
 export default reporterList;
-
-// [\d]{1,3}\sHow\.\sPr\.\sR\.\s[\d]{1,4}
