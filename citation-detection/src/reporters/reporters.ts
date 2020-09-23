@@ -434,7 +434,76 @@ let reporterList = [
         caseDotLawID: 306,
         regEx: null
     },
-
+    {
+        name: "Illinois Appellate Court Reports",
+        caseDotLawID: 315,
+        regEx: null
+    },
+    {
+        name: "Illinois Appellate Court Reports, Third Series",
+        caseDotLawID: 322,
+        regEx: null
+    },
+    {
+        name: "Illinois Circuit Court Reports",
+        caseDotLawID: 652,
+        regEx: null
+    },
+    {
+        name: "Illinois Court of Claims Reports",
+        caseDotLawID: 532,
+        regEx: null
+    },
+    {
+        name: "Illinois Reports",
+        caseDotLawID: 528,
+        regEx: /[\d]{1,3}\sIll(,)?(\.)?\s[\d]{1,4}/
+    },
+    {
+        name: "Indiana Court of Appeals Reports",
+        caseDotLawID: 436,
+        regEx: null
+    },
+    {
+        name: "Indiana Law Reporter",
+        caseDotLawID: 646,
+        regEx: null
+    },
+    {
+        name: "Indiana Reports",
+        caseDotLawID: 272,
+        regEx: /[\d]{1,3}\sInd(,)?(\.)?\s[\d]{1,4}/
+    },
+    {
+        name: "Indian Territory Reports",
+        caseDotLawID: 1069,
+        regEx: null
+    },
+    {
+        name: "Iowa Reports",
+        caseDotLawID: 474,
+        regEx: /[\d]{1,3}\sIowa(,)?(\.)?\s[\d]{1,4}/
+    },
+    {
+        name: "Johnson's Cases",
+        caseDotLawID: 126,
+        regEx: /[\d]{1,3}\sJohns\.\sCas\.\s[\d]{1,4}/
+    },
+    {
+        name: "Johnson's Chancery Reports",
+        caseDotLawID: 10,
+        regEx: /[\d]{1,3}\sJohns\.\sCh\.\s[\d]{1,4}/
+    },
+    {
+        name: "Johnson's Reports",
+        caseDotLawID: 122,
+        regEx: /[\d]{1,3}\sJohns\.\s[\d]{1,4}/
+    },
+    {
+        name: "Jones and Spencer's Superior Court Reports",
+        caseDotLawID: 172,
+        regEx: 
+    },
 ];
 
 export default reporterList;
