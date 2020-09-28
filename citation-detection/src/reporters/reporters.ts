@@ -502,7 +502,52 @@ let reporterList = [
     {
         name: "Jones and Spencer's Superior Court Reports",
         caseDotLawID: 172,
-        regEx: 
+        regEx: null
+    },
+    {
+        name: "Kansas Reports",
+        caseDotLawID: 476,
+        regEx: null
+    },
+    {
+        name: "Kentucky Opinions, containing the unreported opinions of the Court of Appeals",
+        caseDotLawID: 713,
+        regEx: null
+    },
+    {
+        name: "Kentucky Reports",
+        caseDotLawID: 305,
+        regEx: null
+    },
+    {
+        name: "Keyes' Reports",
+        caseDotLawID: 139,
+        regEx: /[\d]{1,3}\sKeyes(,)?(\.)?\s[\d]{1,4}/
+    },
+    {
+        name: "Lansing's Chancery Reports",
+        caseDotLawID: 9,
+        regEx: null
+    },
+    {
+        name: "Lansing's Reports",
+        caseDotLawID: 111,
+        regEx: null
+    },
+    {
+        name: "Law Times (New Series)",
+        caseDotLawID: 956,
+        regEx: null
+    },
+    {
+        name: "Legal Chronicle reports of Cases decided in the Supreme Court of Pennsylvania (Foster)",
+        caseDotLawID: 955,
+        regEx: null
+    },
+    {
+        name: "Legal points decided by the Second circuit court of Louisiana (Gunby's Reports)",
+        caseDotLawID: 725,
+        regEx: null
     },
 ];
 
