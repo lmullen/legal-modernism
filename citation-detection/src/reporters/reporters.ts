@@ -549,6 +549,35 @@ let reporterList = [
         caseDotLawID: 725,
         regEx: null
     },
+    {
+        name: "Liquor Tax Law Reports",
+        caseDotLawID: 152,
+        regEx: null
+    },
+    {
+        name: "Lockwood's Reversed Cases",
+        caseDotLawID: 113,
+        regEx: null
+    },
+    //normalize above here
+    {
+        name: "Louisiana Annual Reports",
+        caseDotLawID: 998,
+        regEx: /[\d]{1,3}\sla\.\sann\.\s[\d]{1,4}/
+    },
+    {
+        name: "Louisiana Annual Reports",
+        caseDotLawID: 998,
+        regEx: /[\d]{1,3}\sla\.\sann\.\s[\d]{1,4}/ //is 'La. An.' the same? See Pomeroy
+    },
+    {
+        name: "Louisiana Reports",
+        caseDotLawID: 339,
+        regEx: 
+    },
+
+
+
 ];
 
 export default reporterList;
