@@ -701,10 +701,16 @@ let reporterList = [
         regEx: null 
     },
     {
-        name: "New Jersey Equity Reports",
-        caseDotLawID: 559,
+        name: "New Jersey Law Reports",
+        caseDotLawID: 551,
         regEx: null 
     },
+    {
+        name: "New Jersey Reports",
+        caseDotLawID: 558,
+        regEx: /[\d]{1,3}\s(,)?n\.(\s)?j\.(,)?(\s)?[\d]{1,4}/gi 
+    },
+
 
 
 
