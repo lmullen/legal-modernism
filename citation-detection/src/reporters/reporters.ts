@@ -4,18 +4,18 @@ let reporterList = [
     {
         name: "Abbot's Court of Appeals Decisions",
         caseDotLawID: 137,
-        regEx: /[\d]{1,3}\sAbb\.\sCt.\sApp\.\s[\d]{1,4}/g
+        regEx: /[\d]{1,3}\sAbb\.\sCt.\sApp\.\s[\d]{1,4}/gi
     },
     {
         name: "Abbot's New Cases",
         caseDotLawID: 23,
-        regEx: /[\d]{1,3}\sAbb\.N\.\sCas\.\s[\d]{1,4}}/g
+        regEx: /[\d]{1,3}\sAbb\.N\.\sCas\.\s[\d]{1,4}}/gi
     },
     {
         name: "Abbot's Practice Reports",
         caseDotLawID: 29,
         alternateIDs: [989],
-        regEx: /[\d]{1,3}\sAbb\.\sPr\.\s(R\.\s)?(\(n\.s\.\)\s)?[\d]{1,4}/g
+        regEx: /[\d]{1,3}\sAbb\.\sPr\.\s(R\.\s)?(\(n\.s\.\)\s)?[\d]{1,4}/gi
     },
     {
         name: "Dallam",
@@ -30,7 +30,7 @@ let reporterList = [
     {
         name: "Alabama Reports",
         caseDotLawID: 296,
-        regEx: /[\d]{1,3}\sAla\.\s[\d]{1,4}/g
+        regEx: /[\d]{1,3}\sAla\.\s[\d]{1,4}/gi
     },
     {
         name: "Alaska Reports",
@@ -80,12 +80,12 @@ let reporterList = [
     {
         name: "Barbour's Chancery Reports",
         caseDotLawID: 2,
-        regEx: /[\d]{1,3}\sBarb\.\sCh\.\s[\d]{1,4}/g
+        regEx: /[\d]{1,3}\sBarb\.\sCh\.\s[\d]{1,4}/gi
     },
     {
         name: "Barbour's Supreme Court Reports",
         caseDotLawID: 112,
-        regEx: /[\d]{1,3}\sBarb\.\s[\d]{1,4}/g
+        regEx: /[\d]{1,3}\sBarb\.\s[\d]{1,4}/gi
     },
     {
         name: "Blackford",
@@ -121,7 +121,7 @@ let reporterList = [
         name: "Caines' Cases", //sic
         caseDotLawID: 124,
         alternateIDs: [123],
-        regEx: /[\d]{1,3}\sCai\.\s[\d]{1,4}/g
+        regEx: /[\d]{1,3}\sCai\.\s[\d]{1,4}/gi
     },
     {
         name: "California Appellate Reports",
@@ -136,12 +136,12 @@ let reporterList = [
     {
         name: "California Reports",
         caseDotLawID: 414,
-        regEx: /[\d]{1,3}\sCal\.\s[\d]{1,4}/g
+        regEx: /[\d]{1,3}\sCal\.\s[\d]{1,4}/gi
     },
     {
         name: "California Unreported Cases",
         caseDotLawID: 565,
-        regEx: /[\d]{1,3}\sCal\.\sUnrep\.\s(R\.\s)?[\d]{1,4}/g
+        regEx: /[\d]{1,3}\sCal\.\sUnrep\.\s(R\.\s)?[\d]{1,4}/gi
     },
     {
         name: "Cases decided in the Courts of common pleas, in the Fifth circuit of the state of Ohio [1816-1819] (Tappan)",
@@ -156,7 +156,7 @@ let reporterList = [
     {
         name: "Ohio State", //@TODO Go through ToA and put unrepresented reporters in here.
         caseDotLawID: 781,
-        regEx: /[\d]{1,3}\sOhio\sSt\.\s[\d]{1,4}/g
+        regEx: /[\d]{1,3}\sOhio\sSt\.\s[\d]{1,4}/gi
     },
     {
         name: "Supreme Court of Pennsylvania -- Monaghan",
@@ -236,7 +236,7 @@ let reporterList = [
     {
         name: "Connecticut Reports",
         caseDotLawID: 178,
-        regEx: /[\d]{1,3}\sConn\.\s[\d]{1,4}/g
+        regEx: /[\d]{1,3}\sConn\.\s[\d]{1,4}/gi
     },
     {
         name: "Connoly's Surrogate's Reports",
@@ -251,7 +251,7 @@ let reporterList = [
     {
         name: "Cowen's Reports",
         caseDotLawID: 121,
-        regEx: /[\d]{1,3}\sCow\.\s[\d]{1,4}/g
+        regEx: /[\d]{1,3}\sCow\.\s[\d]{1,4}/gi
     },
     {
         name: "Dakota Reports",
@@ -306,7 +306,7 @@ let reporterList = [
     {
         name: "Denio's Reports",
         caseDotLawID: 114,
-        regEx: /[\d]{1,3}\sDenio(,)?(\.)?\s[\d]{1,4}/g
+        regEx: /[\d]{1,3}\sDenio(,)?(\.)?\s[\d]{1,4}/gi
     },
     {
         name: "Dudley's Georgia Reports",
@@ -316,7 +316,7 @@ let reporterList = [
     {
         name: "Duer's Superior Court Reports",
         caseDotLawID: 176,
-        regEx: /[\d]{1,3}\sDuer(,)?(\.)?\s[\d]{1,4}/g
+        regEx: /[\d]{1,3}\sDuer(,)?(\.)?\s[\d]{1,4}/gi
     },
     {
         name: "Edmond's Select Cases",
@@ -326,12 +326,12 @@ let reporterList = [
     {
         name: "E.D. Smith's Common Pleas Reports",
         caseDotLawID: 167,
-        regEx: /[\d]{1,3}\sE\.(\s)?D\.\sSmith(,)?(\.)?\s[\d]{1,4}/g
+        regEx: /[\d]{1,3}\sE\.(\s)?D\.\sSmith(,)?(\.)?\s[\d]{1,4}/gi
     },
     {
         name: "Edward's Chancery Reports",
         caseDotLawID: 1,
-        regEx: /[\d]{1,3}\sEdw\.\s[\d]{1,4}/g
+        regEx: /[\d]{1,3}\sEdw\.\s[\d]{1,4}/gi
     },
     {
         name: "Puerto Rico Supreme Court",
@@ -361,7 +361,7 @@ let reporterList = [
     {
         name: "Florida Reports",
         caseDotLawID: 391,
-        regEx: /[\d]{1,3}\sFla\.\s[\d]{1,4}/g
+        regEx: /[\d]{1,3}\sFla\.\s[\d]{1,4}/gi
     },
     {
         name: "Georgia Law Reporter",
@@ -401,12 +401,12 @@ let reporterList = [
     {
         name: "Hill's Reports",
         caseDotLawID: 116,
-        regEx: /[\d]{1,3}\sHill(,)?\s[\d]{1,4}/g
+        regEx: /[\d]{1,3}\sHill(,)?\s[\d]{1,4}/gi
     },
     {
         name: "Hilton's Common Pleas Reports",
         caseDotLawID: 168,
-        regEx: /[\d]{1,3}\sHilt(,)?(\.)?\s[\d]{1,4}/g
+        regEx: /[\d]{1,3}\sHilt(,)?(\.)?\s[\d]{1,4}/gi
     },
     {
         name: "Hoffman's Chancery Reports",
@@ -427,7 +427,7 @@ let reporterList = [
         name: "Howard's Practice Reports",
         caseDotLawID: 35,
         alternateIDs: [991],
-        regEx: /[\d]{1,3}\sHow\.\sPr\.\s(R\.\s)?(n\.s\.)?[\d]{1,4}/g
+        regEx: /[\d]{1,3}\sHow\.\sPr\.\s(R\.\s)?(n\.s\.)?[\d]{1,4}/gi
     },
     {
         name: "Idaho Reports",
@@ -457,7 +457,7 @@ let reporterList = [
     {
         name: "Illinois Reports",
         caseDotLawID: 528,
-        regEx: /[\d]{1,3}\sIll(,)?(\.)?\s[\d]{1,4}/
+        regEx: /[\d]{1,3}\sIll(,)?(\.)?\s[\d]{1,4}/gi
     },
     {
         name: "Indiana Court of Appeals Reports",
@@ -472,7 +472,7 @@ let reporterList = [
     {
         name: "Indiana Reports",
         caseDotLawID: 272,
-        regEx: /[\d]{1,3}\sInd(,)?(\.)?\s[\d]{1,4}/
+        regEx: /[\d]{1,3}\sInd(,)?(\.)?\s[\d]{1,4}/gi
     },
     {
         name: "Indian Territory Reports",
@@ -482,22 +482,22 @@ let reporterList = [
     {
         name: "Iowa Reports",
         caseDotLawID: 474,
-        regEx: /[\d]{1,3}\sIowa(,)?(\.)?\s[\d]{1,4}/
+        regEx: /[\d]{1,3}\sIowa(,)?(\.)?\s[\d]{1,4}/gi
     },
     {
         name: "Johnson's Cases",
         caseDotLawID: 126,
-        regEx: /[\d]{1,3}\sJohns\.\sCas\.\s[\d]{1,4}/
+        regEx: /[\d]{1,3}\sJohns\.\sCas\.\s[\d]{1,4}/gi
     },
     {
         name: "Johnson's Chancery Reports",
         caseDotLawID: 10,
-        regEx: /[\d]{1,3}\sJohns\.\sCh\.\s[\d]{1,4}/
+        regEx: /[\d]{1,3}\sJohns\.\sCh\.\s[\d]{1,4}/gi
     },
     {
         name: "Johnson's Reports",
         caseDotLawID: 122,
-        regEx: /[\d]{1,3}\sJohns\.\s[\d]{1,4}/
+        regEx: /[\d]{1,3}\sJohns\.\s[\d]{1,4}/gi
     },
     {
         name: "Jones and Spencer's Superior Court Reports",
@@ -522,7 +522,7 @@ let reporterList = [
     {
         name: "Keyes' Reports",
         caseDotLawID: 139,
-        regEx: /[\d]{1,3}\sKeyes(,)?(\.)?\s[\d]{1,4}/
+        regEx: /[\d]{1,3}\sKeyes(,)?(\.)?\s[\d]{1,4}/gi
     },
     {
         name: "Lansing's Chancery Reports",
@@ -563,18 +563,155 @@ let reporterList = [
     {
         name: "Louisiana Annual Reports",
         caseDotLawID: 998,
-        regEx: /[\d]{1,3}\sla\.\sann\.\s[\d]{1,4}/
+        regEx: /[\d]{1,3}\sla\.\sann\.\s[\d]{1,4}/gi
     },
     {
         name: "Louisiana Annual Reports",
         caseDotLawID: 998,
-        regEx: /[\d]{1,3}\sla\.\sann\.\s[\d]{1,4}/ //is 'La. An.' the same? See Pomeroy
+        regEx: /[\d]{1,3}\sla\.\sann\.\s[\d]{1,4}/gi //is 'La. An.' the same? See Pomeroy
     },
     {
         name: "Louisiana Reports",
         caseDotLawID: 339,
-        regEx: 
+        regEx: null
     },
+    {
+        name: "Maine Reports",
+        caseDotLawID: 467,
+        regEx: /[\d]{1,3}\sMe\.\s[\d]{1,4}/gi
+    },
+    {
+        name: "Mandamus cases decided in the Supreme court of Michigan",
+        caseDotLawID: 759,
+        regEx: null
+    },
+    {
+        name: "Martin (Louisiana Term Reports)",
+        caseDotLawID: 992,
+        regEx: null
+    },
+    {
+        name: "Martin (Louisiana Term Reports)",
+        caseDotLawID: 993,
+        regEx: null
+    },
+    {
+        name: "Maryland Reports",
+        caseDotLawID: 524,
+        regEx: /[\d]{1,3}\smd\.\s[\d]{1,4}/gi
+    },
+    {
+        name: "Massachusetts Land Court decisions, 1898-1908",
+        caseDotLawID: 743,
+        regEx: null
+    },
+    {
+        name: "Massachusetts Land Court decisions, 1898-1908",
+        caseDotLawID: 478,
+        regEx: /[\d]{1,3}\smass\.\s[\d]{1,4}/gi
+    },
+    {
+        name: "Massachusetts Land Court decisions, 1898-1908",
+        caseDotLawID: 478,
+        regEx: /[\d]{1,3}\smass\.\s[\d]{1,4}/gi
+    },
+    {
+        name: "Michigan appeals reports; cases decided in the Michigan Court of Appeals.",
+        caseDotLawID: 747,
+        regEx: /[\d]{1,3}\smich\.\sapp\.\s[\d]{1,4}/gi
+    },
+    {
+        name: "Michigan nisi prius cases, decided by the state and federal courts in Michigan",
+        caseDotLawID: 760,
+        regEx: null
+    },
+    {
+        name: "Michigan Reports",
+        caseDotLawID: 520,
+        regEx: /[\d]{1,3}\smich\.\s[\d]{1,4}/gi
+    },
+    {
+        name: "Mills' Surrogate's Reports",
+        caseDotLawID: 150,
+        regEx: null
+    },
+    {
+        name: "Minnesota Reports",
+        caseDotLawID: 394,
+        regEx: /[\d]{1,3}\s(,)?minn\.(,)?(\s)?[\d]{1,4}/gi
+    },
+    {
+        name: "Minor",
+        caseDotLawID: 581,
+        regEx: null
+    },
+    {
+        name: "Minor",
+        caseDotLawID: 581,
+        regEx: null
+    },
+    {
+        name: "Mississippi Decisions: containing the unreported opinions of the Supreme Court of Mississippi",
+        caseDotLawID: 767,
+        regEx: null
+    },
+    {
+        name: "Mississippi Reports",
+        caseDotLawID: 283,
+        regEx: /[\d]{1,3}\s(,)?miss\.(,)?(\s)?[\d]{1,4}/gi
+    },
+    {
+        name: "Mississippi State Cases; being criminal cases decided in the High court of errors and appeals",
+        caseDotLawID: 766,
+        regEx: null
+    },
+    {
+        name: "Missouri Appeal Reports",
+        caseDotLawID: 398,
+        regEx: null
+    },
+    {
+        name: "Missouri Reports",
+        caseDotLawID: 673,
+        regEx: /[\d]{1,3}\s(,)?mo\.(,)?(\s)?[\d]{1,4}/gi
+    },
+    {
+        name: "Montana Reports",
+        caseDotLawID: 289,
+        regEx: /[\d]{1,3}\s(,)?mont\.(,)?(\s)?[\d]{1,4}/gi
+    },
+    {
+        name: "Nebraska Reports",
+        caseDotLawID: 539,
+        regEx: /[\d]{1,3}\s(,)?neb\.(,)?(\s)?[\d]{1,4}/gi
+    },
+    {
+        name: "Nevada Reports",
+        caseDotLawID: 518,
+        regEx: /[\d]{1,3}\s(,)?nev\.(,)?(\s)?[\d]{1,4}/gi
+    },
+    {
+        name: "New Hampshire Reports",
+        caseDotLawID: 489,
+        regEx: /[\d]{1,3}\s(,)?n\.(\s)?h\.(,)?(\s)?[\d]{1,4}/gi 
+    },
+    {
+        name: "New Jersey Equity Reports",
+        caseDotLawID: 559,
+        regEx: null 
+    },
+    {
+        name: "New Jersey Equity Reports",
+        caseDotLawID: 559,
+        regEx: null 
+    },
+
+
+
+
+
+
+
 
 
 
