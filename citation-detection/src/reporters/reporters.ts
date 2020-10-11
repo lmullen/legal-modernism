@@ -693,25 +693,58 @@ let reporterList = [
     {
         name: "New Hampshire Reports",
         caseDotLawID: 489,
-        regEx: /[\d]{1,3}\s(,)?n\.(\s)?h\.(,)?(\s)?[\d]{1,4}/gi 
+        regEx: /[\d]{1,3}\s(,)?n\.(\s)?h\.(,)?(\s)?[\d]{1,4}/gi
     },
     {
         name: "New Jersey Equity Reports",
         caseDotLawID: 559,
-        regEx: null 
+        regEx: null
     },
     {
         name: "New Jersey Law Reports",
         caseDotLawID: 551,
-        regEx: null 
+        regEx: null
     },
     {
         name: "New Jersey Reports",
         caseDotLawID: 558,
-        regEx: /[\d]{1,3}\s(,)?n\.(\s)?j\.(,)?(\s)?[\d]{1,4}/gi 
+        regEx: /[\d]{1,3}\s(,)?n\.(\s)?j\.(,)?(\s)?[\d]{1,4}/gi
     },
-
-
+    {
+        name: "New Mexico",
+        caseDotLawID: 554,
+        regEx: null
+    },
+    {
+        name: "New York Criminal Reports",
+        caseDotLawID: 143,
+        regEx: null
+    },
+    {
+        name: "New York Miscellaneous Reports",
+        caseDotLawID: 65,
+        regEx: null
+    },
+    {
+        name: "New York Miscellaneous Reports 2d",
+        caseDotLawID: 77,
+        regEx: null
+    },
+    {
+        name: "New York Reports",
+        caseDotLawID: 20,
+        regEx: /[\d]{1,3}\s(,)?n\.(\s)?y\.(,)?(\s)?[\d]{1,4}/gi
+    },
+    {
+        name: "New York State Reporter",
+        caseDotLawID: 160,
+        regEx: null 
+    },
+    {
+        name: "New York Supreme Court",
+        caseDotLawID: null,
+        regEx: /[\d]{1,3}\s(,)?n\.(\s)?y\.(\s)sup\.\sct\.\s[\d]{1,4}/gi
+    }
 
 
 
