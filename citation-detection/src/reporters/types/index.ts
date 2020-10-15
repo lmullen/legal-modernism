@@ -5,6 +5,6 @@ export type reporter = {
     shortName: string,
     startYear: number,
     endYear: number,
-    jurisdictions: any[],
-    regEx: RegExp
+    jurisdictions?: any[],
+    regEx?: RegExp
 };
