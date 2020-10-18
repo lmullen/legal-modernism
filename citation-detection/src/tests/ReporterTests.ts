@@ -29,7 +29,6 @@ export class ReporterTests {
         Expect(res).toEqual(expectedRes);
     }
 
-    @FocusTest
     @AsyncTest()
     @TestCase(20, "New York Reports")
     async testGetReporter(id: number, name: string) {

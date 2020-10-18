@@ -1,4 +1,4 @@
-import { Expect, AsyncTest, TestCase } from "alsatian";
+import { Expect, AsyncTest, TestCase, FocusTest } from "alsatian";
 
 import { extractMatches } from "../extraction";
 import { manyCitations0, testText1, testText2, testText5, treatiseTest0 } from "../testText";
@@ -38,14 +38,14 @@ export class MatchTests {
     //     let res = await extractMatches(treatiseTest0);
     //     Expect(res.length).toEqual(10);
     // }
-
+    @FocusTest
     @AsyncTest()
     async testSpacing() {
         let reporter = await getReporterByID(20); 
         let regex = reporter.regEx;
 
         let res = await extractMatches(treatiseTest0, regex);
-        Expect(res.length).toEqual(1);
-        Expect(res[0]).toEqual("31 N. Y. 664");
+        Expect(res.length).toEqual(2);
+        Expect(res[0]).toEqual("36 N. Y. 613");
     }
 }

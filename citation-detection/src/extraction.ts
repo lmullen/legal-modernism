@@ -17,10 +17,10 @@ reporterList.forEach((r) => {
 });
 
 let omniRegex: RegExp = new RegExp(omniPattern, "gi");
+// let omniRegex: RegExp = catchallRegex; 
 
 export async function extractMatches(text: string, regex?: RegExp): Promise<string[]> {
     regex = (regex) ? regex : omniRegex;
-    regex = omniRegex;
     let res = [];
     let match;
 
@@ -29,12 +29,15 @@ export async function extractMatches(text: string, regex?: RegExp): Promise<stri
         res.push(match[0]);
     }
 
+    // res = Array.from(text.matchAll(regex));
+
     return res;
 }
 
 async function main() {
     let res = await extractMatches(testTexts.treatiseTest0);
     console.log(res);
+    // console.log(omniRegex);
 }
 
 main();
