@@ -1,6 +1,6 @@
 import { Expect, AsyncTest, TestCase } from "alsatian";
 
-import { reporterInRange } from "../reporters";
+import { reporterInRange } from "../reporters/download-reporters";
 
 export class ReporterTests {
 

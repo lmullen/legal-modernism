@@ -50,4 +50,6 @@ let forthcomingSCOTUS = "In those cases, a court of appeals may review constitut
 let shortCite0 = "It \"does not complain about what the agency has done but rather about what the agency has yet to do,\" United Mine Workers, 190 F.3d at 549."
 // The Wilderness Soc. v. Norton, 434 F.3d 584, 589 (D.C. Cir. 2006)
 
-export { testText0, testText1, testText2, testText3, testText4, testText5, multiSuppTest, simpleReporterTest, revdTest0, combinedReporterSupp, manyCitations0, forthcomingSCOTUS, shortCite0 };
+let treatiseTest0 = "32 Cal. 172 683 Abbe v. Clarke, 31 Barb. 288 247, 733 Abbot v. Chapman, 2 Lev. 81 689 Abeel r. Van Gelder, 36 N. Y. 613 386 Abendrotl v. Boardley, 27 Wise. *556 626 Aberaman Iron Co. v. Wickens, L. R. 4 Ch. App. 101 311 Ackley v. Tarbox, 31 N. Y. 664 250, 285 ";
+
+export { testText0, testText1, testText2, testText3, testText4, testText5, multiSuppTest, simpleReporterTest, revdTest0, combinedReporterSupp, manyCitations0, forthcomingSCOTUS, shortCite0, treatiseTest0};
