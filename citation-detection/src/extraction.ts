@@ -1,4 +1,5 @@
 import * as xregex from "xregexp";
+import * as _ from "lodash";
 
 import * as testTexts from "./testText";
 import reporterList from './reporters/reporters';
@@ -35,7 +36,11 @@ export async function extractMatches(text: string, regex?: RegExp): Promise<stri
 }
 
 async function seriatim() {
-    let regexes = reporterList.map((r) => {return r.regEx});
+    let reportersWithRegexes = _.filter(reporterList, (r) => {return r.regEx != null});
+    let regexes = reportersWithRegexes.map((r) => {
+        return r.regEx;
+    });
+
     console.log(regexes);
 }
 
