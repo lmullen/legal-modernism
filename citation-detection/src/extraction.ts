@@ -16,7 +16,7 @@ reporterList.forEach((r) => {
     }
 });
 
-let omniRegex: RegExp = new RegExp(omniPattern, "gi");
+let omniRegex: RegExp = new RegExp(omniPattern, "gim");
 // let omniRegex: RegExp = catchallRegex; 
 
 export async function extractMatches(text: string, regex?: RegExp): Promise<string[]> {
@@ -34,10 +34,17 @@ export async function extractMatches(text: string, regex?: RegExp): Promise<stri
     return res;
 }
 
+async function seriatim() {
+    let regexes = reporterList.map((r) => {return r.regEx});
+    console.log(regexes);
+}
+
 async function main() {
-    let res = await extractMatches(testTexts.treatiseTest0);
-    console.log(res);
-    // console.log(omniRegex);
+    // let res = await extractMatches(testTexts.treatiseTest0);
+    // console.log(res);
+    // // console.log(omniRegex);
+
+    await seriatim();
 }
 
 main();
