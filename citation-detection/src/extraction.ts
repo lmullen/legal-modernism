@@ -46,9 +46,10 @@ async function seriatim() {
     let allMatches: string[] = [];
 
     for (let r of reportersWithRegexes) {
-        console.log(r.regEx);
+        // console.log(r.regEx);
         let reporterRes = await extractMatches(testTexts.treatiseTest0, r.regEx);
-        allMatches.concat(reporterRes);
+        allMatches = allMatches.concat(reporterRes);
+        // console.log(allMatches);
     }
 
     console.log(allMatches);
@@ -56,13 +57,13 @@ async function seriatim() {
 }
 
 async function main() {
-    let reporter = await getReporterByID(414);
-    console.log(reporter.name);
+    // let reporter = await getReporterByID(414);
+    // console.log(reporter.name);
 
-    let res = await extractMatches(testTexts.treatiseTest0, reporter.regEx);
-    console.log(res);
+    // let res = await extractMatches(testTexts.treatiseTest0, reporter.regEx);
+    // console.log(res);
     
-    // await seriatim();
+    await seriatim();
 }
 
 main();
