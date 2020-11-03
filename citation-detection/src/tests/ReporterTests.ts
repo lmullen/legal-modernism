@@ -1,6 +1,9 @@
-import { Expect, AsyncTest, TestCase } from "alsatian";
+import { Expect, AsyncTest, TestCase, FocusTest } from "alsatian";
 
-import { reporterInRange } from "../reporters";
+import { reporterInRange } from "../reporters/download-reporters";
+
+import reporterList from '../reporters/reporters';
+import { getReporterByID } from "../reporters";
 
 export class ReporterTests {
 
@@ -24,5 +27,12 @@ export class ReporterTests {
 
         let res = reporterInRange(x);
         Expect(res).toEqual(expectedRes);
+    }
+
+    @AsyncTest()
+    @TestCase(20, "New York Reports")
+    async testGetReporter(id: number, name: string) {
+        let r = await getReporterByID(id);
+        Expect(r.name).toEqual(name);
     }
 }

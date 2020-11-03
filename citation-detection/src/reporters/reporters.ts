@@ -559,7 +559,7 @@ let reporterList = [
         caseDotLawID: 113,
         regEx: null
     },
-    //normalize above here
+    //normalize above here (but doesn't really matter, since we search case-insensitive in the other code)
     {
         name: "Louisiana Annual Reports",
         caseDotLawID: 998,
@@ -745,6 +745,8 @@ let reporterList = [
         caseDotLawID: null,
         regEx: /[\d]{1,3}\s(,)?n\.(\s)?y\.(\s)sup\.\sct\.\s[\d]{1,4}/gi
     }
+
+
 
 
 
