@@ -5,7 +5,10 @@ import * as testTexts from "./testText";
 import reporterList from './reporters/reporters';
 import { getReporterByID } from "./reporters";
 
-let catchallRegex: RegExp = /[\d]{1,3}\s[a-zA-Z\.]+([0=9]+)?(\s[a-zA-z]+\.\s)?,?\s[\d]{1,4}/gi; //@TODO: still doesn't catch multi-word reporters 
+// let singleCatchallRegex: RegExp = /[\d]{1,3}\s[a-zA-Z\.]+([0=9]+)?(\s[a-zA-z]+\.\s)?,?\s[\d]{1,4}/gi; 
+// let appCatchallRegex: RegExp = /[\d]{1,3}\s[a-zA-Z\.]+([0=9]+)?(\s[a-zA-z]+\.\s)?,?\s[\d]{1,4}/gi; 
+
+let catchallRegex: RegExp = /[\d]{1,3}\s[a-zA-Z\.\s]+\s[\d]{1,4}/gi;
 
 let omniPattern: string = "(" + catchallRegex.source + ")";
 
