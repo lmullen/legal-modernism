@@ -8,7 +8,8 @@ import { getReporterByID } from "./reporters";
 // let singleCatchallRegex: RegExp = /[\d]{1,3}\s[a-zA-Z\.]+([0=9]+)?(\s[a-zA-z]+\.\s)?,?\s[\d]{1,4}/gi; 
 // let appCatchallRegex: RegExp = /[\d]{1,3}\s[a-zA-Z\.]+([0=9]+)?(\s[a-zA-z]+\.\s)?,?\s[\d]{1,4}/gi; 
 
-let catchallRegex: RegExp = /[\d]{1,3}\s[a-zA-Z\.\s]+\s[\d]{1,4}/gi;
+let catchallRegex: RegExp = /[\d]{1,3}\s[a-zA-Z\.\s]+\s[\d]{1,4}}/gi;
+let appellateCatchallRegex: RegExp = /[\d]{1,3}\s[a-zA-Z\.\s]+\sApp\.\s[\d]{1,4}}/gi;
 
 let omniPattern: string = "(" + catchallRegex.source + ")";
 
