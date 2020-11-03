@@ -4,88 +4,106 @@ let reporterList = [
     {
         name: "Abbot's Court of Appeals Decisions",
         caseDotLawID: 137,
-        regEx: /[\d]{1,3}\sAbb\.\sCt.\sApp\.\s[\d]{1,4}/gi
+        regEx: /[\d]{1,3}\sAbb\.\sCt.\sApp\.\s[\d]{1,4}/gi,
+        useSpecial: false
     },
     {
         name: "Abbot's New Cases",
         caseDotLawID: 23,
-        regEx: /[\d]{1,3}\sAbb\.N\.\sCas\.\s[\d]{1,4}}/gi
+        regEx: /[\d]{1,3}\sAbb\.N\.\sCas\.\s[\d]{1,4}}/gi,
+        useSpecial: false
     },
     {
         name: "Abbot's Practice Reports",
         caseDotLawID: 29,
         alternateIDs: [989],
-        regEx: /[\d]{1,3}\sAbb\.\sPr\.\s(R\.\s)?(\(n\.s\.\)\s)?[\d]{1,4}/gi
+        regEx: /[\d]{1,3}\sAbb\.\sPr\.\s(R\.\s)?(\(n\.s\.\)\s)?[\d]{1,4}/gi,
+        useSpecial: false
     },
     {
         name: "Dallam",
         caseDotLawID: 929,
-        regEx: null
+        regEx: null,
+        useSpecial: false
     },
     {
         name: "Aikens",
         caseDotLawID: 661,
-        regEx: null
+        regEx: null,
+        useSpecial: false
+
     },
     {
         name: "Alabama Reports",
         caseDotLawID: 296,
-        regEx: /[\d]{1,3}\sAla\.\s[\d]{1,4}/gi
+        regEx: /[\d]{1,3}\sAla\.\s[\d]{1,4}/gi,
+        useSpecial: false
     },
     {
         name: "Alaska Reports",
         caseDotLawID: 596,
-        regEx: null
+        regEx: null,
+        useSpecial: false
     },
     {
         name: "Alaska Federal Reports",
         caseDotLawID: 597,
-        regEx: null
+        regEx: null,
+        useSpecial: false
     },
     {
         name: "American Somoa Reports",
         caseDotLawID: 951,
-        regEx: null
+        regEx: null,
+        useSpecial: false
     },
     {
         name: "Anthon's Nisi Prius Cases",
         caseDotLawID: 119,
-        regEx: null
+        regEx: null,
+        useSpecial: false
     },
     {
         name: "Appellate Division Reports",
         caseDotLawID: 107,
-        regEx: null
+        regEx: null,
+        useSpecial: false
     },
     {
         name: "Arizona Reports",
         caseDotLawID: 291,
-        regEx: null
+        regEx: null,
+        useSpecial: false
     },
     {
         name: "Arkansas Reports",
         caseDotLawID: 368,
-        regEx: null
+        regEx: null,
+        useSpecial: false
     },
     {
         name: "Armstrong's Contested Election Cases in New York",
         caseDotLawID: 135,
-        regEx: null
+        regEx: null,
+        useSpecial: false
     },
     {
         name: "Baltimore City Reports",
         caseDotLawID: 735,
-        regEx: null
+        regEx: null,
+        useSpecial: false
     },
     {
         name: "Barbour's Chancery Reports",
         caseDotLawID: 2,
-        regEx: /[\d]{1,3}\sBarb\.\sCh\.\s[\d]{1,4}/gi
+        regEx: /[\d]{1,3}\sBarb\.\sCh\.\s[\d]{1,4}/gi,
+        useSpecial: false
     },
     {
         name: "Barbour's Supreme Court Reports",
         caseDotLawID: 112,
-        regEx: /[\d]{1,3}\sBarb\.\s[\d]{1,4}/gi
+        regEx: /[\d]{1,3}\sBarb\.\s[\d]{1,4}/gi,
+        useSpecial: false
     },
     {
         name: "Blackford",
