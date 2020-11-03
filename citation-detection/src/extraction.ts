@@ -9,7 +9,6 @@ let standardRegex: RegExp = /[\d]{1,3}\s[a-zA-Z\.\s]+\s[\d]{1,4}}/gi;
 let standardAppellateRegex: RegExp = /[\d]{1,3}\s[a-zA-Z\.\s]+\sApp\.\s[\d]{1,4}}/gi;
 
 export async function extractMatches(text: string, regex?: RegExp): Promise<string[]> {
-    // regex = (regex) ? regex : omniRegex;
     let res = [];
     let match;
 
@@ -50,7 +49,14 @@ async function main() {
     // let res = await extractMatches(testTexts.treatiseTest0, reporter.regEx);
     // console.log(res);
     
-    await seriatim();
+    // await seriatim();
+
+    let res = await extractMatches(testTexts.treatiseTest0, standardRegex);
+    let res2 = await extractMatches(testTexts.treatiseTest0, standardAppellateRegex);
+
+    res = res.concat(res2);
+
+    console.log(res);
 }
 
 main();

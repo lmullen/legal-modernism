@@ -324,7 +324,8 @@ let reporterList = [
     {
         name: "Denio's Reports",
         caseDotLawID: 114,
-        regEx: /[\d]{1,3}\sDenio(,)?(\.)?\s[\d]{1,4}/gi
+        regEx: /[\d]{1,3}\sDenio(,)?(\.)?\s[\d]{1,4}/gi,
+        useSpecial: true
     },
     {
         name: "Dudley's Georgia Reports",
@@ -334,7 +335,8 @@ let reporterList = [
     {
         name: "Duer's Superior Court Reports",
         caseDotLawID: 176,
-        regEx: /[\d]{1,3}\sDuer(,)?(\.)?\s[\d]{1,4}/gi
+        regEx: /[\d]{1,3}\sDuer(,)?(\.)?\s[\d]{1,4}/gi,
+        useSpecial: true
     },
     {
         name: "Edmond's Select Cases",
@@ -344,7 +346,9 @@ let reporterList = [
     {
         name: "E.D. Smith's Common Pleas Reports",
         caseDotLawID: 167,
-        regEx: /[\d]{1,3}\sE\.(\s)?D\.\sSmith(,)?(\.)?\s[\d]{1,4}/gi
+        regEx: /[\d]{1,3}\sE\.(\s)?D\.\sSmith(,)?(\.)?\s[\d]{1,4}/gi,
+        useSpecial: true
+
     },
     {
         name: "Edward's Chancery Reports",
@@ -419,12 +423,14 @@ let reporterList = [
     {
         name: "Hill's Reports",
         caseDotLawID: 116,
-        regEx: /[\d]{1,3}\sHill(,)?\s[\d]{1,4}/gi
+        regEx: /[\d]{1,3}\sHill(,)?\s[\d]{1,4}/gi,
+        useSpecial: true
     },
     {
         name: "Hilton's Common Pleas Reports",
         caseDotLawID: 168,
-        regEx: /[\d]{1,3}\sHilt(,)?(\.)?\s[\d]{1,4}/gi
+        regEx: /[\d]{1,3}\sHilt(,)?(\.)?\s[\d]{1,4}/gi,
+        useSpecial: true
     },
     {
         name: "Hoffman's Chancery Reports",
@@ -445,7 +451,8 @@ let reporterList = [
         name: "Howard's Practice Reports",
         caseDotLawID: 35,
         alternateIDs: [991],
-        regEx: /[\d]{1,3}\sHow\.\sPr\.\s(R\.\s)?(n\.s\.)?[\d]{1,4}/gi
+        regEx: /[\d]{1,3}\sHow\.\sPr\.\s(R\.\s)?(n\.s\.)?[\d]{1,4}/gi,
+        useSpecial: true
     },
     {
         name: "Idaho Reports",
@@ -475,7 +482,8 @@ let reporterList = [
     {
         name: "Illinois Reports",
         caseDotLawID: 528,
-        regEx: /[\d]{1,3}\sIll(,)?(\.)?\s[\d]{1,4}/gi
+        regEx: /[\d]{1,3}\sIll(,)?(\.)?\s[\d]{1,4}/gi,
+        useSpecial: true
     },
     {
         name: "Indiana Court of Appeals Reports",
@@ -490,7 +498,8 @@ let reporterList = [
     {
         name: "Indiana Reports",
         caseDotLawID: 272,
-        regEx: /[\d]{1,3}\sInd(,)?(\.)?\s[\d]{1,4}/gi
+        regEx: /[\d]{1,3}\sInd(,)?(\.)?\s[\d]{1,4}/gi,
+        useSpecial: true
     },
     {
         name: "Indian Territory Reports",
@@ -500,7 +509,8 @@ let reporterList = [
     {
         name: "Iowa Reports",
         caseDotLawID: 474,
-        regEx: /[\d]{1,3}\sIowa(,)?(\.)?\s[\d]{1,4}/gi
+        regEx: /[\d]{1,3}\sIowa(,)?(\.)?\s[\d]{1,4}/gi,
+        useSpecial: true
     },
     {
         name: "Johnson's Cases",
@@ -540,7 +550,8 @@ let reporterList = [
     {
         name: "Keyes' Reports",
         caseDotLawID: 139,
-        regEx: /[\d]{1,3}\sKeyes(,)?(\.)?\s[\d]{1,4}/gi
+        regEx: /[\d]{1,3}\sKeyes(,)?(\.)?\s[\d]{1,4}/gi,
+        useSpecial: true
     },
     {
         name: "Lansing's Chancery Reports",
@@ -656,7 +667,8 @@ let reporterList = [
     {
         name: "Minnesota Reports",
         caseDotLawID: 394,
-        regEx: /[\d]{1,3}\s(,)?minn\.(,)?(\s)?[\d]{1,4}/gi
+        regEx: /[\d]{1,3}\s(,)?minn\.(,)?(\s)?[\d]{1,4}/gi,
+        useSpecial: true
     },
     {
         name: "Minor",
@@ -676,7 +688,8 @@ let reporterList = [
     {
         name: "Mississippi Reports",
         caseDotLawID: 283,
-        regEx: /[\d]{1,3}\s(,)?miss\.(,)?(\s)?[\d]{1,4}/gi
+        regEx: /[\d]{1,3}\s(,)?miss\.(,)?(\s)?[\d]{1,4}/gi,
+        useSpecial: true
     },
     {
         name: "Mississippi State Cases; being criminal cases decided in the High court of errors and appeals",
@@ -691,27 +704,32 @@ let reporterList = [
     {
         name: "Missouri Reports",
         caseDotLawID: 673,
-        regEx: /[\d]{1,3}\s(,)?mo\.(,)?(\s)?[\d]{1,4}/gi
+        regEx: /[\d]{1,3}\s(,)?mo\.(,)?(\s)?[\d]{1,4}/gi,
+        useSpecial: true
     },
     {
         name: "Montana Reports",
         caseDotLawID: 289,
-        regEx: /[\d]{1,3}\s(,)?mont\.(,)?(\s)?[\d]{1,4}/gi
+        regEx: /[\d]{1,3}\s(,)?mont\.(,)?(\s)?[\d]{1,4}/gi,
+        useSpecial: true
     },
     {
         name: "Nebraska Reports",
         caseDotLawID: 539,
-        regEx: /[\d]{1,3}\s(,)?neb\.(,)?(\s)?[\d]{1,4}/gi
+        regEx: /[\d]{1,3}\s(,)?neb\.(,)?(\s)?[\d]{1,4}/gi,
+        useSpecial: true
     },
     {
         name: "Nevada Reports",
         caseDotLawID: 518,
-        regEx: /[\d]{1,3}\s(,)?nev\.(,)?(\s)?[\d]{1,4}/gi
+        regEx: /[\d]{1,3}\s(,)?nev\.(,)?(\s)?[\d]{1,4}/gi,
+        useSpecial: true
     },
     {
         name: "New Hampshire Reports",
         caseDotLawID: 489,
-        regEx: /[\d]{1,3}\s(,)?n\.(\s)?h\.(,)?(\s)?[\d]{1,4}/gi
+        regEx: /[\d]{1,3}\s(,)?n\.(\s)?h\.(,)?(\s)?[\d]{1,4}/gi,
+        useSpecial: true
     },
     {
         name: "New Jersey Equity Reports",
@@ -726,7 +744,8 @@ let reporterList = [
     {
         name: "New Jersey Reports",
         caseDotLawID: 558,
-        regEx: /[\d]{1,3}\s(,)?n\.(\s)?j\.(,)?(\s)?[\d]{1,4}/gi
+        regEx: /[\d]{1,3}\s(,)?n\.(\s)?j\.(,)?(\s)?[\d]{1,4}/gi,
+        useSpecial: true
     },
     {
         name: "New Mexico",
