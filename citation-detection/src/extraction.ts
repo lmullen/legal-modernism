@@ -6,7 +6,6 @@ import reporterList from './reporters/reporters';
 import { getReporterByID } from "./reporters";
 
 let catchallRegex: RegExp = /[\d]{1,3}\s[a-zA-Z\.]+([0=9]+)?(\s[a-zA-z]+\.\s)?,?\s[\d]{1,4}/gi; //@TODO: still doesn't catch multi-word reporters 
-// let actualMagic: RegExp = /[a-zA-Z0-9\.,\s]+\sv\.\s[a-zA-Z0-9\.,\s]+/g; //Capable of getting party names, but over-inclusive. Gets basically everything to the left of the "v."
 
 let omniPattern: string = "(" + catchallRegex.source + ")";
 
