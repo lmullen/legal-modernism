@@ -8,6 +8,16 @@ import { getReporterByID } from "./reporters";
 let standardRegex: RegExp = /[\d]{1,3}\s[a-zA-Z\.\s]+\s[\d]{1,4}/gi;
 let standardAppellateRegex: RegExp = /[\d]{1,3}\s[a-zA-Z\.\s]+\sApp\.\s[\d]{1,4}}/gi;
 
+async function gatherRegexes(): Promise<RegExp[]> {
+    let r = [standardRegex, standardAppellateRegex];
+
+    let reportersWithSpecial = _.filter(reporterList, (r) => { return r.useSpecial });
+    let specialRegexes = reportersWithSpecial.map((r) => { return r.regEx; });
+
+    r = r.concat(specialRegexes);
+    return r;
+}
+
 export async function extractMatches(text: string, regex?: RegExp): Promise<string[]> {
     let res = [];
     let match;
@@ -22,6 +32,15 @@ export async function extractMatches(text: string, regex?: RegExp): Promise<stri
     console.log(res);
 
     return res;
+}
+
+export async function processText(text: string) {
+    // let res = await extractMatches(text, standardRegex);
+    // let res2 = await extractMatches(text, standardAppellateRegex);
+
+    let regexes = await gatherRegexes();
+
+    console.log(regexes);
 }
 
 // async function seriatim() {
@@ -50,12 +69,14 @@ async function main() {
 
     // let res = await extractMatches(testTexts.treatiseTest0, reporter.regEx);
     // console.log(res);
-    
+
     // await seriatim();
 
-    let res = await extractMatches(testTexts.treatiseTest0, standardRegex); 
+    // let res = await extractMatches(testTexts.treatiseTest0, standardRegex);
     // console.log(res);
     // let res2 = await extractMatches(testTexts.treatiseTest0, standardAppellateRegex);
+
+    await processText("sdfsfd");
 
 }
 

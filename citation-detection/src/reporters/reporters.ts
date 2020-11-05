@@ -159,7 +159,8 @@ let reporterList = [
     {
         name: "California Unreported Cases",
         caseDotLawID: 565,
-        regEx: /[\d]{1,3}\sCal\.\sUnrep\.\s(R\.\s)?[\d]{1,4}/gi
+        regEx: /[\d]{1,3}\sCal\.\sUnrep\.\s(R\.\s)?[\d]{1,4}/gi,
+        useSpecial: true
     },
     {
         name: "Cases decided in the Courts of common pleas, in the Fifth circuit of the state of Ohio [1816-1819] (Tappan)",
@@ -588,7 +589,6 @@ let reporterList = [
         caseDotLawID: 113,
         regEx: null
     },
-    //normalize above here (but doesn't really matter, since we search case-insensitive in the other code)
     {
         name: "Louisiana Annual Reports",
         caseDotLawID: 998,
@@ -770,7 +770,8 @@ let reporterList = [
     {
         name: "New York Reports",
         caseDotLawID: 20,
-        regEx: /[\d]{1,3}\s(,)?n\.(\s)?y\.(,)?(\s)?[\d]{1,4}/gi
+        regEx: /[\d]{1,3}\s(,)?n\.(\s)?y\.(,)?(\s)?[\d]{1,4}/gi,
+        useSpecial: true
     },
     {
         name: "New York State Reporter",
@@ -780,17 +781,9 @@ let reporterList = [
     {
         name: "New York Supreme Court",
         caseDotLawID: null,
-        regEx: /[\d]{1,3}\s(,)?n\.(\s)?y\.(\s)sup\.\sct\.\s[\d]{1,4}/gi
+        regEx: /[\d]{1,3}\s(,)?n\.(\s)?y\.(\s)sup\.\sct\.\s[\d]{1,4}/gi,
+        useSpecial: true
     }
-
-
-
-
-
-
-
-
-
 
 
 ];
