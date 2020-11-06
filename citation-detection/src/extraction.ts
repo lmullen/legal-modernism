@@ -21,7 +21,7 @@ async function gatherRegexes(): Promise<RegExp[]> {
 export async function extractMatches(text: string, regex?: RegExp): Promise<string[]> {
     let res = [];
     let match;
-    console.log(regex);
+    // console.log(regex);
     // It's stupid, but this is how one must find all matches in a text to a regex in JS.
     while ((match = regex.exec(text)) !== null) {
         res.push(match[0]);
@@ -29,7 +29,7 @@ export async function extractMatches(text: string, regex?: RegExp): Promise<stri
 
     // res = Array.from(text.matchAll(regex));
 
-    console.log(res);
+    // console.log(res);
 
     return res;
 }
@@ -40,7 +40,16 @@ export async function processText(text: string) {
 
     let regexes = await gatherRegexes();
 
-    console.log(regexes);
+    // console.log(regexes);
+
+    let res = [];
+
+    for(let reg of regexes) {
+        let _res = await extractMatches(text, reg);
+        res = res.concat(_res);
+    }
+
+    return res;
 }
 
 // async function seriatim() {
@@ -76,8 +85,8 @@ async function main() {
     // console.log(res);
     // let res2 = await extractMatches(testTexts.treatiseTest0, standardAppellateRegex);
 
-    await processText("sdfsfd");
-
+   let res =  await processText(testTexts.treatiseTest0);
+   console.log(res);
 }
 
 main();
