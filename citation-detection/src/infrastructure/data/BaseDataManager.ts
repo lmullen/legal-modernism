@@ -1,8 +1,6 @@
-import config from "../config";
+import config from "../../config";
 import * as Knex from "knex";
 import * as _ from "lodash";
-
-import BaseDataModel from "./BaseDataModel";
 
 interface IKnexConfig extends Knex.Config {
     ssl: boolean
@@ -22,7 +20,7 @@ c.connection = "postgres://ss108:$ChangeMeAfterLogin$@baird.gmu.edu:5432/law";
 const knex = Knex(c);
 
 abstract class Repository {
-    private readonly _model;
+    private readonly _model; 
 
     constructor(m) {
         this._model = m;
@@ -106,3 +104,5 @@ abstract class Repository {
             });
     }
 }
+
+export default Repository;

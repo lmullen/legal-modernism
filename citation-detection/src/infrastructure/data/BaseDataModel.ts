@@ -1,10 +1,8 @@
-// <reference path="../../../typeDecs/objection.d.ts" />
-
 import {Model} from "objection";
 import * as _ from "lodash";
 
 /*http://vincit.github.io/objection.js/#map-column-names-to-different-property-names*/
-export default class BaseBloomtriModel extends Model {
+export default class BaseDataModel extends Model {
     readonly id: number;
     $formatDatabaseJson(json) {
         // Call superclass implementation.

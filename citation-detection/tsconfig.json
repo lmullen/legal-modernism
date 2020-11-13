@@ -22,7 +22,7 @@
         "src/*/*",
         "src/jobs/*.ts",
         "src/tests/*/*.ts",
-        "src/tests/*"
+        "src/tests/*" 
     ],
     "exclude": [
         "node_modules"
