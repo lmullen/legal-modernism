@@ -73,18 +73,6 @@ export async function processText(text: string) {
 // }
 
 async function main() {
-    // let reporter = await getReporterByID(414);
-    // console.log(reporter.name);
-
-    // let res = await extractMatches(testTexts.treatiseTest0, reporter.regEx);
-    // console.log(res);
-
-    // await seriatim();
-
-    // let res = await extractMatches(testTexts.treatiseTest0, standardRegex);
-    // console.log(res);
-    // let res2 = await extractMatches(testTexts.treatiseTest0, standardAppellateRegex);
-
    let res =  await processText(testTexts.treatiseTest0);
    console.log(res);
 }
