@@ -1,8 +1,8 @@
 import config from "../config";
 import * as Knex from "knex";
+import * as _ from "lodash";
 
 import BaseDataModel from "./BaseDataModel";
-
 
 interface IKnexConfig extends Knex.Config {
     ssl: boolean
@@ -17,8 +17,7 @@ class KnexConfig implements Knex.Config {
 let c = new KnexConfig();
 c.ssl = true;
 c.client = "pg";
-// c.connection = config.database;
-c.connection = 
+c.connection = "postgres://ss108:$ChangeMeAfterLogin$@baird.gmu.edu:5432/law";
 
 const knex = Knex(c);
 

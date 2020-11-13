@@ -4,6 +4,7 @@ import * as _ from "lodash";
 import * as testTexts from "./testText";
 import reporterList from './reporters/reporters';
 import { getReporterByID } from "./reporters";
+import { rawQuery } from "./infrastructure/dataTest";
 
 let standardRegex: RegExp = /[\d]{1,3}\s[a-zA-Z\.\s]+\s[\d]{1,4}/gi;
 let standardAppellateRegex: RegExp = /[\d]{1,3}\s[a-zA-Z\.\s]+\sApp\.\s[\d]{1,4}}/gi;
@@ -44,7 +45,7 @@ export async function processText(text: string) {
 
     let res = [];
 
-    for(let reg of regexes) {
+    for (let reg of regexes) {
         let _res = await extractMatches(text, reg);
         res = res.concat(_res);
     }
@@ -73,8 +74,11 @@ export async function processText(text: string) {
 // }
 
 async function main() {
-   let res =  await processText(testTexts.treatiseTest0);
-   console.log(res);
+    //    let res =  await processText(testTexts.treatiseTest0);
+    //    console.log(res);
+
+    let res = await rawQuery("select * from moml.book_info limit 1");
+    console.log(res);
 }
 
 main();
