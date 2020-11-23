@@ -2,25 +2,10 @@ import config from "../../config";
 import * as Knex from "knex";
 import * as _ from "lodash";
 
-interface IKnexConfig extends Knex.Config {
-    ssl: boolean
-}
-
-class KnexConfig implements Knex.Config {
-    ssl: boolean
-    client: string;
-    connection: string
-}
-
-let c = new KnexConfig();
-c.ssl = true;
-c.client = "pg";
-c.connection = "postgres://ss108:$ChangeMeAfterLogin$@baird.gmu.edu:5432/law";
-
-const knex = Knex(c);
+import { mainConn } from "./connProvider";
 
 abstract class Repository {
-    private readonly _model; 
+    private readonly _model;
 
     constructor(m) {
         this._model = m;
@@ -91,7 +76,8 @@ abstract class Repository {
         return this.q.deleteById(id);
     }
 
-    rawQuery(query: string, params = []) {
+    rawQuery(query: string, params = [], conn: Knex.Config = mainConn) {
+        let knex = Knex(conn);
         return knex.raw(query, params)
             .then((res) => {
                 return res.rows.map((r) => {
