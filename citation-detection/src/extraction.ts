@@ -77,10 +77,21 @@ export async function processText(text: string) {
 
 export async function processTreatise(treatiseId: string) {
 
-    console.log(`psmid: ${treatiseId}`);
+    // console.log(`psmid: ${treatiseId}`);
     let pages = await OcrRepo.getOCRTextByTreatiseID(treatiseId);
-    // return pages;
-    console.log(pages.length);
+    // console.log(pages.length);
+
+    let matchObject = {
+        treatiseId: treatiseId,
+        cases: []
+    };
+
+    for (let p of pages) {
+        let matchRes = await processText(p);
+        matchObject.cases = matchObject.cases.concat(matchRes);
+    }
+
+    console.log(matchObject);
 }
 
 async function main() {
