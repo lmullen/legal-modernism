@@ -76,15 +76,23 @@ export async function processText(text: string) {
 // }
 
 export async function processTreatise(treatiseId: string) {
+
+    console.log(`psmid: ${treatiseId}`);
     let pages = await OcrRepo.getOCRTextByTreatiseID(treatiseId);
-    return pages;
+    // return pages;
+    console.log(pages.length);
 }
 
 async function main() {
     // let res = await processText();
 
     let testTreatises = await TreatiseRepo.getSampleTreatises();
-    console.log(testTreatises);
+    // console.log(testTreatises);
+
+    for(let t of testTreatises) {
+        // console.log(t.psmid);
+        await processTreatise(t.psmid);
+    }
 
 }
 

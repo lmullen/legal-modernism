@@ -7,7 +7,7 @@ class OcrRepo extends Repository {
     }
 
     async getOCRTextByTreatiseID(treatiseID: string) {
-        const sql = `select * from page_ocrtext where psmid = ?`;
+        const sql = `select * from moml.page_ocrtext where psmid = ? ORDER BY pageid asc`;
         return this.rawQuery(sql, [treatiseID]);
     }
 
