@@ -1,14 +1,24 @@
+import * as _ from "lodash";
+
 import Repository from "../../infrastructure/data/BaseDataManager";
-import { pageOCRText } from './models';
+import { BookInfo } from './models';
 
 class TreatiseRepo extends Repository {
     constructor() {
-        super(pageOCRText);
+        super(BookInfo);
     }
 
-    async getByTreatiseID(treatiseID: string) {
-        const sql = `select * from page_ocrtext where psmid = ?`;
-        return this.rawQuery(sql, [treatiseID]);
+    async getSampleTreatises() {
+        const sql = `select * from moml.book_info limit 5`;
+        let res = await this.rawQuery(sql);
+        return res;
+        // console.log(res);
+        // let picked = _.map(res, (bi) => {
+        //     _.pick(bi, ['psmid', 'contentType', 'id', 'pubdateComposed']);
+        // });
+
+        // console.log(picked);
+        
     }
 }
 

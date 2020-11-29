@@ -3,7 +3,7 @@ import * as _ from "lodash";
 
 /*http://vincit.github.io/objection.js/#map-column-names-to-different-property-names*/
 export default class BaseDataModel extends Model {
-    readonly id: number;
+    readonly id: number | string;
     $formatDatabaseJson(json) {
         // Call superclass implementation.
         json = super.$formatDatabaseJson.call(this, json);

@@ -6,6 +6,7 @@ import reporterList from './reporters/reporters';
 import { getReporterByID } from "./reporters";
 import { rawQuery } from "./infrastructure/data/dataTest";
 import TreatiseRepo from "./treatises/data/treatiseRepo";
+import OcrRepo from "./treatises/data/ocrRepo";
 
 let standardRegex: RegExp = /[\d]{1,3}\s[a-zA-Z\.\s]+\s[\d]{1,4}/gi;
 let standardAppellateRegex: RegExp = /[\d]{1,3}\s[a-zA-Z\.\s]+\sApp\.\s[\d]{1,4}}/gi;
@@ -75,12 +76,15 @@ export async function processText(text: string) {
 // }
 
 export async function processTreatise(treatiseId: string) {
-    let pages = await TreatiseRepo.getByTreatiseID(treatiseId);
+    let pages = await OcrRepo.getOCRTextByTreatiseID(treatiseId);
     return pages;
 }
 
 async function main() {
-    let res = await processText();
+    // let res = await processText();
+
+    let testTreatises = await TreatiseRepo.getSampleTreatises();
+    console.log(testTreatises);
 
 }
 
