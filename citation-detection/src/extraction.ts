@@ -55,26 +55,6 @@ export async function processText(text: string) {
     return res;
 }
 
-// async function seriatim() {
-//     let reportersWithRegexes = _.filter(reporterList, (r) => { return r.regEx != null });
-
-//     // reportersWithRegexes.forEach((r) => {
-//     //     let res = await extractMatches(testTexts.treatiseTest0, r.regEx);
-//     // });
-
-//     let allMatches: string[] = [];
-
-//     for (let r of reportersWithRegexes) {
-//         // console.log(r.regEx);
-//         let reporterRes = await extractMatches(testTexts.treatiseTest0, r.regEx);
-//         allMatches = allMatches.concat(reporterRes);
-//         // console.log(allMatches);
-//     }
-
-//     console.log(allMatches);
-
-// }
-
 export async function processTreatise(treatiseId: string) {
 
     // console.log(`psmid: ${treatiseId}`);
@@ -87,7 +67,7 @@ export async function processTreatise(treatiseId: string) {
     };
 
     for (let p of pages) {
-        let matchRes = await processText(p);
+        let matchRes = await processText(p.ocrtext);
         matchObject.cases = matchObject.cases.concat(matchRes);
     }
 
