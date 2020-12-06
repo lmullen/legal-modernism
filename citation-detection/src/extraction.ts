@@ -78,12 +78,12 @@ async function main() {
     // let res = await processText();
 
     let testTreatises = await TreatiseRepo.getSampleTreatises();
-    // console.log(testTreatises);
+    console.log(testTreatises);
 
-    for(let t of testTreatises) {
-        // console.log(t.psmid);
-        await processTreatise(t.psmid);
-    }
+    // for(let t of testTreatises) {
+    //     // console.log(t.psmid);
+    //     await processTreatise(t.psmid);
+    // }
 
 }
 
