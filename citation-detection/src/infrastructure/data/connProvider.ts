@@ -13,7 +13,8 @@ class KnexConfig implements Knex.Config {
 let mainConn = new KnexConfig();
 mainConn.ssl = true;
 mainConn.client = "pg";
-mainConn.connection = "postgres://ss108:$ChangeMeAfterLogin$@baird.gmu.edu:5432/law";
+// mainConn.connection = "postgres://ss108:$ChangeMeAfterLogin$@baird.gmu.edu:5432/law";
+
 
 let testConn = new KnexConfig();
 testConn.ssl = true;
