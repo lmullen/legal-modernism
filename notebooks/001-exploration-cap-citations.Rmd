@@ -252,6 +252,36 @@ ggraph(jurisdictions_g2, "igraph", algorithm = "nicely") +
         panel.border = element_blank())
 ```
 
+The network is obviously highly centralized around state courts citing the federal courts. That's interesting, but let's see what the network looks like without the federal courts.
+
+```{r}
+jurisdictions_g3 <- network_edges_v2 %>% 
+  filter(jurisdiction_from != "U.S.",
+         jurisdiction_to != "U.S.") %>% 
+  filter(n >= 20,
+         percentage_of_external >= 0.1) %>% 
+  graph_from_data_frame() %>% 
+  as_tbl_graph() %>% 
+  activate(nodes) %>% 
+  mutate(degree = round(centrality_degree(mode = "in") / 5, 0))
+set.seed(378)
+ggraph(jurisdictions_g3, "igraph", algorithm = "nicely") +
+  geom_edge_fan(alpha = 0.40,
+                arrow = arrow(type = "closed", ends = "last",
+                              length = unit(0.25, "inches"),
+                               angle = 15)) +
+  geom_node_point(size = 8, aes(color = as.factor(degree))) +
+  geom_node_text(size = 3, aes(label = name)) +
+  ggforce::theme_no_axes() +
+  labs(title = str_glue("Citations between jurisdictions, {MIN_YEAR}-{MAX_YEAR}"),
+       subtitle = "Graph from percentage of external citations",
+       color = "Importance") +
+  theme(legend.position = "bottom",
+        panel.border = element_blank())
+```
+
+Noteworthy that NY is at the center, as we would likely expect. However, slightly troubling that NY has so many more cases in the dataset. We need to figure out a way to assess whether the construction of the dataset is affecting the results more than the actual history.
+
 ## Cleanup
 
 ```{r}
