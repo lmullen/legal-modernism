@@ -74,7 +74,9 @@ async function main() {
     // console.log(testTreatises);
 
     let text = fs.readFileSync("../sample-treatises/Pomeroy, Remedies, 1976.txt", 'utf8');
-    console.log(text);
+    // console.log(text);
+    let res = await processText(text);
+    console.log(res);
 
     // for(let t of testTreatises) {
     //     // console.log(t.psmid);
