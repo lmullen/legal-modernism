@@ -73,7 +73,8 @@ async function main() {
     // let testTreatises = await TreatiseRepo.getSampleTreatises();
     // console.log(testTreatises);
 
-    let text = fs.readFileSync("../sample-treatises/Pomeroy, Remedies, 1976.txt", 'utf8');
+    // let text = fs.readFileSync("../sample-treatises/Pomeroy, Remedies, 1976.txt", 'utf8');
+    let text = fs.readFileSync("../sample-treatises/Santvoord, Treatise, 1852.txt", 'utf8');
     // console.log(text);
     let res = await processText(text);
     console.log(res);
