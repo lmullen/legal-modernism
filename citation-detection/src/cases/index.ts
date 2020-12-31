@@ -1,5 +1,6 @@
 import requester from '../caseDotLaw/requester';
 import {Case} from "./data/models";
+import CaseRepo from "./data/caseRepo";
 
 //gets numerical year from CAP "decision_date" string
 function stripYear(d: string) {
@@ -35,5 +36,7 @@ export async function locateCase(guid: string) {
     c.shortName = res.name_abbreviation;
     c.year = stripYear(res.decision_date);
     c.guid = guid;
+
+    CaseRepo.insertCase(c);
 
 }
