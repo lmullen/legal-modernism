@@ -39,12 +39,7 @@ export async function extractMatches(text: string, regex?: RegExp): Promise<stri
 }
 
 export async function processText(text: string) {
-    // let res = await extractMatches(text, standardRegex);
-    // let res2 = await extractMatches(text, standardAppellateRegex);
-
     let regexes = await gatherRegexes();
-
-    // console.log(regexes);
 
     let res = [];
 
@@ -73,19 +68,13 @@ export async function processTreatise(treatiseId: string) {
     }
 
     console.log(matchObject);
+
+    for(let c of matchObject.cases) {
+        await locateCase(c);
+    }
 }
 
 async function main() {
-    // let res = await processText();
-
-    // let testTreatises = await TreatiseRepo.getSampleTreatises();
-    // console.log(testTreatises);
-
-    // for(let t of testTreatises) {
-    //     // console.log(t.psmid);
-    //     await processTreatise(t.psmid);
-    // }
-
     await locateCase("32 F. Supp. 817");
 
 }
