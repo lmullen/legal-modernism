@@ -1,5 +1,5 @@
 import requester from '../caseDotLaw/requester';
-import {Case} from "./data/models";
+import { Case } from "./data/models";
 import CaseRepo from "./data/caseRepo";
 
 //gets numerical year from CAP "decision_date" string
@@ -10,12 +10,23 @@ function stripYear(d: string) {
     return numYear;
 }
 
+//I think 'case' is some sort of reserved keyword in Typescript, or maybe just VS Code
+export async function getOrInsertCase(guid: string) {
+    let c: any[] = await CaseRepo.fetchCase(guid);
+
+    if (!c) {
+        c = await locateCase(guid);
+    }
+
+    return c;
+}
+
 
 export async function locateCase(guid: string) {
     let requestURL: string = `/cases/?cite=${guid}`;
     let data = await requester.get(requestURL);
-    let numRes = data.data.count; 
-;
+    let numRes = data.data.count;
+    ;
 
     if (numRes == 0) {
         return null;
@@ -37,6 +48,8 @@ export async function locateCase(guid: string) {
     c.year = stripYear(res.decision_date);
     c.guid = guid;
 
-    CaseRepo.insertCase(c);
+    console.log(c);
+
+    // CaseRepo.insertCase(c);
 
 }

@@ -14,6 +14,12 @@ class CaseRepo extends Repository {
         console.log(sql);
     }
 
+    async fetchCase(guid: string) {
+        const sql = `SELECT * FROM case where guid = ?`;
+        // return this.rawQuery(sql, [guid]);
+        return [];
+    }
+
 }
 
 const instance = new CaseRepo();
