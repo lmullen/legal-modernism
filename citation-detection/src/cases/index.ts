@@ -22,7 +22,7 @@ export async function getOrInsertCase(guid: string) {
 }
 
 
-export async function locateCase(guid: string) {
+async function locateCase(guid: string) {
     let requestURL: string = `/cases/?cite=${guid}`;
     let data = await requester.get(requestURL);
     let numRes = data.data.count;

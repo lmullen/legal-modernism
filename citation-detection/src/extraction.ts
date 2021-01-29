@@ -7,7 +7,7 @@ import { getReporterByID } from "./reporters";
 import { rawQuery } from "./infrastructure/data/dataTest";
 import TreatiseRepo from "./treatises/data/treatiseRepo";
 import OcrRepo from "./treatises/data/ocrRepo";
-import { locateCase } from "./cases";
+import { getOrInsertCase } from "./cases";
 
 let standardRegex: RegExp = /[\d]{1,3}\s[a-zA-Z\.\s]+\s[\d]{1,4}/gi;
 let standardAppellateRegex: RegExp = /[\d]{1,3}\s[a-zA-Z\.\s]+\sApp\.\s[\d]{1,4}}/gi;
@@ -70,12 +70,12 @@ export async function processTreatise(treatiseId: string) {
     console.log(matchObject);
 
     for(let c of matchObject.cases) {
-        await locateCase(c);
+        let caseEntry = await getOrInsertCase(c);
     }
 }
 
 async function main() {
-    await locateCase("32 F. Supp. 817");
+    // await locateCase("32 F. Supp. 817");
 
 }
 
