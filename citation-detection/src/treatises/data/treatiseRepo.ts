@@ -20,6 +20,11 @@ class TreatiseRepo extends Repository {
         // console.log(picked);
         
     }
+
+    //needs to use alt db
+    async getCitation(psmid: string, guid: string) {
+
+    }
 }
 
 const instance = new TreatiseRepo();
