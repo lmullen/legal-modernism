@@ -8,6 +8,7 @@ import { rawQuery } from "./infrastructure/data/dataTest";
 import TreatiseRepo from "./treatises/data/treatiseRepo";
 import OcrRepo from "./treatises/data/ocrRepo";
 import { getOrInsertCase } from "./cases";
+import { incrementCitation } from "./treatises";
 
 let standardRegex: RegExp = /[\d]{1,3}\s[a-zA-Z\.\s]+\s[\d]{1,4}/gi;
 let standardAppellateRegex: RegExp = /[\d]{1,3}\s[a-zA-Z\.\s]+\sApp\.\s[\d]{1,4}}/gi;
@@ -69,8 +70,9 @@ export async function processTreatise(treatiseId: string) {
 
     console.log(matchObject);
 
-    for(let c of matchObject.cases) {
+    for (let c of matchObject.cases) {
         let caseEntry = await getOrInsertCase(c);
+        await incrementCitation(c.guid, treatiseId); 
     }
 }
 
