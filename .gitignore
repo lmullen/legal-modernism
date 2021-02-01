@@ -86,3 +86,4 @@ compile/
 .DS_Store
 
 .idea/
+.Rproj.user

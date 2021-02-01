@@ -1,5 +1,6 @@
 import * as xregex from "xregexp";
 import * as _ from "lodash";
+import * as fs from "fs";
 
 import * as testTexts from "./testText";
 import reporterList from './reporters/reporters';
@@ -26,15 +27,11 @@ async function gatherRegexes(): Promise<RegExp[]> {
 export async function extractMatches(text: string, regex?: RegExp): Promise<string[]> {
     let res = [];
     let match;
-    // console.log(regex);
     // It's stupid, but this is how one must find all matches in a text to a regex in JS.
     while ((match = regex.exec(text)) !== null) {
         res.push(match[0]);
     }
 
-    // res = Array.from(text.matchAll(regex));
-
-    // console.log(res);
 
     return res;
 }
@@ -77,7 +74,26 @@ export async function processTreatise(treatiseId: string) {
 }
 
 async function main() {
+
     // await locateCase("32 F. Supp. 817");
+
+    // await processTreatise("19005095000");
+    // let res = await processText();
+
+    // let testTreatises = await TreatiseRepo.getSampleTreatises();
+    // console.log(testTreatises);
+
+    // let text = fs.readFileSync("../sample-treatises/Pomeroy, Remedies, 1976.txt", 'utf8');
+    let text = fs.readFileSync("../sample-treatises/Santvoord, Treatise, 1852.txt", 'utf8');
+    // console.log(text);
+    let res = await processText(text);
+    console.log(res);
+
+    // for(let t of testTreatises) {
+    //     // console.log(t.psmid);
+    //     await processTreatise(t.psmid);
+    // }
+
 
 }
 

@@ -1,0 +1,290 @@
+---
+title: "Exploration of the CAP citation data"
+output: html_notebook
+---
+
+## Setup
+
+The *Caselaw Access Project* makes available a dataset that is a graph of case citations. We have previously imported this data to the database and added a few variables that will be helpful for analysis.
+
+```{r include=FALSE}
+library(tidyverse)
+library(DBI)
+library(dbplyr)
+library(igraph)
+library(ggraph)
+library(tidygraph)
+```
+
+Connect to the database and load the key tables.
+
+```{r}
+law_db <- dbConnect(odbc::odbc(), "Law", timeout = 10)
+citations <- tbl(law_db, in_schema("cap_citations", "citations"))
+metadata <- tbl(law_db, in_schema("cap_citations", "metadata"))
+pagerank <- tbl(law_db, in_schema("cap_citations", "pagerank"))
+```
+
+## Background exploration
+
+The `metadata` table is a summary (denormalized) from the main CAP database of cases, but it will make analysis faster just to use it. The data for cases should have the same characteristics as the broader CAP database, but we don't know what that is yet. So let's do some preliminary analysis to get a sense of what is in the cases and citation data.
+
+How many cases are there per year?
+
+```{r}
+cases_per_year <- metadata %>% 
+  count(decision_year) %>% 
+  arrange(decision_year) %>% 
+  collect() %>% 
+  mutate(n = as.integer(n))
+
+MIN_YEAR <- 1863
+MAX_YEAR <- 1913
+
+ggplot(cases_per_year, aes(x = decision_year, y = n)) + 
+  geom_vline(xintercept = c(MIN_YEAR, MAX_YEAR), color = "red") +
+  geom_line() + 
+  labs(title = "Cases per year in CAP citation data")
+```
+
+Obviously there is a steep dropoff after 2006/2007, and the corpus is incomplete after that point. More troubling is figuring out what start date to pick. Obviously before 1800 the data is very incomplete, but the question is when does it start becoming tolerably complete. The lines in the chart above (`r MIN_YEAR` and `r MAX_YEAR`) are at least a tolerable first guess at where to find the usable lumber in this tree for the ninteenth century.
+
+Another question is how complete the cases are by jurisdiction. If there are major gaps, we will need to know that. Let's look at the cases per state from 1800 to 2000.
+
+```{r}
+cases_by_jurisdiction_19c <- metadata %>% 
+  filter(1800 <= decision_year, 
+         decision_year < 1900) %>% 
+  count(jurisdiction__name, sort = TRUE) %>% 
+  collect() %>% 
+  mutate(n = as.integer(n))
+ggplot(cases_by_jurisdiction_19c, 
+       aes(x = reorder(jurisdiction__name, -n), y = n)) +
+  geom_col() +
+  theme(axis.text.x = element_text(angle = 270, hjust = 0)) +
+  scale_y_continuous(label = scales::label_number_si()) +
+  labs(title = "Count of cases in CAP citations for 19th century by jurisdiction",
+       x = "Jurisdiction",
+       y = "Number of cases")
+```
+
+```{r}
+cases_by_jurisdiction_20c <- metadata %>% 
+  filter(1900 <= decision_year, 
+         decision_year < 2000) %>% 
+  count(jurisdiction__name, sort = TRUE) %>% 
+  collect() %>% 
+  mutate(n = as.integer(n))
+ggplot(cases_by_jurisdiction_20c, 
+       aes(x = reorder(jurisdiction__name, -n), y = n)) +
+  geom_col() +
+  theme(axis.text.x = element_text(angle = 270, hjust = 0)) +
+  scale_y_continuous(label = scales::label_number_si()) +
+  labs(title = "Count of cases in CAP citations for 20th century by jurisdiction",
+       x = "Jurisdiction",
+       y = "Number of cases")
+```
+
+Not surprising to see a long tail here. But we need to look closely at the CAP documentation to see which states are included and for what time periods so we are aware of any gaps.
+
+## Exploring the case citation data
+
+We need to pull the year and jurisdiction information from metadata table. 
+
+```{r}
+citations_meta <- citations %>% 
+  left_join(metadata %>%
+              select(id, 
+                     jurisdiction_from = jurisdiction__name,
+                     year_from = decision_year),
+            by = c("cites_from" = "id")) %>%
+  left_join(metadata %>%
+              select(id, 
+                     jurisdiction_to = jurisdiction__name,
+                     year_to = decision_year),
+            by = c("cites_to" = "id")) %>% 
+  select(ends_with("_from"), ends_with("_to"), everything())
+```
+
+We should at least get a sense of how the citations work. What is the gap in time between citations?
+
+```{r}
+citations_meta %>% 
+  mutate(time_gap = year_from - year_to) %>% 
+  filter(time_gap <= 150) %>% 
+  count(time_gap) %>% 
+  arrange(time_gap) %>% 
+  collect() %>% 
+  mutate(n = as.integer(n)) %>% 
+  ggplot(aes(x = time_gap, y = n)) +
+  geom_col() +
+  labs(title = "Gap in years between case and the case cited") +
+  scale_y_continuous(label = scales::label_number_si())
+```
+
+The distribution is surprisingly smooth. Cases tend to cite cases from the previous two or three years.
+
+What percentage of cases cite the same jurisdiction, vs a different jurisdiction?
+
+```{r}
+citations_meta %>% 
+  mutate(same_jurisdiction = jurisdiction_from == jurisdiction_to) %>% 
+  count(same_jurisdiction) %>% 
+  mutate(percentage = n / sum(n, na.rm = TRUE))
+```
+
+So about 20% of citations are to cases outside of the current jurisdiction.
+
+How does that compare across jurisdictions?
+
+```{r}
+citations_meta %>% 
+  mutate(same_jurisdiction = jurisdiction_from == jurisdiction_to) %>% 
+  group_by(jurisdiction_from, same_jurisdiction) %>% 
+  summarize(n = n()) %>% 
+  mutate(percentage = n / sum(n, na.rm = TRUE)) %>% 
+  filter(!same_jurisdiction) %>% 
+  arrange(desc(percentage))
+```
+Some of those jurisdictions have a very high rate of citation to external sources.
+
+It might be interesting to break this down between state/federal external cites. So, to the same state, to another state, to the federal courts.
+
+## Basic network between jurisdictions
+
+Let's create a network of citations between jurisdictions. Perhaps eventually we will do something more sophisticated, like count the percentage of citations, or use the page rank data. For now, let's just do the simplest possible thing: count citations between jurisdictions equally. To keep this manageable, for now we will only include cases _making_ citations in the period from the late 19c and early 20c we identified earlier.
+
+```{r}
+network_edges_v1 <- citations_meta %>% 
+  filter(MIN_YEAR <= year_from, year_from <= MAX_YEAR) %>% 
+  filter(jurisdiction_from != jurisdiction_to) %>% 
+  count(jurisdiction_from, jurisdiction_to) %>% 
+  ungroup() %>% 
+  arrange(desc(n)) %>% 
+  collect() %>% 
+  mutate(n = as.integer(n))
+```
+
+The network visualization will be unusable if we include every single edge. So let's just keep the ones where there are a lot of cases cited.
+
+```{r}
+ggplot(network_edges_v1, aes(x = n)) +
+  geom_histogram(binwidth = 100) +
+  scale_x_continuous(limits = c(0, 10000), breaks = seq(0, 10000, 500))
+```
+
+It looks like if we make the cutoff 2,500, that eliminate a lot of less meaningful edges.
+
+```{r}
+jurisdictions_g <- network_edges_v1 %>% 
+  filter(n >= 2500) %>% 
+  graph_from_data_frame() %>% 
+  as_tbl_graph() %>% 
+  activate(nodes) %>% 
+  mutate(degree = round(centrality_degree(mode = "in") / 10, 0))
+set.seed(378)
+ggraph(jurisdictions_g, "igraph", algorithm = "nicely") +
+  geom_edge_fan(alpha = 0.40,
+                arrow = arrow(type = "closed", ends = "last",
+                              length = unit(0.25, "inches"),
+                               angle = 15)) +
+  geom_node_point(size = 8, aes(color = as.factor(degree))) +
+  geom_node_text(size = 3, aes(label = name)) +
+  ggforce::theme_no_axes() +
+  labs(title = str_glue("Citations between jurisdictions, {MIN_YEAR}-{MAX_YEAR}"),
+       subtitle = "Graph from counts of citations",
+       color = "Importance") +
+  theme(legend.position = "bottom",
+        panel.border = element_blank())
+```
+
+Obviously much more could be done to make that more interpretable. (Importance here just means that more jurisdictions cite you more frequently.)
+
+But more important would be to try a different way of determining what is an edge. Instead of just the count of how many citations there are between jurisdictions, let's count the percentage of citations that a jurisdiction makes. In other words, if WV makes 100 external citations, and 90 of them are to VA, then that is 90%.
+
+So, count up how many internal/external citations a jurisdiction makes.
+
+```{r}
+citation_counts <- citations_meta %>% 
+  filter(MIN_YEAR <= year_from, year_from <= MAX_YEAR) %>% 
+  mutate(type = if_else(jurisdiction_from == jurisdiction_to, "internal", "external")) %>% 
+  count(jurisdiction_from, type) %>% 
+  collect() %>% 
+  mutate(n = as.integer(n)) %>% 
+  pivot_wider(names_from = type, values_from = n, values_fill = 0L)
+```
+
+Then we can compute the percentages.
+
+```{r}
+network_edges_v2 <- network_edges_v1 %>% 
+  left_join(citation_counts, by = "jurisdiction_from") %>% 
+  mutate(percentage_of_external = n / external) %>% 
+  arrange(desc(percentage_of_external))
+network_edges_v2
+```
+
+In visualizing a manageable number of edges, it probably makes sense to restrict both the percentage (e.g., batting average) and the actual number of cites (e.g., plate appearances). So American Samoa has 83% of its external cites to the federal courts, but it only has 5 cases.
+
+For an edge to be visualized here, one state has to cite another at least 20 times and the number of citations has to be at least 10% of all external citations. 
+
+```{r}
+jurisdictions_g2 <- network_edges_v2 %>% 
+  filter(n >= 20,
+         percentage_of_external >= 0.1) %>% 
+  graph_from_data_frame() %>% 
+  as_tbl_graph() %>% 
+  activate(nodes) %>% 
+  mutate(degree = round(centrality_degree(mode = "in") / 10, 0))
+set.seed(378)
+ggraph(jurisdictions_g2, "igraph", algorithm = "nicely") +
+  geom_edge_fan(alpha = 0.40,
+                arrow = arrow(type = "closed", ends = "last",
+                              length = unit(0.25, "inches"),
+                               angle = 15)) +
+  geom_node_point(size = 8, aes(color = as.factor(degree))) +
+  geom_node_text(size = 3, aes(label = name)) +
+  ggforce::theme_no_axes() +
+  labs(title = str_glue("Citations between jurisdictions, {MIN_YEAR}-{MAX_YEAR}"),
+       subtitle = "Graph from percentage of external citations",
+       color = "Importance") +
+  theme(legend.position = "bottom",
+        panel.border = element_blank())
+```
+
+The network is obviously highly centralized around state courts citing the federal courts. That's interesting, but let's see what the network looks like without the federal courts.
+
+```{r}
+jurisdictions_g3 <- network_edges_v2 %>% 
+  filter(jurisdiction_from != "U.S.",
+         jurisdiction_to != "U.S.") %>% 
+  filter(n >= 20,
+         percentage_of_external >= 0.1) %>% 
+  graph_from_data_frame() %>% 
+  as_tbl_graph() %>% 
+  activate(nodes) %>% 
+  mutate(degree = round(centrality_degree(mode = "in") / 5, 0))
+set.seed(378)
+ggraph(jurisdictions_g3, "igraph", algorithm = "nicely") +
+  geom_edge_fan(alpha = 0.40,
+                arrow = arrow(type = "closed", ends = "last",
+                              length = unit(0.25, "inches"),
+                               angle = 15)) +
+  geom_node_point(size = 8, aes(color = as.factor(degree))) +
+  geom_node_text(size = 3, aes(label = name)) +
+  ggforce::theme_no_axes() +
+  labs(title = str_glue("Citations between jurisdictions, {MIN_YEAR}-{MAX_YEAR}"),
+       subtitle = "Graph from percentage of external citations",
+       color = "Importance") +
+  theme(legend.position = "bottom",
+        panel.border = element_blank())
+```
+
+Noteworthy that NY is at the center, as we would likely expect. However, slightly troubling that NY has so many more cases in the dataset. We need to figure out a way to assess whether the construction of the dataset is affecting the results more than the actual history.
+
+## Cleanup
+
+```{r}
+dbDisconnect(law_db)
+```
+

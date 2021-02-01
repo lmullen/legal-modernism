@@ -10,7 +10,8 @@ class TreatiseRepo extends Repository {
     }
 
     async getSampleTreatises() {
-        const sql = `select * from moml.book_info limit 5`;
+        const sql = `select * from book_info limit 5;`;
+        console.log(sql);
         let res = await this.rawQuery(sql);
         return res;
         // console.log(res);
