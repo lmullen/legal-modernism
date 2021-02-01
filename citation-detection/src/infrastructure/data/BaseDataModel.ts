@@ -1,4 +1,4 @@
-import {Model} from "objection";
+import { Model } from "objection";
 import * as _ from "lodash";
 
 /*http://vincit.github.io/objection.js/#map-column-names-to-different-property-names*/

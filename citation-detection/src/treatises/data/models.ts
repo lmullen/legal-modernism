@@ -16,3 +16,11 @@ export class BookInfo extends BaseDataModel {
     id: string
     pubdate_composed: string
 }
+
+export class Citation extends BaseDataModel {
+    static tableName = "citation"
+
+    psmid: string
+    guid: string
+    count: number
+}

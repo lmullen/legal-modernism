@@ -8,6 +8,8 @@ import { getReporterByID } from "./reporters";
 import { rawQuery } from "./infrastructure/data/dataTest";
 import TreatiseRepo from "./treatises/data/treatiseRepo";
 import OcrRepo from "./treatises/data/ocrRepo";
+import { getOrInsertCase } from "./cases";
+import { incrementCitation } from "./treatises";
 
 let standardRegex: RegExp = /[\d]{1,3}\s[a-zA-Z\.\s]+\s[\d]{1,4}/gi;
 let standardAppellateRegex: RegExp = /[\d]{1,3}\s[a-zA-Z\.\s]+\sApp\.\s[\d]{1,4}}/gi;
@@ -64,9 +66,17 @@ export async function processTreatise(treatiseId: string) {
     }
 
     console.log(matchObject);
+
+    for (let c of matchObject.cases) {
+        let caseEntry = await getOrInsertCase(c);
+        await incrementCitation(c.guid, treatiseId); 
+    }
 }
 
 async function main() {
+
+    // await locateCase("32 F. Supp. 817");
+
     // await processTreatise("19005095000");
     // let res = await processText();
 
@@ -83,6 +93,7 @@ async function main() {
     //     // console.log(t.psmid);
     //     await processTreatise(t.psmid);
     // }
+
 
 }
 
