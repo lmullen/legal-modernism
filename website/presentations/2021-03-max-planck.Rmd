@@ -54,6 +54,21 @@ jurisdiction_citations <- citations_meta %>%
   collect() %>% 
   mutate(n = as.integer(n))
 
+# Doesn't really belong here, but get the citation counts per year for an 
+# interactive visualization
+jurisdiction_citations_per_year <- citations_meta %>% 
+  filter(jurisdiction_from != jurisdiction_to) %>% 
+  filter(jurisdiction_from != "U.S.",
+         jurisdiction_to != "U.S.") %>% 
+  count(jurisdiction_from, jurisdiction_to, year_from) %>% 
+  ungroup() %>% 
+  arrange(year_from, desc(n)) %>% 
+  collect() %>% 
+  mutate(n = as.integer(n)) %>% 
+  select(year = year_from, jurisdiction_from, jurisdiction_to, n)
+
+write_csv(jurisdiction_citations_per_year, "~/Desktop/jurisdiction-citations.csv")
+
 comma_labeler <- comma_format(accuracy = 1)
 ```
 
