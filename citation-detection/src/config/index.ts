@@ -10,6 +10,8 @@ const baseConfig = {
 
 let envConfig;
 
+console.log(env);
+
 switch(env) {
     case "development":
         envConfig = devConfig;

@@ -78,6 +78,7 @@ abstract class Repository {
 
     rawQuery(query: string, params = [], conn: Knex.Config = mainConn) {
         let knex = Knex(conn);
+
         return knex.raw(query, params)
             .then((res) => {
                 return res.rows.map((r) => {
