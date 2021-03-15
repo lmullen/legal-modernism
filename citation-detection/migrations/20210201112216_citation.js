@@ -5,7 +5,6 @@ exports.up = function(knex) {
         citationTable.string('psmid');
         citationTable.string('guid');
         citationTable.integer('count');
-        // userTable.timestamps();
     });
 
 };

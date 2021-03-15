@@ -2,10 +2,11 @@ import * as _ from "lodash";
 
 import Repository from "../../infrastructure/data/BaseDataManager";
 import { Case } from "./models";
+import { altConn } from "../../infrastructure/data/connProvider";
 
 class CaseRepo extends Repository {
     constructor() {
-        super(Case);
+        super(Case, altConn);
     }
 
     //@TODO: use Objection properly and set appropriate DB on queries
@@ -16,7 +17,7 @@ class CaseRepo extends Repository {
 
     async fetchCase(guid: string) {
         const sql = `SELECT * FROM case where guid = ?`;
-        // return this.rawQuery(sql, [guid]);
+        return this.rawQuery(sql, [guid]);
         return [];
     }
 

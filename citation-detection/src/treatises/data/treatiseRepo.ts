@@ -6,7 +6,7 @@ import { BookInfo, Citation } from './models';
 
 class TreatiseRepo extends Repository {
     constructor() {
-        super(BookInfo);
+        super(BookInfo, altConn);
     }
 
     async getSampleTreatises() {
@@ -24,20 +24,20 @@ class TreatiseRepo extends Repository {
     }
 
     //needs to use alt db
-    async getCitation(psmid: string, guid: string) {
-        const sql = `select * from citation where psmid = ? and guid = ?`;
-        return await this.rawQuery(sql, [psmid, guid], altConn);
-    }
+    // async getCitation(psmid: string, guid: string) {
+    //     const sql = `select * from citation where psmid = ? and guid = ?`;
+    //     return await this.rawQuery(sql, [psmid, guid], altConn);
+    // }
 
-    async insertCitation(c: Citation) {
-        const sql = `INSERT INTO citation (psmid, guid) VALUES (${c.psmid}, ${c.guid})`;
-        return await this.rawQuery(sql, [], altConn);
-    }
+    // async insertCitation(c: Citation) {
+    //     const sql = `INSERT INTO citation (psmid, guid) VALUES (${c.psmid}, ${c.guid})`;
+    //     return await this.rawQuery(sql, [], altConn);
+    // }
 
-    async updateCitationCount(id: number | string, count: number) {
-        const sql = `UPDATE citation SET count = ? WHERE id = ?`;
-        return await this.rawQuery(sql, [count, id], altConn);
-    }
+    // async updateCitationCount(id: number | string, count: number) {
+    //     const sql = `UPDATE citation SET count = ? WHERE id = ?`;
+    //     return await this.rawQuery(sql, [count, id], altConn);
+    // }
 }
 
 const instance = new TreatiseRepo();

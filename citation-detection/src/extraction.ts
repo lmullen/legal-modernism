@@ -32,7 +32,6 @@ export async function extractMatches(text: string, regex?: RegExp): Promise<stri
         res.push(match[0]);
     }
 
-
     return res;
 }
 
@@ -74,25 +73,9 @@ export async function processTreatise(treatiseId: string) {
 }
 
 async function main() {
+    await processTreatise("19003947801");
+    process.exit(1);
 
-    // await locateCase("32 F. Supp. 817");
-
-    // await processTreatise("19005095000");
-    // let res = await processText();
-
-    // let testTreatises = await TreatiseRepo.getSampleTreatises();
-    // console.log(testTreatises);
-    let t = await OcrRepo.getOCRTextByTreatiseID("19003947801");
-    console.log(t);
-
-    // let text = fs.readFileSync("../sample-treatises/Santvoord, Treatise, 1852.txt", 'utf8');
-    // let res = await processText(text);
-    // console.log(res);
-
-    // for(let t of testTreatises) {
-    //     // console.log(t.psmid);
-    //     await processTreatise(t.psmid);
-    // }
 
 
 }

@@ -6,9 +6,11 @@ import { mainConn } from "./connProvider";
 
 abstract class Repository {
     private readonly _model;
+    private readonly _conn;
 
-    constructor(m) {
+    constructor(m, c?) {
         this._model = m;
+        this._conn = c || mainConn;
     }
 
     get q() {
@@ -76,8 +78,8 @@ abstract class Repository {
         return this.q.deleteById(id);
     }
 
-    rawQuery(query: string, params = [], conn: Knex.Config = mainConn) {
-        let knex = Knex(conn);
+    rawQuery(query: string, params = []) {
+        let knex = Knex(this._conn);
 
         return knex.raw(query, params)
             .then((res) => {
