@@ -82,12 +82,12 @@ async function main() {
 
     // let testTreatises = await TreatiseRepo.getSampleTreatises();
     // console.log(testTreatises);
+    let t = await OcrRepo.getOCRTextByTreatiseID("19003947801");
+    console.log(t);
 
-    // let text = fs.readFileSync("../sample-treatises/Pomeroy, Remedies, 1976.txt", 'utf8');
-    let text = fs.readFileSync("../sample-treatises/Santvoord, Treatise, 1852.txt", 'utf8');
-    // console.log(text);
-    let res = await processText(text);
-    console.log(res);
+    // let text = fs.readFileSync("../sample-treatises/Santvoord, Treatise, 1852.txt", 'utf8');
+    // let res = await processText(text);
+    // console.log(res);
 
     // for(let t of testTreatises) {
     //     // console.log(t.psmid);
