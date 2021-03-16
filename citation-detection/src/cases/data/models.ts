@@ -1,7 +1,7 @@
 import BaseDataModel from '../../infrastructure/data/BaseDataModel';
 
 export class Case extends BaseDataModel {
-    static tableName = "case";
+    static tableName = "caseTable";
 
     id: number
     caseDotLawId: number

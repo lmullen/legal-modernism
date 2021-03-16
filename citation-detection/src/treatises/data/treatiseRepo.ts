@@ -1,6 +1,6 @@
 import * as _ from "lodash";
 
-import Repository from "../../infrastructure/data/BaseDataManager";
+import Repository from "../../infrastructure/data/Repository";
 import { altConn } from "../../infrastructure/data/connProvider";
 import { BookInfo, Citation } from './models';
 

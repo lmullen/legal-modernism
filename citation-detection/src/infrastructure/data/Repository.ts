@@ -35,11 +35,12 @@ abstract class Repository {
      * @param val 
      */
     getBy(fieldName: string, val: any) {
+        // console.log(this.q);
         return this.q
             .where(fieldName, '=', val)
-            .then((res) => {
-                return res[0] || null;
-            });
+            // .then((res) => {
+            //     return res[0] || null;
+            // });
     }
 
     get(id: number | string) {

@@ -1,4 +1,4 @@
-import Repository from "../../infrastructure/data/BaseDataManager";
+import Repository from "../../infrastructure/data/Repository";
 import { PageOCRText } from './models';
 
 class OcrRepo extends Repository {

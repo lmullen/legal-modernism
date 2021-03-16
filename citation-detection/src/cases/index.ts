@@ -12,18 +12,19 @@ function stripYear(d: string) {
 
 //I think 'case' is some sort of reserved keyword in Typescript, or maybe just VS Code
 export async function getOrInsertCase(guid: string) {
-    let cases: any[] = await CaseRepo.fetchCase(guid);
+    // let cases: any[] = await CaseRepo.fetchCase(guid);
+    let c = await CaseRepo.getBy("full_name", "test");
 
     // if (!c) {
     //     c = await locateCase(guid);
-    // CaseRepo.insertCase(c);
+    //     CaseRepo.insertCase(c);
     // }
 
     // return c;
 }
 
 
-async function locateCase(guid: string) : Promise<Case> {
+async function locateCase(guid: string): Promise<Case> {
     let requestURL: string = `/cases/?cite=${guid}`;
     let data = await requester.get(requestURL);
     let numRes = data.data.count;
@@ -34,7 +35,7 @@ async function locateCase(guid: string) : Promise<Case> {
 
     if (numRes > 1) {
         //do something in the unlikely event more than one case matches the guid
-        return null; 
+        return null;
     }
 
     let res = data.data.results[0];

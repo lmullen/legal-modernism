@@ -10,6 +10,7 @@ import TreatiseRepo from "./treatises/data/treatiseRepo";
 import OcrRepo from "./treatises/data/ocrRepo";
 import { getOrInsertCase } from "./cases";
 import { incrementCitation } from "./treatises";
+import { Case } from './cases/data/models';
 
 let standardRegex: RegExp = /[\d]{1,3}\s[a-zA-Z\.\s]+\s[\d]{1,4}/gi;
 let standardAppellateRegex: RegExp = /[\d]{1,3}\s[a-zA-Z\.\s]+\sApp\.\s[\d]{1,4}}/gi;
@@ -64,16 +65,16 @@ export async function processTreatise(treatiseId: string) {
         matchObject.cases = matchObject.cases.concat(matchRes);
     }
 
-    console.log(matchObject);
-
     for (let c of matchObject.cases) {
         let caseEntry = await getOrInsertCase(c);
-        await incrementCitation(c.guid, treatiseId); 
+        await incrementCitation(c.guid, treatiseId);
     }
 }
 
 async function main() {
-    await processTreatise("19003947801");
+    // await processTreatise("19003947801");
+    let caseEntry = await getOrInsertCase("ff");
+    console.log(caseEntry);
     process.exit(1);
 
 
