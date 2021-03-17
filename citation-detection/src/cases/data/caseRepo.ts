@@ -11,8 +11,9 @@ class CaseRepo extends Repository {
 
     //@TODO: use Objection properly and set appropriate DB on queries
     async insertCase(c: Case) {
-        let sql = `INSERT INTO case (case_dot_law_id, full_name, short_name, year, guid) VALUES (${c.caseDotLawId}, ${c.fullName}, ${c.shortName}, ${c.year}, ${c.guid})`;
-        console.log(sql);
+        let sql = `INSERT INTO "caseTable" (case_dot_law_id, full_name, short_name, year, guid) VALUES (${c.caseDotLawId}, '${c.fullName}', '${c.shortName}', ${c.year}, '${c.guid}')`;
+        // console.log(sql);
+        return this.rawQuery(sql);
     }
 
     async fetchCase(guid: string) {

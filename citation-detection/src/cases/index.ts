@@ -12,14 +12,11 @@ function stripYear(d: string) {
 
 //I think 'case' is some sort of reserved keyword in Typescript, or maybe just VS Code
 export async function getOrInsertCase(guid: string) {
-    // let cases: any[] = await CaseRepo.fetchCase(guid);
-    // let c = await CaseRepo.getBy("full_name", "test");
     let c = await CaseRepo.getBy("guid", guid);
 
     if (!c) {
-        console.log("don't haz case");
-        // c = await locateCase(guid);
-        // CaseRepo.insertCase(c);
+        c = await locateCase(guid);
+        await CaseRepo.insertCase(c);
     }
 
     return c;
@@ -51,6 +48,5 @@ async function locateCase(guid: string): Promise<Case> {
     c.year = stripYear(res.decision_date);
     c.guid = guid;
 
-    console.log(c);
     return c;
 }

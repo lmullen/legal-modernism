@@ -73,8 +73,8 @@ export async function processTreatise(treatiseId: string) {
 
 async function main() {
     // await processTreatise("19003947801");
-    let caseEntry = await getOrInsertCase("546 U.S. 21");
-    console.log(caseEntry);
+    let caseEntry = await getOrInsertCase("488 U.S. 361");
+    // console.log(caseEntry);
     process.exit(1);
 
 
