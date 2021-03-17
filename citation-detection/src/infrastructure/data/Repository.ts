@@ -39,7 +39,10 @@ abstract class Repository {
     getBy(fieldName: string, val: any) {
         const sql = `select * from "${this._model.tableName}" where ${fieldName} = '${val}'`;
         // const sql = `select * from ? where ? = ?`;
-        return this.rawQuery(sql);
+        return this.rawQuery(sql)
+         .then((res) => {
+            return res[0] || null;
+        });
         //not working for some reason
         // return this._model.query()
         //     .where(fieldName, '=', val)
