@@ -20,7 +20,7 @@ export async function getOrInsertCase(guid: string) {
     //     CaseRepo.insertCase(c);
     // }
 
-    // return c;
+    return c;
 }
 
 

@@ -1,11 +1,13 @@
 import config from "../../config";
 import * as Knex from "knex";
 import * as _ from "lodash";
+// import * as Objection from "objection";
 
 import { mainConn } from "./connProvider";
+import { Model } from 'objection';
 
 abstract class Repository {
-    private readonly _model;
+    private readonly _model: Model;
     private readonly _conn;
 
     constructor(m, c?) {
@@ -14,7 +16,7 @@ abstract class Repository {
     }
 
     get q() {
-        return this._model.query();
+        return this._model.query(this._conn);
     }
 
     create(item) {
@@ -35,12 +37,15 @@ abstract class Repository {
      * @param val 
      */
     getBy(fieldName: string, val: any) {
-        // console.log(this.q);
-        return this.q
-            .where(fieldName, '=', val)
-            // .then((res) => {
-            //     return res[0] || null;
-            // });
+        const sql = `select * from "${this._model.tableName}" where ${fieldName} = '${val}'`;
+        // const sql = `select * from ? where ? = ?`;
+        return this.rawQuery(sql);
+        //not working for some reason
+        // return this._model.query()
+        //     .where(fieldName, '=', val)
+        //     .then((res) => {
+        //         return res[0] || null;
+        //     });
     }
 
     get(id: number | string) {
