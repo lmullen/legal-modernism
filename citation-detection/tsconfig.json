@@ -12,10 +12,10 @@
         "emitDecoratorMetadata": true,
         "types": ["reflect-metadata"],
         "preserveConstEnums": true,
-        "forceConsistentCasingInFileNames": true,
+        "forceConsistentCasingInFileNames": false,
         "allowUnreachableCode": true,
         "jsx": "preserve",
-        "allowJs": true
+        "allowJs": true,
     },
     "include": [
         "src/*",

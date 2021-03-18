@@ -7,6 +7,7 @@ import reporterList from './reporters/reporters';
 import { getReporterByID } from "./reporters";
 import { rawQuery } from "./infrastructure/data/dataTest";
 import TreatiseRepo from "./treatises/data/treatiseRepo";
+import CitationRepo from "./treatises/data/CitationRepo";
 import OcrRepo from "./treatises/data/ocrRepo";
 import { getOrInsertCase } from "./cases";
 import { incrementCitation } from "./treatises";
@@ -53,7 +54,7 @@ export async function processTreatise(treatiseId: string) {
 
     // console.log(`psmid: ${treatiseId}`);
     let pages = await OcrRepo.getOCRTextByTreatiseID(treatiseId);
-    // console.log(pages.length);
+    console.log(pages.length);
 
     let matchObject = {
         treatiseId: treatiseId,
@@ -65,19 +66,21 @@ export async function processTreatise(treatiseId: string) {
         matchObject.cases = matchObject.cases.concat(matchRes);
     }
 
+    console.log(matchObject.cases);
+
     for (let c of matchObject.cases) {
-        let caseEntry = await getOrInsertCase(c);
+        // let caseEntry = await getOrInsertCase(c);
         await incrementCitation(c.guid, treatiseId);
     }
 }
 
 async function main() {
     // await processTreatise("19003947801");
-    let caseEntry = await getOrInsertCase("488 U.S. 361");
-    // console.log(caseEntry);
+    // let cite = await CitationRepo.getCitation("19003947801", "546 U.S. 241");
+    // console.log(cite);
+    await incrementCitation("65 N.Y. 289", "3489348");
+
     process.exit(1);
-
-
 
 }
 
