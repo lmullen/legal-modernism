@@ -51,34 +51,42 @@ export async function processText(text: string) {
 }
 
 export async function processTreatise(treatiseId: string) {
-
-    // console.log(`psmid: ${treatiseId}`);
     let pages = await OcrRepo.getOCRTextByTreatiseID(treatiseId);
-    console.log(pages.length);
+
+    let testPages = _.slice(pages, 0, 12);
 
     let matchObject = {
         treatiseId: treatiseId,
         cases: []
     };
 
-    for (let p of pages) {
+    for (let p of testPages) {
         let matchRes = await processText(p.ocrtext);
         matchObject.cases = matchObject.cases.concat(matchRes);
     }
 
-    console.log(matchObject.cases);
+    console.log(matchObject.cases.length);
 
+    let count = 0;
     for (let c of matchObject.cases) {
-        // let caseEntry = await getOrInsertCase(c);
-        await incrementCitation(c.guid, treatiseId);
+        count += 1;
+        let caseEntry = await getOrInsertCase(c);
+        console.log(count);
+
+        // if (caseEntry) {
+
+        //     // await incrementCitation(c.guid, treatiseId);
+        //     console.log("a case");
+        // }
+        // else {
+        //     console.log("not a case");
+        // }
     }
 }
 
 async function main() {
-    // await processTreatise("19003947801");
-    // let cite = await CitationRepo.getCitation("19003947801", "546 U.S. 241");
+    await processTreatise("19003947801");
     // console.log(cite);
-    await incrementCitation("65 N.Y. 289", "3489348");
 
     process.exit(1);
 

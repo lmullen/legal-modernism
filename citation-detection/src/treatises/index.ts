@@ -14,9 +14,9 @@ export async function incrementCitation(guid: string, psmid: string) {
         c = await CitationRepo.insertCitation(newCitation);
     }
 
-    // c.count = c.count + 1;
+    c.count = c.count + 1;
     // console.log(c);
     // console.log('hey updating');
 
-    // await CitationRepo.updateCitationCount(c.id, c.count);
+    await CitationRepo.updateCitationCount(c.id, c.count);
 }
