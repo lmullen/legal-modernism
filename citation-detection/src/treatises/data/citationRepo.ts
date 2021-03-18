@@ -18,7 +18,7 @@ class CitationRepo extends Repository {
     }
 
     async insertCitation(c: Citation) {
-        const sql = `INSERT INTO citation (psmid, guid) VALUES ('${c.psmid}', '${c.guid}')`;
+        const sql = `INSERT INTO citation (psmid, guid, count) VALUES ('${c.psmid}', '${c.guid}', ${c.count})`;
         return await this.rawQuery(sql, []);
     }
 
