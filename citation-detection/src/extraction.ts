@@ -54,6 +54,7 @@ export async function processTreatise(treatiseId: string) {
     let pages = await OcrRepo.getOCRTextByTreatiseID(treatiseId);
 
     let testPages = _.slice(pages, 0, 12);
+    console.log(testPages);
 
     let matchObject = {
         treatiseId: treatiseId,
@@ -85,8 +86,11 @@ export async function processTreatise(treatiseId: string) {
 }
 
 async function main() {
-    await processTreatise("19003947801");
+    // await processTreatise("19003947801");
     // console.log(cite);
+
+    let c = await getOrInsertCase("56 N.Y. 35");
+    console.log(c);
 
     process.exit(1);
 

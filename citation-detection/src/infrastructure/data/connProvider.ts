@@ -23,6 +23,8 @@ mainConn.connection = `postgres://${process.env.GMU_DB_USER}:${process.env.GMU_D
 let altConn = new KnexConfig();
 altConn.ssl = true;
 altConn.client = "pg";
-altConn.connection = `postgres://${process.env.TEST_DB_USER}:${process.env.TEST_DB_PW}@${process.env.TEST_DB_HOST}/${process.env.TEST_DB}`;
+altConn.connection = `postgres://${process.env.TEST_DB_USER}:${process.env.TEST_DB_PW}@${process.env.TEST_DB_HOST}:5432/${process.env.TEST_DB}?ssl=true`;
+console.log(altConn.connection);
+// altConn.connection = process.env.TEST_DB_URI
 
 export { mainConn, altConn };
