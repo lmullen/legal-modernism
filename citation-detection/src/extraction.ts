@@ -72,25 +72,25 @@ export async function processTreatise(treatiseId: string) {
     for (let c of matchObject.cases) {
         count += 1;
         let caseEntry = await getOrInsertCase(c);
-        console.log(count);
+        // console.log(count);
 
-        // if (caseEntry) {
+        if (caseEntry) {
 
-        //     // await incrementCitation(c.guid, treatiseId);
-        //     console.log("a case");
-        // }
-        // else {
-        //     console.log("not a case");
-        // }
+            await incrementCitation(c.guid, treatiseId);
+            console.log("a case");
+        }
+        else {
+            console.log("not a case");
+        }
     }
 }
 
 async function main() {
-    // await processTreatise("19003947801");
+    await processTreatise("19003947801");
     // console.log(cite);
 
-    let c = await getOrInsertCase("488 U.S. 361");
-    console.log(c);
+    // let c = await getOrInsertCase("488 U.S. 361");
+    // console.log(c);
 
     process.exit(1);
 

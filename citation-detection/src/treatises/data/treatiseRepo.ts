@@ -1,12 +1,12 @@
 import * as _ from "lodash";
 
 import Repository from "../../infrastructure/data/Repository";
-import { altConn } from "../../infrastructure/data/connProvider";
+import { CONN } from "../../infrastructure/data/knexProvider";
 import { BookInfo, Citation } from './models';
 
 class TreatiseRepo extends Repository {
     constructor() {
-        super(BookInfo, altConn);
+        super(BookInfo, CONN.ALT);
     }
 
     async getSampleTreatises() {

@@ -2,11 +2,11 @@ import * as _ from "lodash";
 
 import Repository from "../../infrastructure/data/Repository";
 import { Case } from "./models";
-import { altConn } from "../../infrastructure/data/connProvider";
+import { CONN } from "../../infrastructure/data/knexProvider";
 
 class CaseRepo extends Repository {
     constructor() {
-        super(Case, altConn);
+        super(Case, CONN.ALT);
     }
 
     //@TODO: use Objection properly and set appropriate DB on queries

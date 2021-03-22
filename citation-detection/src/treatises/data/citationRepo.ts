@@ -1,20 +1,20 @@
 import * as _ from "lodash";
 
 import Repository from "../../infrastructure/data/Repository";
-import { altConn } from "../../infrastructure/data/connProvider";
+import { CONN } from "../../infrastructure/data/knexProvider";
 import { Citation } from './models';
 
 class CitationRepo extends Repository {
     constructor() {
-        super(Citation, altConn);
+        super(Citation, CONN.ALT);
     }
 
     async getCitation(psmid: string, guid: string) {
         const sql = `select * from citation where psmid = ? and guid = ?`;
         return await this.rawQuery(sql, [psmid, guid])
-         .then((res) => {
-            return res[0] || null;
-        });
+            .then((res) => {
+                return res[0] || null;
+            });
     }
 
     async insertCitation(c: Citation) {

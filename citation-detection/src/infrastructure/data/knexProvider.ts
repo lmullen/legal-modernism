@@ -24,7 +24,28 @@ let altConn = new KnexConfig();
 altConn.ssl = true;
 altConn.client = "pg";
 altConn.connection = `postgres://${process.env.TEST_DB_USER}:${process.env.TEST_DB_PW}@${process.env.TEST_DB_HOST}:5432/${process.env.TEST_DB}?ssl=true`;
-console.log(altConn.connection);
-// altConn.connection = process.env.TEST_DB_URI
 
-export { mainConn, altConn };
+
+let gmuKnex = Knex(mainConn);
+let altKnex = Knex(altConn);
+
+function getKnex(e: CONN) {
+    switch(e){
+        case CONN.GMU:
+            return gmuKnex;
+            break;
+        case CONN.ALT:
+            return altKnex;
+            break;
+        default:
+            return gmuKnex;
+            break;
+    }
+}
+
+enum CONN {
+    GMU = 0,
+    ALT = 1
+}
+
+export { getKnex, CONN };
