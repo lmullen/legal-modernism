@@ -14,11 +14,15 @@ function stripYear(d: string) {
 export async function getOrInsertCase(guid: string) {
     let c = await CaseRepo.getBy("guid", guid);
 
-    // if (!c) {
-    //     // c = await locateCase(guid);
-    //     // await CaseRepo.insertCase(c);
-    //     console.log("must fetch case");
-    // }
+    if (!c) {
+        c = await locateCase(guid);
+
+        if(!c) {
+            return c;
+        }
+
+        await CaseRepo.insertCase(c);
+    }
 
     return c;
 }

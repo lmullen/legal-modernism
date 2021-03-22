@@ -89,7 +89,7 @@ async function main() {
     // await processTreatise("19003947801");
     // console.log(cite);
 
-    let c = await getOrInsertCase("56 N.Y. 35");
+    let c = await getOrInsertCase("488 U.S. 361");
     console.log(c);
 
     process.exit(1);
