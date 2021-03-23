@@ -26,7 +26,7 @@ async function gatherRegexes(): Promise<RegExp[]> {
     return r;
 }
 
-export async function extractMatches(text: string, regex?: RegExp): Promise<string[]> {
+export async function parseCases(text: string, regex?: RegExp): Promise<string[]> {
     let res = [];
     let match;
     // It's stupid, but this is how one must find all matches in a text to a regex in JS.
@@ -37,23 +37,27 @@ export async function extractMatches(text: string, regex?: RegExp): Promise<stri
     return res;
 }
 
-export async function processText(text: string) {
+export async function extractCases(text: string) {
     let regexes = await gatherRegexes();
 
     let res = [];
 
     for (let reg of regexes) {
-        let _res = await extractMatches(text, reg);
+        let _res = await parseCases(text, reg);
         res = res.concat(_res);
     }
 
     return res;
 }
 
+export async function processText(treatiseId: string, text: string) {
+
+}
+
 export async function processTreatise(treatiseId: string) {
     let pages = await OcrRepo.getOCRTextByTreatiseID(treatiseId);
 
-    let testPages = _.slice(pages, 0, 12);
+    let testPages = _.slice(pages, 30, 35);
     console.log(testPages);
 
     let matchObject = {
@@ -62,11 +66,11 @@ export async function processTreatise(treatiseId: string) {
     };
 
     for (let p of testPages) {
-        let matchRes = await processText(p.ocrtext);
+        let matchRes = await extractCases(p.ocrtext);
         matchObject.cases = matchObject.cases.concat(matchRes);
     }
 
-    console.log(matchObject.cases.length);
+    // console.log(matchObject.cases[0]);
 
     let count = 0;
     for (let c of matchObject.cases) {
@@ -76,7 +80,7 @@ export async function processTreatise(treatiseId: string) {
 
         if (caseEntry) {
 
-            await incrementCitation(c.guid, treatiseId);
+            // await incrementCitation(c.guid, treatiseId);
             console.log("a case");
         }
         else {
@@ -86,14 +90,13 @@ export async function processTreatise(treatiseId: string) {
 }
 
 async function main() {
-    await processTreatise("19003947801");
+    // await processTreatise("19003947801");
     // console.log(cite);
 
     // let c = await getOrInsertCase("488 U.S. 361");
     // console.log(c);
 
     process.exit(1);
-
 }
 
 main();
