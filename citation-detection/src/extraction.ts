@@ -12,6 +12,7 @@ import OcrRepo from "./treatises/data/ocrRepo";
 import { getOrInsertCase } from "./cases";
 import { incrementCitation } from "./treatises";
 import { Case } from './cases/data/models';
+import { PageOCRText } from './treatises/data/models';
 
 let standardRegex: RegExp = /[\d]{1,3}\s[a-zA-Z\.\s]+\s[\d]{1,4}/gi;
 let standardAppellateRegex: RegExp = /[\d]{1,3}\s[a-zA-Z\.\s]+\sApp\.\s[\d]{1,4}}/gi;
@@ -50,36 +51,21 @@ export async function extractCases(text: string) {
     return res;
 }
 
-export async function processText(treatiseId: string, text: string) {
+export async function processText(text: string, matchObject) {
 
+    let matchRes = await extractCases(text);
+    matchObject.cases = matchObject.cases.concat(matchRes);
+    console.log(matchObject);
 }
 
-export async function processTreatise(treatiseId: string) {
-    let pages = await OcrRepo.getOCRTextByTreatiseID(treatiseId);
+export async function updateCitationCounts(matchObject) {
+    console.log(matchObject);
 
-    let testPages = _.slice(pages, 30, 35);
-    console.log(testPages);
-
-    let matchObject = {
-        treatiseId: treatiseId,
-        cases: []
-    };
-
-    for (let p of testPages) {
-        let matchRes = await extractCases(p.ocrtext);
-        matchObject.cases = matchObject.cases.concat(matchRes);
-    }
-
-    // console.log(matchObject.cases[0]);
-
-    let count = 0;
     for (let c of matchObject.cases) {
-        count += 1;
         let caseEntry = await getOrInsertCase(c);
         // console.log(count);
 
         if (caseEntry) {
-
             // await incrementCitation(c.guid, treatiseId);
             console.log("a case");
         }
@@ -89,12 +75,32 @@ export async function processTreatise(treatiseId: string) {
     }
 }
 
+export async function processTreatise(treatiseId: string) {
+    let pages = await OcrRepo.getOCRTextByTreatiseID(treatiseId);
+
+    let testPages = _.slice(pages, 50, 52);
+    console.log(testPages);
+
+    let matchObject = {
+        treatiseId: treatiseId,
+        cases: []
+    };
+
+    for (let p of testPages) {
+        await processText(p.PageOCRText, matchObject);
+    }
+
+
+}
+
 async function main() {
-    // await processTreatise("19003947801");
+    // await processTreatise("19004091400");
     // console.log(cite);
 
     // let c = await getOrInsertCase("488 U.S. 361");
     // console.log(c);
+
+    await processText(testTexts.treatiseTest0, { cases: [] })
 
     process.exit(1);
 }
