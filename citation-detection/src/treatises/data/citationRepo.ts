@@ -10,6 +10,7 @@ class CitationRepo extends Repository {
     }
 
     async getCitation(psmid: string, guid: string) {
+        console.log(`psm: ${psmid} guid: ${guid}`);
         const sql = `select * from citation where psmid = ? and guid = ?`;
         return await this.rawQuery(sql, [psmid, guid])
             .then((res) => {

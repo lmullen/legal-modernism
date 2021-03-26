@@ -52,25 +52,24 @@ export async function extractCases(text: string) {
 }
 
 export async function processText(text: string, matchObject) {
-
     let matchRes = await extractCases(text);
     matchObject.cases = matchObject.cases.concat(matchRes);
-    console.log(matchObject);
+    // console.log(matchObject);
+    return matchObject;
 }
 
 export async function updateCitationCounts(matchObject) {
-    console.log(matchObject);
-
+    // console.log(matchObject);
     for (let c of matchObject.cases) {
         let caseEntry = await getOrInsertCase(c);
-        // console.log(count);
 
         if (caseEntry) {
-            // await incrementCitation(c.guid, treatiseId);
-            console.log("a case");
+            // console.log("a case");
+            // console.log(caseEntry);
+            await incrementCitation(caseEntry.guid, matchObject.treatiseId);
         }
         else {
-            console.log("not a case");
+            // console.log("not a case");
         }
     }
 }
@@ -100,7 +99,9 @@ async function main() {
     // let c = await getOrInsertCase("488 U.S. 361");
     // console.log(c);
 
-    await processText(testTexts.treatiseTest0, { cases: [] })
+    let mo = await processText(testTexts.treatiseTest0, { cases: [] })
+    mo.treatiseId = "890";
+    await updateCitationCounts(mo);
 
     process.exit(1);
 }
