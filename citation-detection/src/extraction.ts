@@ -54,8 +54,7 @@ export async function extractCases(text: string) {
 export async function processText(text: string, matchObject) {
     let matchRes = await extractCases(text);
     matchObject.cases = matchObject.cases.concat(matchRes);
-    // console.log(matchObject);
-    return matchObject;
+    // return matchObject;
 }
 
 export async function updateCitationCounts(matchObject) {
@@ -64,45 +63,37 @@ export async function updateCitationCounts(matchObject) {
         let caseEntry = await getOrInsertCase(c);
 
         if (caseEntry) {
-            // console.log("a case");
+            console.log("a case");
             // console.log(caseEntry);
             await incrementCitation(caseEntry.guid, matchObject.treatiseId);
         }
         else {
-            // console.log("not a case");
+            console.log("not a case");
         }
     }
 }
 
 export async function processTreatise(treatiseId: string) {
     let pages = await OcrRepo.getOCRTextByTreatiseID(treatiseId);
-
-    let testPages = _.slice(pages, 50, 52);
-    console.log(testPages);
+    console.log(pages.length);
 
     let matchObject = {
         treatiseId: treatiseId,
         cases: []
     };
 
-    for (let p of testPages) {
-        await processText(p.PageOCRText, matchObject);
+    for (let p of pages) {
+        // console.log(p);
+        await processText(p.ocrtext, matchObject);
     }
 
+    console.log(matchObject.cases);
 
+    await updateCitationCounts(matchObject);
 }
 
 async function main() {
-    // await processTreatise("19004091400");
-    // console.log(cite);
-
-    // let c = await getOrInsertCase("488 U.S. 361");
-    // console.log(c);
-
-    let mo = await processText(testTexts.treatiseTest0, { cases: [] })
-    mo.treatiseId = "890";
-    await updateCitationCounts(mo);
-
+    await processTreatise("19007469900");
     process.exit(1);
 }
 
