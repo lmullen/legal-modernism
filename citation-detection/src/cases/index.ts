@@ -3,22 +3,34 @@ import { Case } from "./data/models";
 import CaseRepo from "./data/caseRepo";
 
 //gets numerical year from CAP "decision_date" string
-function stripYear(d: string) {
+function _stripYear(d: string) {
     let split = d.split("-");
     let stringYear = split[0];
     let numYear = parseInt(stringYear);
     return numYear;
 }
 
+//not sure how much unescaping the strings matters rn
+// export async function getCase(guid: string) {
+//     let c: Case = await CaseRepo.getBy("guid", guid);
+//     c.fullName = unescape(c.fullName);
+
+// }
+
 //I think 'case' is some sort of reserved keyword in Typescript, or maybe just VS Code
 export async function getOrInsertCase(guid: string) {
     let c = await CaseRepo.getBy("guid", guid);
 
-    // if (!c) {
-    //     // c = await locateCase(guid);
-    //     // await CaseRepo.insertCase(c);
-    //     console.log("must fetch case");
-    // }
+    if (!c) {
+        c = await locateCase(guid);
+
+        if (!c) {
+            return c;
+        }
+
+    }
+
+    await insertCase(c);
 
     return c;
 }
@@ -42,12 +54,22 @@ async function locateCase(guid: string): Promise<Case> {
 
     // let caseYear = stripYear(res.decision_date);
 
+    let c = _mapCase(res, guid);
+    return c;
+
+}
+
+function _mapCase(res, guid) {
     let c = new Case();
     c.caseDotLawId = res.id;
-    c.fullName = res.name;
-    c.shortName = res.name_abbreviation;
-    c.year = stripYear(res.decision_date);
+    c.fullName = escape(res.name);
+    c.shortName = escape(res.name_abbreviation);
+    c.year = _stripYear(res.decision_date);
     c.guid = guid;
 
     return c;
+}
+
+export async function insertCase(c: Case) {
+    await CaseRepo.insertCase(c);
 }

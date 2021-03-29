@@ -3,20 +3,20 @@ import * as Knex from "knex";
 import * as _ from "lodash";
 // import * as Objection from "objection";
 
-import { mainConn } from "./connProvider";
+import { getKnex, CONN } from "./knexProvider";
 import { Model } from 'objection';
 
 abstract class Repository {
     private readonly _model: Model;
-    private readonly _conn;
+    private readonly _knex;
 
     constructor(m, c?) {
         this._model = m;
-        this._conn = c || mainConn;
+        this._knex = (getKnex(c)); 
     }
 
     get q() {
-        return this._model.query(this._conn);
+        return this._model.query(this._knex);
     }
 
     create(item) {
@@ -88,9 +88,7 @@ abstract class Repository {
     }
 
     rawQuery(query: string, params = []) {
-        let knex = Knex(this._conn);
-
-        return knex.raw(query, params)
+        return this._knex.raw(query, params)
             .then((res) => {
                 return res.rows.map((r) => {
                     let cased = _.mapKeys(r, (v, k) => {

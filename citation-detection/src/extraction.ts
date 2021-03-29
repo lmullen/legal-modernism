@@ -9,9 +9,10 @@ import { rawQuery } from "./infrastructure/data/dataTest";
 import TreatiseRepo from "./treatises/data/treatiseRepo";
 import CitationRepo from "./treatises/data/CitationRepo";
 import OcrRepo from "./treatises/data/ocrRepo";
-import { getOrInsertCase } from "./cases";
+import { getOrInsertCase, insertCase } from "./cases";
 import { incrementCitation } from "./treatises";
 import { Case } from './cases/data/models';
+import { PageOCRText } from './treatises/data/models';
 
 let standardRegex: RegExp = /[\d]{1,3}\s[a-zA-Z\.\s]+\s[\d]{1,4}/gi;
 let standardAppellateRegex: RegExp = /[\d]{1,3}\s[a-zA-Z\.\s]+\sApp\.\s[\d]{1,4}}/gi;
@@ -26,7 +27,7 @@ async function gatherRegexes(): Promise<RegExp[]> {
     return r;
 }
 
-export async function extractMatches(text: string, regex?: RegExp): Promise<string[]> {
+export async function parseCases(text: string, regex?: RegExp): Promise<string[]> {
     let res = [];
     let match;
     // It's stupid, but this is how one must find all matches in a text to a regex in JS.
@@ -37,59 +38,70 @@ export async function extractMatches(text: string, regex?: RegExp): Promise<stri
     return res;
 }
 
-export async function processText(text: string) {
+export async function extractCases(text: string) {
     let regexes = await gatherRegexes();
 
     let res = [];
 
     for (let reg of regexes) {
-        let _res = await extractMatches(text, reg);
+        let _res = await parseCases(text, reg);
         res = res.concat(_res);
     }
 
     return res;
 }
 
+export async function processText(text: string, matchObject) {
+    let matchRes = await extractCases(text);
+    matchObject.cases = matchObject.cases.concat(matchRes);
+    // return matchObject;
+}
+
+export async function updateCitationCounts(matchObject) {
+    // console.log(matchObject);
+    for (let c of matchObject.cases) {
+        let caseEntry = await getOrInsertCase(c);
+
+        if (caseEntry) {
+            console.log("a case");
+            // console.log(caseEntry);
+            await incrementCitation(caseEntry.guid, matchObject.treatiseId);
+        }
+        else {
+            console.log("not a case");
+        }
+    }
+}
+
 export async function processTreatise(treatiseId: string) {
     let pages = await OcrRepo.getOCRTextByTreatiseID(treatiseId);
-
-    let testPages = _.slice(pages, 0, 12);
+    console.log(pages.length);
 
     let matchObject = {
         treatiseId: treatiseId,
         cases: []
     };
 
-    for (let p of testPages) {
-        let matchRes = await processText(p.ocrtext);
-        matchObject.cases = matchObject.cases.concat(matchRes);
+    for (let p of pages) {
+        // console.log(p);
+        await processText(p.ocrtext, matchObject);
     }
 
-    console.log(matchObject.cases.length);
+    console.log(matchObject.cases);
 
-    let count = 0;
-    for (let c of matchObject.cases) {
-        count += 1;
-        let caseEntry = await getOrInsertCase(c);
-        console.log(count);
-
-        // if (caseEntry) {
-
-        //     // await incrementCitation(c.guid, treatiseId);
-        //     console.log("a case");
-        // }
-        // else {
-        //     console.log("not a case");
-        // }
-    }
+    await updateCitationCounts(matchObject);
 }
 
 async function main() {
-    await processTreatise("19003947801");
-    // console.log(cite);
-
+    // await processTreatise("19007469900");
+    let c = new Case();
+    c.caseDotLawId = 878;
+    c.fullName = escape("Mason v. Citizens' Fire, Marine, and Life Insurance Company");
+    c.shortName = escape("'Mason v. Citizens' Fire, Marine, & Life Insurance'");
+    c.guid = "45 f 4";
+    c.year = 1990;
+    await insertCase(c);
     process.exit(1);
-
 }
 
 main();

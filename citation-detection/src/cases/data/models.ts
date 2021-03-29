@@ -1,5 +1,4 @@
 import BaseDataModel from '../../infrastructure/data/BaseDataModel';
-import { altConn } from "../../infrastructure/data/connProvider";
 
 export class Case extends BaseDataModel {
     static tableName = "caseTable";
