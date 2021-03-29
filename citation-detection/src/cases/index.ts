@@ -10,6 +10,13 @@ function _stripYear(d: string) {
     return numYear;
 }
 
+//not sure how much unescaping the strings matters rn
+// export async function getCase(guid: string) {
+//     let c: Case = await CaseRepo.getBy("guid", guid);
+//     c.fullName = unescape(c.fullName);
+
+// }
+
 //I think 'case' is some sort of reserved keyword in Typescript, or maybe just VS Code
 export async function getOrInsertCase(guid: string) {
     let c = await CaseRepo.getBy("guid", guid);
