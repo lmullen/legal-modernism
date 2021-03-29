@@ -3,7 +3,7 @@ import { Case } from "./data/models";
 import CaseRepo from "./data/caseRepo";
 
 //gets numerical year from CAP "decision_date" string
-function stripYear(d: string) {
+function _stripYear(d: string) {
     let split = d.split("-");
     let stringYear = split[0];
     let numYear = parseInt(stringYear);
@@ -17,12 +17,13 @@ export async function getOrInsertCase(guid: string) {
     if (!c) {
         c = await locateCase(guid);
 
-        if(!c) {
+        if (!c) {
             return c;
         }
 
-        await CaseRepo.insertCase(c);
     }
+
+    await insertCase(c);
 
     return c;
 }
@@ -46,12 +47,22 @@ async function locateCase(guid: string): Promise<Case> {
 
     // let caseYear = stripYear(res.decision_date);
 
+    let c = _mapCase(res, guid);
+    return c;
+
+}
+
+function _mapCase(res, guid) {
     let c = new Case();
     c.caseDotLawId = res.id;
-    c.fullName = res.name;
-    c.shortName = res.name_abbreviation;
-    c.year = stripYear(res.decision_date);
+    c.fullName = escape(res.name);
+    c.shortName = escape(res.name_abbreviation);
+    c.year = _stripYear(res.decision_date);
     c.guid = guid;
 
     return c;
+}
+
+export async function insertCase(c: Case) {
+    await CaseRepo.insertCase(c);
 }

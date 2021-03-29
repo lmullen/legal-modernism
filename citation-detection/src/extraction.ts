@@ -9,7 +9,7 @@ import { rawQuery } from "./infrastructure/data/dataTest";
 import TreatiseRepo from "./treatises/data/treatiseRepo";
 import CitationRepo from "./treatises/data/CitationRepo";
 import OcrRepo from "./treatises/data/ocrRepo";
-import { getOrInsertCase } from "./cases";
+import { getOrInsertCase, insertCase } from "./cases";
 import { incrementCitation } from "./treatises";
 import { Case } from './cases/data/models';
 import { PageOCRText } from './treatises/data/models';
@@ -93,7 +93,12 @@ export async function processTreatise(treatiseId: string) {
 }
 
 async function main() {
-    await processTreatise("19007469900");
+    // await processTreatise("19007469900");
+    let c = new Case();
+    c.caseDotLawId = 878;
+    c.fullName = escape("Mason v. Citizens' Fire, Marine, and Life Insurance Company");
+    c.shortName = escape("'Mason v. Citizens' Fire, Marine, & Life Insurance'");
+    await insertCase(c);
     process.exit(1);
 }
 
