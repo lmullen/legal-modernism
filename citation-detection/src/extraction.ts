@@ -98,6 +98,8 @@ async function main() {
     c.caseDotLawId = 878;
     c.fullName = escape("Mason v. Citizens' Fire, Marine, and Life Insurance Company");
     c.shortName = escape("'Mason v. Citizens' Fire, Marine, & Life Insurance'");
+    c.guid = "45 f 4";
+    c.year = 1990;
     await insertCase(c);
     process.exit(1);
 }
