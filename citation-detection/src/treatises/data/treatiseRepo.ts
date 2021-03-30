@@ -21,6 +21,11 @@ class TreatiseRepo extends Repository {
         // console.log(picked);
     }
 
+    async getTreatise(psmid: string) {
+        const sql = `select * from treatise where psmid = ${psmid}`;
+        return this.rawQuery(sql);
+    }
+
 }
 
 const instance = new TreatiseRepo();
