@@ -18,6 +18,10 @@ export async function incrementCitation(guid: string, psmid: string) {
     await CitationRepo.updateCitationCount(c.id, c.count);
 }
 
+async function createTreatiseRecord() {
+
+}
+
 //Creates db entry for treatise if one does not exist yet
 export async function createTreatiseEntry(psmid: string) {
     let t = TreatiseRepo.getTreatise(psmid);
