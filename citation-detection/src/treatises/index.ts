@@ -1,5 +1,6 @@
 import CitationRepo from "./data/citationRepo";
 import TreatiseRepo from "./data/treatiseRepo";
+import BookInfoRepo from "./data/BookInfoRepo";
 import { Citation } from './data/models';
 
 export async function incrementCitation(guid: string, psmid: string) {
@@ -18,15 +19,24 @@ export async function incrementCitation(guid: string, psmid: string) {
     await CitationRepo.updateCitationCount(c.id, c.count);
 }
 
-async function createTreatiseRecord() {
+async function createTreatiseRecord(psmid: string, link: string) {
 
 }
 
 //Creates db entry for treatise if one does not exist yet
 export async function createTreatiseEntry(psmid: string) {
-    let t = TreatiseRepo.getTreatise(psmid);
+    let t = await TreatiseRepo.getTreatise(psmid);
+
+    console.log("oh hello");
+    console.log(t);
 
     if(!t) {
+        let bookInfo = await BookInfoRepo.getBookInfo(psmid);
 
+        console.log(bookInfo);
+
+        // let year;
+
+        // if(!bookInfo.pub)
     }
 }
