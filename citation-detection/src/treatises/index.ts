@@ -1,7 +1,7 @@
 import CitationRepo from "./data/citationRepo";
 import TreatiseRepo from "./data/treatiseRepo";
 import BookInfoRepo from "./data/BookInfoRepo";
-import { Citation } from './data/models';
+import { Citation, Treatise } from './data/models';
 
 export async function incrementCitation(guid: string, psmid: string) {
     let c = await CitationRepo.getCitation(psmid, guid);
@@ -35,8 +35,14 @@ export async function createTreatiseEntry(psmid: string) {
 
         console.log(bookInfo);
 
-        // let year;
+        t = new Treatise();
+        t.psmid = psmid;
+        t.link = bookInfo.productlink;
 
-        // if(!bookInfo.pub)
+        let year = bookInfo.pubdateYear || bookInfo.pubdateComposed;
+        t.year = year;
+        console.log(t);
+
+        // await TreatiseRepo.createTreatise(t);
     }
 }

@@ -30,5 +30,6 @@ export class Treatise extends BaseDataModel {
 
     psmid: string
     link: string
+    year: number
     lastRun: Date
 }

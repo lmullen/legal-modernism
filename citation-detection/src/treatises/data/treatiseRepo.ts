@@ -17,7 +17,9 @@ class TreatiseRepo extends Repository {
             });
     }
 
-    // async createTreatise(psmid: string, link: string)
+    async createTreatise(t: Treatise) {
+        await this.create(t);
+    }
 }
 
 const instance = new TreatiseRepo();

@@ -22,8 +22,11 @@ class BookInfoRepo extends Repository {
     }
 
     async getBookInfo(psmid: string) {
-        const sql = `select * from moml.book_info where psmid = ${psmid}`;
-        return this.rawQuery(sql);
+        const sql = `select * from moml.book_info where psmid = '${psmid}'`;
+        return this.rawQuery(sql)
+        .then((res) => {
+            return res[0] || null;
+        });
     }
 }
 
