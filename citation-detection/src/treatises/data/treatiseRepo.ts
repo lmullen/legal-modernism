@@ -18,7 +18,8 @@ class TreatiseRepo extends Repository {
     }
 
     async createTreatise(t: Treatise) {
-        await this.create(t);
+        // await this.create(t);
+        const sql = `select * `
     }
 }
 

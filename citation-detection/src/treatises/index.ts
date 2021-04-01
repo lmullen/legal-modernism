@@ -43,6 +43,6 @@ export async function createTreatiseEntry(psmid: string) {
         t.year = year;
         console.log(t);
 
-        // await TreatiseRepo.createTreatise(t);
+        await TreatiseRepo.createTreatise(t);
     }
 }
