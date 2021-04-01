@@ -24,3 +24,12 @@ export class Citation extends BaseDataModel {
     guid: string
     count: number
 }
+
+export class Treatise extends BaseDataModel {
+    static tableName = "treatise";
+
+    psmid: string
+    link: string
+    year: number
+    lastRun: Date
+}
