@@ -7,7 +7,7 @@ exports.up = function(knex) {
 
 exports.down = function(knex) {
       return knex.schema.table('treatise', (table) => {
-        table.dropColumns("processed");
+        table.dropcolumns("processed");
     });
 };
 
