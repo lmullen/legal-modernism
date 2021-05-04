@@ -18,7 +18,7 @@ class KnexConfig implements Knex.Config {
 let mainConn = new KnexConfig();
 mainConn.ssl = true;
 mainConn.client = "pg";
-mainConn.connection = `postgres://${process.env.GMU_DB_USER}:${process.env.GMU_DB_PW}@${process.env.GMU_DB_HOST}`;
+mainConn.connection = `postgres://${process.env.GMU_DB_USER}:${process.env.GMU_DB_PW}@${process.env.GMU_DB_HOST}:5432/${process.env.GMU_DB}`;
 
 let altConn = new KnexConfig();
 altConn.ssl = true;

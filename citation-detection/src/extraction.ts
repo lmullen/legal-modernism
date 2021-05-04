@@ -77,24 +77,24 @@ export async function processTreatise(treatiseId: string) {
     let pages = await OcrRepo.getOCRTextByTreatiseID(treatiseId);
     console.log(pages.length);
 
-    let matchObject = {
-        treatiseId: treatiseId,
-        cases: []
-    };
+    // let matchObject = {
+    //     treatiseId: treatiseId,
+    //     cases: []
+    // };
 
-    for (let p of pages) {
-        // console.log(p);
-        await processText(p.ocrtext, matchObject);
-    }
+    // for (let p of pages) {
+    //     // console.log(p);
+    //     await processText(p.ocrtext, matchObject);
+    // }
 
-    console.log(matchObject.cases);
+    // console.log(matchObject.cases);
 
-    await updateCitationCounts(matchObject);
+    // await updateCitationCounts(matchObject);
 }
 
 async function main() {
     // await processTreatise("19007469900");
-    await createTreatiseEntry("19007469900");
+    await processTreatise("19007469900");
     process.exit(1);
 }
 
