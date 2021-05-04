@@ -30,19 +30,19 @@ export async function createTreatiseEntry(psmid: string) {
     console.log("oh hello");
     console.log(t);
 
-    if(!t) {
-        let bookInfo = await BookInfoRepo.getBookInfo(psmid);
+    // if(!t) {
+    //     let bookInfo = await BookInfoRepo.getBookInfo(psmid);
 
-        console.log(bookInfo);
+    //     console.log(bookInfo);
 
-        t = new Treatise();
-        t.psmid = psmid;
-        t.link = bookInfo.productlink;
+    //     t = new Treatise();
+    //     t.psmid = psmid;
+    //     t.link = bookInfo.productlink;
 
-        let year = bookInfo.pubdateYear || bookInfo.pubdateComposed;
-        t.year = year;
-        console.log(t);
+    //     let year = bookInfo.pubdateYear || bookInfo.pubdateComposed;
+    //     t.year = year;
+    //     console.log(t);
 
-        await TreatiseRepo.createTreatise(t);
-    }
+    //     await TreatiseRepo.createTreatise(t);
+    // }
 }
