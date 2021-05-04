@@ -32,4 +32,5 @@ export class Treatise extends BaseDataModel {
     link: string
     year: number
     lastRun: Date
+    processed: boolean
 }
