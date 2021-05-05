@@ -28,6 +28,7 @@ export async function createTreatiseEntry(psmid: string) {
     let t = new Treatise();
     t.psmid = psmid;
     t.link = "bomb.com";
+    t.year = 1897;
     await TreatiseRepo.createTreatise(t);
     // let t = await TreatiseRepo.getTreatise(psmid);
 
