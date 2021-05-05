@@ -27,7 +27,8 @@ async function createTreatiseRecord(psmid: string, link: string) {
 export async function createTreatiseEntry(psmid: string) {
     let t = new Treatise();
     t.psmid = psmid;
-        await TreatiseRepo.createTreatise(t);
+    t.link = "bomb.com";
+    await TreatiseRepo.createTreatise(t);
     // let t = await TreatiseRepo.getTreatise(psmid);
 
     // console.log("oh hello");
