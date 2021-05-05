@@ -25,10 +25,13 @@ async function createTreatiseRecord(psmid: string, link: string) {
 
 //Creates db entry for treatise if one does not exist yet
 export async function createTreatiseEntry(psmid: string) {
-    let t = await TreatiseRepo.getTreatise(psmid);
+    let t = new Treatise();
+    t.psmid = psmid;
+        await TreatiseRepo.createTreatise(t);
+    // let t = await TreatiseRepo.getTreatise(psmid);
 
-    console.log("oh hello");
-    console.log(t);
+    // console.log("oh hello");
+    // console.log(t);
 
     // if(!t) {
     //     let bookInfo = await BookInfoRepo.getBookInfo(psmid);
@@ -45,4 +48,8 @@ export async function createTreatiseEntry(psmid: string) {
 
     //     await TreatiseRepo.createTreatise(t);
     // }
+}
+
+export async function markTreatiseProcessed(psmid: string) {
+
 }
