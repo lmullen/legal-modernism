@@ -25,7 +25,9 @@ export async function getOrInsertCase(guid: string) {
         c = await locateCase(guid);
 
         if (!c) {
-            return c;
+            c = new Case();
+            c.guid = guid;
+            c.existsOnCap = false;
         }
 
     }
@@ -55,6 +57,7 @@ async function locateCase(guid: string): Promise<Case> {
     // let caseYear = stripYear(res.decision_date);
 
     let c = _mapCase(res, guid);
+    c.existsOnCap = true;
     return c;
 
 }

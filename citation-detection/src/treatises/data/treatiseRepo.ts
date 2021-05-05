@@ -21,8 +21,20 @@ class TreatiseRepo extends Repository {
     async createTreatise(t: Treatise) {
         // await this.create(t);
         let today = new Date();
-        let formattedToday = dateformat(today, "isoDateTime"); 
+        let formattedToday = dateformat(today, "isoDateTime");
         const sql = `INSERT INTO treatise (psmid, url, last_run, year, processed) VALUES ('${t.psmid}', '${t.link}', '${formattedToday}', ${t.year}, true)`;
+        return this.rawQuery(sql)
+            .then((res) => {
+                return res[0] || null;
+            });
+    }
+
+    async updateTreatiseLastRun(psmid: string) {
+        let today = new Date();
+        let formattedToday = dateformat(today, "isoDateTime");
+
+        const sql = `UPDATE treatise SET last_run = '${formattedToday}`;
+        console.log(sql);
         return this.rawQuery(sql)
             .then((res) => {
                 return res[0] || null;

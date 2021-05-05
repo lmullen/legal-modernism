@@ -10,7 +10,7 @@ import TreatiseRepo from "./treatises/data/treatiseRepo";
 import CitationRepo from "./treatises/data/CitationRepo";
 import OcrRepo from "./treatises/data/ocrRepo";
 import { getOrInsertCase, insertCase } from "./cases";
-import { createTreatiseEntry, incrementCitation } from "./treatises";
+import { createOrUpdateTreatiseEntry, incrementCitation } from "./treatises";
 import { Case } from './cases/data/models';
 import { PageOCRText } from './treatises/data/models';
 
@@ -74,7 +74,7 @@ export async function updateCitationCounts(matchObject) {
 }
 
 export async function processTreatise(treatiseId: string) {
-    await createTreatiseEntry(treatiseId);
+    await createOrUpdateTreatiseEntry(treatiseId);
     // let pages = await OcrRepo.getOCRTextByTreatiseID(treatiseId);
     // // console.log(pages.length);
 
