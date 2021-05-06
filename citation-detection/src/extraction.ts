@@ -68,7 +68,7 @@ export async function updateCitationCounts(matchObject) {
             await incrementCitation(caseEntry.guid, matchObject.treatiseId);
         }
         else {
-            console.log("not a case");
+            // console.log("not a case");
         }
     }
 }
@@ -90,15 +90,19 @@ export async function processTreatise(treatiseId: string) {
         await processText(p.ocrtext, matchObject);
     }
 
-    await updateCitationCounts(matchObject);
+    await updateCitationCounts(matchObject);     
+    await TreatiseRepo.updateTreatiseLastRun(treatiseId);
+    await TreatiseRepo.setTreatiseProcessed(true, treatiseId);
     console.log("hello, I am finished with this treatise");
 }
 
 async function main() {
     let ts = await getAllTreatises();
-    for (let t of ts) {
-        await processTreatise(t.psmid);
-    }
+    // for (let t of ts) {
+    //     await processTreatise(t.psmid);
+    // }
+    let test = ts[0];
+    await processTreatise(test.psmid);
     // console.log(ts);
     // console.log(ts.length);
     process.exit(1);

@@ -49,7 +49,7 @@ export async function createOrUpdateTreatiseEntry(psmid: string) {
     }
     else {
         // console.log('hello update')
-        await TreatiseRepo.updateTreatiseLastRun(t.psmid);
+   
     }
 }
 

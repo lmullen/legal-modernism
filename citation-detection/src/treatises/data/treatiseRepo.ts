@@ -33,15 +33,23 @@ class TreatiseRepo extends Repository {
         let today = new Date();
         let formattedToday = dateformat(today, "isoDateTime");
 
-        const sql = `UPDATE treatise SET last_run = '${formattedToday}' and processed = true`;
-        console.log(sql);
+        const sql = `UPDATE treatise SET last_run = '${formattedToday}' where psmid = '${psmid}'`;
+        // console.log(sql);
         return this.rawQuery(sql)
             .then((res) => {
                 return res[0] || null;
             });
     }
 
- }
+    async setTreatiseProcessed(val: boolean, psmid: string) {
+        const sql = `UPDATE treatise SET processed = true where psmid = '${psmid}'`;
+        return this.rawQuery(sql)
+            .then((res) => {
+                return res[0] || null;
+            });
+    }
+
+}
 
 const instance = new TreatiseRepo();
 Object.seal(instance);
