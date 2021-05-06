@@ -95,9 +95,12 @@ export async function processTreatise(treatiseId: string) {
 }
 
 async function main() {
-    let ts = await getAllTreatises()
-    console.log(ts);
-    console.log(ts.length);
+    let ts = await getAllTreatises();
+    for (let t of ts) {
+        await processTreatise(t.psmid);
+    }
+    // console.log(ts);
+    // console.log(ts.length);
     process.exit(1);
 }
 
