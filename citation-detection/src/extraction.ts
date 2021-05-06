@@ -10,7 +10,7 @@ import TreatiseRepo from "./treatises/data/treatiseRepo";
 import CitationRepo from "./treatises/data/CitationRepo";
 import OcrRepo from "./treatises/data/ocrRepo";
 import { getOrInsertCase, insertCase } from "./cases";
-import { createOrUpdateTreatiseEntry, incrementCitation } from "./treatises";
+import { clearTreatiseCitations, createOrUpdateTreatiseEntry, incrementCitation } from "./treatises";
 import { Case } from './cases/data/models';
 import { PageOCRText } from './treatises/data/models';
 
@@ -60,9 +60,9 @@ export async function processText(text: string, matchObject) {
 export async function updateCitationCounts(matchObject) {
     // console.log(matchObject);
     for (let c of matchObject.cases) {
-        let caseEntry = await getOrInsertCase(c);
+        let caseEntry: Case = await getOrInsertCase(c);
 
-        if (caseEntry) {
+        if (caseEntry.existsOnCap) {
             console.log("a case");
             // console.log(caseEntry);
             await incrementCitation(caseEntry.guid, matchObject.treatiseId);
@@ -75,22 +75,23 @@ export async function updateCitationCounts(matchObject) {
 
 export async function processTreatise(treatiseId: string) {
     await createOrUpdateTreatiseEntry(treatiseId);
-    // let pages = await OcrRepo.getOCRTextByTreatiseID(treatiseId);
-    // // console.log(pages.length);
+    await clearTreatiseCitations(treatiseId);
+    let pages = await OcrRepo.getOCRTextByTreatiseID(treatiseId);
+    console.log(pages.length);
+    pages = pages.slice(213);
 
-    // let matchObject = {
-    //     treatiseId: treatiseId,
-    //     cases: []
-    // };
+    let matchObject = {
+        treatiseId: treatiseId,
+        cases: []
+    };
 
-    // for (let p of pages) {
-    //     // console.log(p);
-    //     await processText(p.ocrtext, matchObject);
-    // }
+    for (let p of pages) {
+        // console.log(p);
+        await processText(p.ocrtext, matchObject);
+    }
 
-    // console.log(matchObject.cases);
-
-    // await updateCitationCounts(matchObject);
+    await updateCitationCounts(matchObject);
+    console.log("hello, I am finished with this treatise");
 }
 
 async function main() {

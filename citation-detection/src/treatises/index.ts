@@ -12,11 +12,13 @@ export async function incrementCitation(guid: string, psmid: string) {
         newCitation.psmid = psmid;
         newCitation.count = 0;
         await CitationRepo.insertCitation(newCitation);
+        console.log("new citation");
         c = await CitationRepo.getCitation(psmid, guid);
     }
 
     c.count = c.count + 1;
     await CitationRepo.updateCitationCount(c.id, c.count);
+    console.log("incrementation");
 }
 
 async function createTreatiseRecord(psmid: string, link: string) {
@@ -51,6 +53,7 @@ export async function createOrUpdateTreatiseEntry(psmid: string) {
     }
 }
 
-export async function markTreatiseProcessed(psmid: string) {
-
+//everytime treatise is run, must clear previous citations
+export async function clearTreatiseCitations(psmid: string) {
+    await CitationRepo.clearCitations(psmid);
 }

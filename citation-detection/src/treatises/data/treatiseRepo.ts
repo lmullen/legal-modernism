@@ -22,7 +22,7 @@ class TreatiseRepo extends Repository {
         // await this.create(t);
         let today = new Date();
         let formattedToday = dateformat(today, "isoDateTime");
-        const sql = `INSERT INTO treatise (psmid, url, last_run, year, processed) VALUES ('${t.psmid}', '${t.link}', '${formattedToday}', ${t.year}, true)`;
+        const sql = `INSERT INTO treatise (psmid, url, last_run, year, processed) VALUES ('${t.psmid}', '${t.link}', '${formattedToday}', ${t.year}, false)`;
         return this.rawQuery(sql)
             .then((res) => {
                 return res[0] || null;
@@ -33,13 +33,14 @@ class TreatiseRepo extends Repository {
         let today = new Date();
         let formattedToday = dateformat(today, "isoDateTime");
 
-        const sql = `UPDATE treatise SET last_run = '${formattedToday}`;
+        const sql = `UPDATE treatise SET last_run = '${formattedToday}' and processed = true`;
         console.log(sql);
         return this.rawQuery(sql)
             .then((res) => {
                 return res[0] || null;
             });
     }
+
 }
 
 const instance = new TreatiseRepo();

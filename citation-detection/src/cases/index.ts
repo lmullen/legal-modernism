@@ -28,6 +28,7 @@ export async function getOrInsertCase(guid: string) {
             c = new Case();
             c.guid = guid;
             c.existsOnCap = false;
+            return c;
         }
 
     }
@@ -65,6 +66,8 @@ async function locateCase(guid: string): Promise<Case> {
 function _mapCase(res, guid) {
     let c = new Case();
     c.caseDotLawId = res.id;
+    console.log(res.name);
+    console.log(res.name_abbreviation);
     c.fullName = escape(res.name);
     c.shortName = escape(res.name_abbreviation);
     c.year = _stripYear(res.decision_date);

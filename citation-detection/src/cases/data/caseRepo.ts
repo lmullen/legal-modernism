@@ -6,7 +6,7 @@ import { CONN } from "../../infrastructure/data/knexProvider";
 
 class CaseRepo extends Repository {
     constructor() {
-        super(Case, CONN.ALT);
+        super(Case);
     }
 
     //@TODO: use Objection properly and set appropriate DB on queries
