@@ -57,3 +57,7 @@ export async function createOrUpdateTreatiseEntry(psmid: string) {
 export async function clearTreatiseCitations(psmid: string) {
     await CitationRepo.clearCitations(psmid);
 }
+
+export async function getAllTreatises() {
+    return BookInfoRepo.getAllTreatises();
+}

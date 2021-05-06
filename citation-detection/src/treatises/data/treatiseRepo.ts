@@ -41,7 +41,7 @@ class TreatiseRepo extends Repository {
             });
     }
 
-}
+ }
 
 const instance = new TreatiseRepo();
 Object.seal(instance);
