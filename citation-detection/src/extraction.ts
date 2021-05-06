@@ -98,11 +98,11 @@ export async function processTreatise(treatiseId: string) {
 
 async function main() {
     let ts = await getAllTreatises();
-    // for (let t of ts) {
-    //     await processTreatise(t.psmid);
-    // }
-    let test = ts[0];
-    await processTreatise(test.psmid);
+    for (let t of ts) {
+        await processTreatise(t.psmid);
+    }
+    // let test = ts[0];
+    // await processTreatise(test.psmid);
     // console.log(ts);
     // console.log(ts.length);
     process.exit(1);
