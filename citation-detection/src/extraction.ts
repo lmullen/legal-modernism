@@ -60,25 +60,32 @@ export async function processText(text: string, matchObject) {
 export async function updateCitationCounts(matchObject) {
     // console.log(matchObject);
     for (let c of matchObject.cases) {
-        let caseEntry: Case = await getOrInsertCase(c);
+        try {
+            let caseEntry: Case = await getOrInsertCase(c);
 
-        if (caseEntry.existsOnCap) {
-            console.log("a case");
-            // console.log(caseEntry);
-            await incrementCitation(caseEntry.guid, matchObject.treatiseId);
+            if (caseEntry.existsOnCap) {
+                console.log("a case");
+                // console.log(caseEntry);
+                await incrementCitation(caseEntry.guid, matchObject.treatiseId);
+            }
+            else {
+                // console.log("not a case");
+            }
         }
-        else {
-            // console.log("not a case");
+        catch (e) {
+            
         }
+
     }
 }
 
 export async function processTreatise(treatiseId: string) {
+    console.log(`hello, I am starting this treatise: ${treatiseId}`);
     await createOrUpdateTreatiseEntry(treatiseId);
     await clearTreatiseCitations(treatiseId);
+    console.log(`treatise record located/created; citations cleared`);
     let pages = await OcrRepo.getOCRTextByTreatiseID(treatiseId);
-    console.log(pages.length);
-    pages = pages.slice(213);
+    // pages = pages.slice(213);
 
     let matchObject = {
         treatiseId: treatiseId,
@@ -90,21 +97,29 @@ export async function processTreatise(treatiseId: string) {
         await processText(p.ocrtext, matchObject);
     }
 
-    await updateCitationCounts(matchObject);     
+    await updateCitationCounts(matchObject);
     await TreatiseRepo.updateTreatiseLastRun(treatiseId);
     await TreatiseRepo.setTreatiseProcessed(true, treatiseId);
-    console.log("hello, I am finished with this treatise");
+    console.log(`hello, I am finished with this treatise: ${treatiseId}`);
 }
 
 async function main() {
     let ts = await getAllTreatises();
+    ts = ts.slice(6, 11);
     for (let t of ts) {
-        await processTreatise(t.psmid);
+        try {
+
+            await processTreatise(t.psmid);
+        }
+        catch (e) {
+            console.log(`something went frong for ${t.psmid}!!`);
+            console.error(e);
+        }
     }
     // let test = ts[0];
     // await processTreatise(test.psmid);
     // console.log(ts);
-    // console.log(ts.length);
+    console.log(ts.length);
     process.exit(1);
 }
 

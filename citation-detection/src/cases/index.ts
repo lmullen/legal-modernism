@@ -31,9 +31,17 @@ export async function getOrInsertCase(guid: string) {
             return c;
         }
 
+        try {
+            await insertCase(c);
+        }
+        catch (e) {
+            console.log(`error inserting case: ${guid}`);
+            console.error(e);
+            throw (e);
+        }
+
     }
 
-    await insertCase(c);
 
     return c;
 }
