@@ -59,6 +59,7 @@ export async function processText(text: string, matchObject) {
 
 export async function updateCitationCounts(matchObject) {
     // console.log(matchObject);
+    console.log(`${matchObject.cases.length} possible cases`);
     for (let c of matchObject.cases) {
         try {
             let caseEntry: Case = await getOrInsertCase(c);
@@ -73,7 +74,9 @@ export async function updateCitationCounts(matchObject) {
             }
         }
         catch (e) {
-            
+            // throw (e);
+            console.log(`case entry error, guid: ${c}`);
+            console.error(e);
         }
 
     }
@@ -85,6 +88,7 @@ export async function processTreatise(treatiseId: string) {
     await clearTreatiseCitations(treatiseId);
     console.log(`treatise record located/created; citations cleared`);
     let pages = await OcrRepo.getOCRTextByTreatiseID(treatiseId);
+    console.log(`pages: ${pages.length}`);
     // pages = pages.slice(213);
 
     let matchObject = {
@@ -93,8 +97,13 @@ export async function processTreatise(treatiseId: string) {
     };
 
     for (let p of pages) {
-        // console.log(p);
-        await processText(p.ocrtext, matchObject);
+        try {
+            await processText(p.ocrtext, matchObject);
+        }
+        catch (e) {
+            console.log("page process error");
+            console.error(e);
+        }
     }
 
     await updateCitationCounts(matchObject);
@@ -105,7 +114,7 @@ export async function processTreatise(treatiseId: string) {
 
 async function main() {
     let ts = await getAllTreatises();
-    ts = ts.slice(6, 11);
+    ts = ts.slice(0, 5);
     for (let t of ts) {
         try {
 
