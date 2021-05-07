@@ -112,7 +112,7 @@ async function main() {
             await processTreatise(t.psmid);
         }
         catch (e) {
-            console.log(`something went frong for ${t.psmid}!!`);
+            console.log(`something went wrong for ${t.psmid}!!`);
             console.error(e);
         }
     }
