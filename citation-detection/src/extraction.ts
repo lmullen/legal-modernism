@@ -117,6 +117,7 @@ async function singleTreatiseTest() {
     await processTreatise(problemTreatise);
 }
 
+//SHORT CITES?
 async function main() {
     await singleTreatiseTest();
     // let ts = await getAllTreatises();

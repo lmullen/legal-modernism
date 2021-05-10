@@ -31,7 +31,7 @@ let simpleReporterTest = "Brock v. Cathedral Bluffs Shale Oil Co., 796 F.2d 533,
 
 let revdTest0 = "Lompe v. Sunridge Partners, LLC, 54 F. Supp. 3d 1252 (D. Wyo. 2014), rev'd 818 F.3d 1041 (10th Cir. 2016)"
 
-let combinedReporterSupp = "Vinh Tan Nguyen v. Holder, 763 F.3d 1022, 1029 (9th Cir. 2014)...stuff stuff stuff. See Texas v. United States, 86 F. Supp. 3d 591"
+let combinedReporterSupp = "Vinh Tan Nguyen v. Holder, 763 F.3d 1022, 1029 (9th Cir. 2014)...stuff stuff stuff. See Texas v. United States, 86 F. Supp. 3d 591 Texas v. United States 86 F. Supp. 3d 591"
 
 let manyCitations0 = "The Courts of Appeals are divided over whether §§1252(a)(2)(C) and (D) preclude judicial review of factual challenges to a CAT order. \
     Most Courts of Appeals have sided with the Government; the Seventh and Ninth Circuits have gone the other way. \

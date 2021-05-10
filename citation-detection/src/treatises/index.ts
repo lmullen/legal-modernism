@@ -7,7 +7,6 @@ export async function incrementCitation(guid: string, psmid: string) {
     let c = await CitationRepo.getCitation(psmid, guid);
 
     if (c) {
-
         console.log(`haz citation; current count: ${c.count}`);
     }
 
@@ -23,7 +22,6 @@ export async function incrementCitation(guid: string, psmid: string) {
 
     c.count = c.count + 1;
     await CitationRepo.updateCitationCount(c.id, c.count);
-    console.log("incrementation");
 }
 
 async function createTreatiseRecord(psmid: string, link: string) {
