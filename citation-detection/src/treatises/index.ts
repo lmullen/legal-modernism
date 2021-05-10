@@ -5,7 +5,11 @@ import { Citation, Treatise } from './data/models';
 
 export async function incrementCitation(guid: string, psmid: string) {
     let c = await CitationRepo.getCitation(psmid, guid);
-    console.log(`haz citation; current count: ${c.count}`);
+
+    if (c) {
+
+        console.log(`haz citation; current count: ${c.count}`);
+    }
 
     if (!c) {
         let newCitation = new Citation();
@@ -33,7 +37,7 @@ export async function createOrUpdateTreatiseEntry(psmid: string) {
     // console.log("oh hello");
     // console.log(t);
 
-    if(!t) {
+    if (!t) {
         let bookInfo = await BookInfoRepo.getBookInfo(psmid);
 
         // console.log(bookInfo);
@@ -50,7 +54,7 @@ export async function createOrUpdateTreatiseEntry(psmid: string) {
     }
     else {
         // console.log('hello update')
-   
+
     }
 }
 

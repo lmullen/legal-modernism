@@ -63,10 +63,9 @@ export async function updateCitationCounts(matchObject) {
     for (let c of matchObject.cases) {
         try {
             let caseEntry: Case = await getOrInsertCase(c);
-
+            console.log(caseEntry);
             if (caseEntry.existsOnCap) {
                 console.log("a case");
-                // console.log(caseEntry);
                 await incrementCitation(caseEntry.guid, matchObject.treatiseId);
             }
             else {
@@ -112,23 +111,30 @@ export async function processTreatise(treatiseId: string) {
     console.log(`hello, I am finished with this treatise: ${treatiseId}`);
 }
 
-async function main() {
-    let ts = await getAllTreatises();
-    ts = ts.slice(0, 5);
-    for (let t of ts) {
-        try {
+async function singleTreatiseTest() {
+    // const problemTreatise = "19004016900";
+    const problemTreatise = "19007469900";
+    await processTreatise(problemTreatise);
+}
 
-            await processTreatise(t.psmid);
-        }
-        catch (e) {
-            console.log(`something went wrong for ${t.psmid}!!`);
-            console.error(e);
-        }
-    }
+async function main() {
+    await singleTreatiseTest();
+    // let ts = await getAllTreatises();
+    // ts = ts.slice(0, 5);
+    // for (let t of ts) {
+    //     try {
+
+    //         await processTreatise(t.psmid);
+    //     }
+    //     catch (e) {
+    //         console.log(`something went wrong for ${t.psmid}!!`);
+    //         console.error(e);
+    //     }
+    // }
     // let test = ts[0];
     // await processTreatise(test.psmid);
     // console.log(ts);
-    console.log(ts.length);
+    // console.log(ts.length);
     process.exit(1);
 }
 
