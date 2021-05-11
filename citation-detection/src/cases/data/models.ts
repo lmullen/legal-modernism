@@ -9,4 +9,5 @@ export class Case extends BaseDataModel {
     shortName: string
     year: number
     guid: string
+    existsOnCap: boolean
 }

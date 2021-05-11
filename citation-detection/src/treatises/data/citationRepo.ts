@@ -6,7 +6,7 @@ import { Citation } from './models';
 
 class CitationRepo extends Repository {
     constructor() {
-        super(Citation, CONN.ALT);
+        super(Citation);
     }
 
     async getCitation(psmid: string, guid: string) {
@@ -26,6 +26,14 @@ class CitationRepo extends Repository {
         const sql = `UPDATE citation SET count = ? WHERE id = ?`;
         // console.log(sql);
         return await this.rawQuery(sql, [count, id]);
+    }
+
+    async clearCitations(psmid: string) {
+        const sql = `DELETE from citation where psmid = ?`;
+        return await this.rawQuery(sql, [psmid])
+            .then((res) => {
+                return res[0] || null;
+            });
     }
 }
 

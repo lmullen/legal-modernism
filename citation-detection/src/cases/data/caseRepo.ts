@@ -6,12 +6,12 @@ import { CONN } from "../../infrastructure/data/knexProvider";
 
 class CaseRepo extends Repository {
     constructor() {
-        super(Case, CONN.ALT);
+        super(Case);
     }
 
     //@TODO: use Objection properly and set appropriate DB on queries
     async insertCase(c: Case) {
-        let sql = `INSERT INTO "caseTable" (case_dot_law_id, full_name, short_name, year, guid) VALUES (${c.caseDotLawId}, '${c.fullName}', '${c.shortName}', ${c.year}, '${c.guid}')`;
+        let sql = `INSERT INTO "caseTable" (case_dot_law_id, full_name, short_name, year, guid, exists_on_cap) VALUES (${c.caseDotLawId}, '${c.fullName}', '${c.shortName}', ${c.year}, '${c.guid}', '${c.existsOnCap}')`;
         // console.log(sql);
         return this.rawQuery(sql);
     }

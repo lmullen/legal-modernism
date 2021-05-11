@@ -10,7 +10,7 @@ import TreatiseRepo from "./treatises/data/treatiseRepo";
 import CitationRepo from "./treatises/data/CitationRepo";
 import OcrRepo from "./treatises/data/ocrRepo";
 import { getOrInsertCase, insertCase } from "./cases";
-import { createTreatiseEntry, incrementCitation } from "./treatises";
+import { clearTreatiseCitations, createOrUpdateTreatiseEntry, getAllTreatises, incrementCitation } from "./treatises";
 import { Case } from './cases/data/models';
 import { PageOCRText } from './treatises/data/models';
 
@@ -59,23 +59,36 @@ export async function processText(text: string, matchObject) {
 
 export async function updateCitationCounts(matchObject) {
     // console.log(matchObject);
+    console.log(`${matchObject.cases.length} possible cases`);
     for (let c of matchObject.cases) {
-        let caseEntry = await getOrInsertCase(c);
+        try {
+            let caseEntry: Case = await getOrInsertCase(c);
+            console.log(caseEntry);
+            if (caseEntry.existsOnCap) {
+                console.log("a case");
+                await incrementCitation(caseEntry.guid, matchObject.treatiseId);
+            }
+            else {
+                // console.log("not a case");
+            }
+        }
+        catch (e) {
+            // throw (e);
+            console.log(`case entry error, guid: ${c}`);
+            console.error(e);
+        }
 
-        if (caseEntry) {
-            console.log("a case");
-            // console.log(caseEntry);
-            await incrementCitation(caseEntry.guid, matchObject.treatiseId);
-        }
-        else {
-            console.log("not a case");
-        }
     }
 }
 
 export async function processTreatise(treatiseId: string) {
+    console.log(`hello, I am starting this treatise: ${treatiseId}`);
+    await createOrUpdateTreatiseEntry(treatiseId);
+    await clearTreatiseCitations(treatiseId);
+    console.log(`treatise record located/created; citations cleared`);
     let pages = await OcrRepo.getOCRTextByTreatiseID(treatiseId);
-    console.log(pages.length);
+    console.log(`pages: ${pages.length}`);
+    // pages = pages.slice(213);
 
     let matchObject = {
         treatiseId: treatiseId,
@@ -83,18 +96,61 @@ export async function processTreatise(treatiseId: string) {
     };
 
     for (let p of pages) {
-        // console.log(p);
-        await processText(p.ocrtext, matchObject);
+        try {
+            await processText(p.ocrtext, matchObject);
+        }
+        catch (e) {
+            console.log("page process error");
+            console.error(e);
+        }
     }
+
+    await updateCitationCounts(matchObject);
+    await TreatiseRepo.updateTreatiseLastRun(treatiseId);
+    await TreatiseRepo.setTreatiseProcessed(true, treatiseId);
+    console.log(`hello, I am finished with this treatise: ${treatiseId}`);
+}
+
+async function singleTreatiseTest() {
+    // const problemTreatise = "19004016900";
+    const problemTreatise = "19007469900";
+    await processTreatise(problemTreatise);
+}
+
+async function textTest(text: string) {
+    let matchObject = {
+        treatiseId: 0,
+        cases: []
+    };
+
+
+    await processText(text, matchObject);
 
     console.log(matchObject.cases);
 
-    await updateCitationCounts(matchObject);
 }
 
+async function properRun() {
+    let ts = await getAllTreatises();
+    ts = ts.slice(0, 1);
+    for (let t of ts) {
+        try {
+
+            await processTreatise(t.psmid);
+        }
+        catch (e) {
+            console.log(`something went wrong for ${t.psmid}!!`);
+            console.error(e);
+        }
+    }
+}
+
+//SHORT CITES?
 async function main() {
-    // await processTreatise("19007469900");
-    await createTreatiseEntry("19007469900");
+    // await singleTreatiseTest();
+    // await textTest(testTexts.treatiseTest0);
+
+    await properRun();
     process.exit(1);
 }
 
