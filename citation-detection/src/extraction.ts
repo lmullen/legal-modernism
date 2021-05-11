@@ -117,25 +117,40 @@ async function singleTreatiseTest() {
     await processTreatise(problemTreatise);
 }
 
+async function textTest(text: string) {
+    let matchObject = {
+        treatiseId: 0,
+        cases: []
+    };
+
+
+    await processText(text, matchObject);
+
+    console.log(matchObject.cases);
+
+}
+
+async function properRun() {
+    let ts = await getAllTreatises();
+    ts = ts.slice(0, 1);
+    for (let t of ts) {
+        try {
+
+            await processTreatise(t.psmid);
+        }
+        catch (e) {
+            console.log(`something went wrong for ${t.psmid}!!`);
+            console.error(e);
+        }
+    }
+}
+
 //SHORT CITES?
 async function main() {
-    await singleTreatiseTest();
-    // let ts = await getAllTreatises();
-    // ts = ts.slice(0, 5);
-    // for (let t of ts) {
-    //     try {
+    // await singleTreatiseTest();
+    // await textTest(testTexts.treatiseTest0);
 
-    //         await processTreatise(t.psmid);
-    //     }
-    //     catch (e) {
-    //         console.log(`something went wrong for ${t.psmid}!!`);
-    //         console.error(e);
-    //     }
-    // }
-    // let test = ts[0];
-    // await processTreatise(test.psmid);
-    // console.log(ts);
-    // console.log(ts.length);
+    await properRun();
     process.exit(1);
 }
 

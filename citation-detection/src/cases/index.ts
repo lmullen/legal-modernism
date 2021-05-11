@@ -39,7 +39,6 @@ export async function getOrInsertCase(guid: string) {
             console.error(e);
             throw (e);
         }
-
     }
 
 
