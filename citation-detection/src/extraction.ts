@@ -63,12 +63,12 @@ export async function updateCitationCounts(matchObject) {
     for (let c of matchObject.cases) {
         try {
             let caseEntry: Case = await getOrInsertCase(c);
-            console.log(caseEntry);
             if (caseEntry.existsOnCap) {
-                console.log("a case");
+                console.log("found a case!");
                 await incrementCitation(caseEntry.guid, matchObject.treatiseId);
             }
             else {
+                console.log(caseEntry);
                 // console.log("not a case");
             }
         }
@@ -87,6 +87,7 @@ export async function processTreatise(treatiseId: string) {
     await clearTreatiseCitations(treatiseId);
     console.log(`treatise record located/created; citations cleared`);
     let pages = await OcrRepo.getOCRTextByTreatiseID(treatiseId);
+    // pages = pages.slice(4, 500);
     console.log(`pages: ${pages.length}`);
     // pages = pages.slice(213);
 
@@ -96,6 +97,7 @@ export async function processTreatise(treatiseId: string) {
     };
 
     for (let p of pages) {
+        console.log(`processing page ${p.pageid}`);
         try {
             await processText(p.ocrtext, matchObject);
         }
@@ -113,7 +115,7 @@ export async function processTreatise(treatiseId: string) {
 
 async function singleTreatiseTest() {
     // const problemTreatise = "19004016900";
-    const problemTreatise = "19007469900";
+    const problemTreatise = "19004016900";
     await processTreatise(problemTreatise);
 }
 
@@ -132,7 +134,7 @@ async function textTest(text: string) {
 
 async function properRun() {
     let ts = await getAllTreatises();
-    ts = ts.slice(0, 1);
+    ts = ts.slice(0, 100);
     for (let t of ts) {
         try {
 
@@ -150,7 +152,9 @@ async function main() {
     // await singleTreatiseTest();
     // await textTest(testTexts.treatiseTest0);
 
+    await singleTreatiseTest();
     await properRun();
+
     process.exit(1);
 }
 
