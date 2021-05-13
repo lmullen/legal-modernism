@@ -22,7 +22,9 @@ class TreatiseRepo extends Repository {
         // await this.create(t);
         let today = new Date();
         let formattedToday = dateformat(today, "isoDateTime");
-        const sql = `INSERT INTO treatise (psmid, url, last_run, year, processed) VALUES ('${t.psmid}', '${t.link}', '${formattedToday}', ${t.year}, false)`;
+        let link = encodeURIComponent(t.link);
+        // const sql = `INSERT INTO treatise (psmid, url, last_run, year, processed) VALUES ('${t.psmid}', url_encode('${t.link}'), '${formattedToday}', ${t.year}, false)`;
+        const sql = `INSERT INTO treatise (psmid, url, last_run, year, processed) VALUES ('${t.psmid}', '${link}', '${formattedToday}', ${t.year}, false)`;
         return this.rawQuery(sql)
             .then((res) => {
                 return res[0] || null;

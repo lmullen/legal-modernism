@@ -68,8 +68,8 @@ export async function updateCitationCounts(matchObject) {
                 await incrementCitation(caseEntry.guid, matchObject.treatiseId);
             }
             else {
-                console.log(caseEntry);
-                // console.log("not a case");
+                // console.log(caseEntry);
+                console.log("not a case");
             }
         }
         catch (e) {
@@ -134,7 +134,7 @@ async function textTest(text: string) {
 
 async function properRun() {
     let ts = await getAllTreatises();
-    ts = ts.slice(0, 100);
+    ts = ts.slice(36, 100);
     for (let t of ts) {
         try {
 
@@ -153,7 +153,7 @@ async function main() {
     // await textTest(testTexts.treatiseTest0);
 
     await singleTreatiseTest();
-    await properRun();
+    // await properRun();
 
     process.exit(1);
 }
