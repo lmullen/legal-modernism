@@ -128,13 +128,13 @@ async function textTest(text: string) {
 
     await processText(text, matchObject);
 
-    console.log(matchObject.cases);
+    // console.log(matchObject.cases);
 
 }
 
 async function properRun() {
     let ts = await getAllTreatises();
-    ts = ts.slice(36, 100);
+    ts = ts.slice(0, 30);
     for (let t of ts) {
         try {
 
@@ -152,8 +152,8 @@ async function main() {
     // await singleTreatiseTest();
     // await textTest(testTexts.treatiseTest0);
 
-    await singleTreatiseTest();
-    // await properRun();
+    // await singleTreatiseTest();
+    await properRun();
 
     process.exit(1);
 }
