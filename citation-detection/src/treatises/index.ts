@@ -42,7 +42,7 @@ export async function createOrUpdateTreatiseEntry(psmid: string) {
 
         t = new Treatise();
         t.psmid = psmid;
-        // t.link = bookInfo.productlink; ignore for now because the '?' in the url messed up insertion into db via raw SQL
+        t.link = bookInfo.productlink; 
 
         let year = bookInfo.pubdateYear || bookInfo.pubdateComposed;
         t.year = year;
