@@ -70,6 +70,9 @@ export async function updateCitationCounts(matchObject) {
             else {
                 // console.log(caseEntry);
                 console.log("not a case");
+                // return;
+
+                // process.exit(1);
             }
         }
         catch (e) {
@@ -134,7 +137,7 @@ async function textTest(text: string) {
 
 async function properRun() {
     let ts = await getAllTreatises();
-    ts = ts.slice(0, 30);
+    ts = ts.slice(0, 6);
     for (let t of ts) {
         try {
 

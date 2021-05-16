@@ -28,8 +28,15 @@ export async function getOrInsertCase(guid: string) {
             c = new Case();
             c.guid = guid;
             c.existsOnCap = false;
-            return c;
+            c.caseDotLawId = 0;
+            c.year = 0;
+            c.fullName = "";
+            c.shortName = "";
+            // return c;
         }
+
+
+        // await insertCase(c);
 
         try {
             await insertCase(c);
