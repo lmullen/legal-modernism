@@ -1,0 +1,10 @@
+{
+    "environments": {
+        "test": {
+            "scripts": {
+                "test-setup": "make install",
+                "test": "make test"
+            }
+        }
+    }
+}

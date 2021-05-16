@@ -137,7 +137,7 @@ async function textTest(text: string) {
 
 async function properRun() {
     let ts = await getAllTreatises();
-    ts = ts.slice(0, 6);
+    ts = ts.slice(0, 10);
     for (let t of ts) {
         try {
 
