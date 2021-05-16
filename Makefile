@@ -1,5 +1,5 @@
 start:
-	make build-server; make run;
+	make run;
 
 install:
 	cd citation-detection; npm install; cd ..;

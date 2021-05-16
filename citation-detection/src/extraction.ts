@@ -156,7 +156,8 @@ async function main() {
     // await textTest(testTexts.treatiseTest0);
 
     // await singleTreatiseTest();
-    await properRun();
+    // await properRun();
+    console.log('hello i am interwebs');
 
     process.exit(1);
 }
