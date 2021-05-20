@@ -137,10 +137,9 @@ async function textTest(text: string) {
 
 async function properRun() {
     let ts = await getAllTreatises();
-    ts = ts.slice(0, 10);
+    ts = ts.slice(16, 21);
     for (let t of ts) {
         try {
-
             await processTreatise(t.psmid);
         }
         catch (e) {

@@ -31,7 +31,7 @@ class BookInfoRepo extends Repository {
     }
 
     async getAllTreatises() {
-        const sql = `select * from moml.book_info`;
+        const sql = `select * from moml.book_info order by psmid desc;`;
         return this.rawQuery(sql)
             // .then((res) => {
             //     return res[0] || null;
