@@ -20,6 +20,7 @@ let standardAppellateRegex: RegExp = /[\d]{1,3}\s[a-zA-Z\.\s]+\sApp\.\s[\d]{1,4}
 async function gatherRegexes(): Promise<RegExp[]> {
     let r = [standardRegex, standardAppellateRegex];
 
+    //so there are these two catchall regexes above, and also specific regexes for each reporter CAP lists as having been active during the relevant time period. that list is incomplete. I think it would be best if finished; relying on the catchall regexes is not ideal, IMO
     let reportersWithSpecial = _.filter(reporterList, (r) => { return r.useSpecial });
     let specialRegexes = reportersWithSpecial.map((r) => { return r.regEx; });
 
@@ -38,6 +39,7 @@ export async function parseCases(text: string, regex?: RegExp): Promise<string[]
     return res;
 }
 
+//extracts case guids from a given block of text
 export async function extractCases(text: string) {
     let regexes = await gatherRegexes();
 
@@ -51,14 +53,15 @@ export async function extractCases(text: string) {
     return res;
 }
 
+//puts the resulting extracted cases in a place where other parts of the code can use them
 export async function processText(text: string, matchObject) {
     let matchRes = await extractCases(text);
     matchObject.cases = matchObject.cases.concat(matchRes);
-    // return matchObject;
+    //so, we pass this matchObject around. it's not the best software design, admittedly, a lot of the parts of this entire process started out as quick tests that just stuck
 }
 
+//once we have all the case guids from a given treatise, we record that these cases were cited in the treatise
 export async function updateCitationCounts(matchObject) {
-    // console.log(matchObject);
     console.log(`${matchObject.cases.length} possible cases`);
     for (let c of matchObject.cases) {
         try {
@@ -68,11 +71,7 @@ export async function updateCitationCounts(matchObject) {
                 await incrementCitation(caseEntry.guid, matchObject.treatiseId);
             }
             else {
-                // console.log(caseEntry);
                 console.log("not a case");
-                // return;
-
-                // process.exit(1);
             }
         }
         catch (e) {
@@ -84,15 +83,14 @@ export async function updateCitationCounts(matchObject) {
     }
 }
 
+//sort of the "master" function. Pre-processing of treatise; extraction of cases; post-processing of treatise, including actually recording the citations in our db
 export async function processTreatise(treatiseId: string) {
     console.log(`hello, I am starting this treatise: ${treatiseId}`);
     await createOrUpdateTreatiseEntry(treatiseId);
     await clearTreatiseCitations(treatiseId);
     console.log(`treatise record located/created; citations cleared`);
     let pages = await OcrRepo.getOCRTextByTreatiseID(treatiseId);
-    // pages = pages.slice(4, 500);
     console.log(`pages: ${pages.length}`);
-    // pages = pages.slice(213);
 
     let matchObject = {
         treatiseId: treatiseId,
@@ -137,7 +135,7 @@ async function textTest(text: string) {
 
 async function properRun() {
     let ts = await getAllTreatises();
-    ts = ts.slice(16, 21);
+    ts = ts.slice(0, 15); //this how I was setting it to like only do 20 this day, or w/e
     for (let t of ts) {
         try {
             await processTreatise(t.psmid);
@@ -149,15 +147,8 @@ async function properRun() {
     }
 }
 
-//SHORT CITES?
 async function main() {
-    // await singleTreatiseTest();
-    // await textTest(testTexts.treatiseTest0);
-
-    // await singleTreatiseTest();
     await properRun();
-    // console.log('hello i am interwebs');
-
     process.exit(1);
 }
 
