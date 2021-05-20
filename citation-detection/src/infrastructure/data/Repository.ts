@@ -15,6 +15,7 @@ abstract class Repository {
         this._knex = (getKnex(c)); 
     }
 
+    //this doesn't work for some reason. would be a solid QoL improvement if it was made to work
     get q() {
         return this._model.query(this._knex);
     }

@@ -22,23 +22,15 @@ export async function incrementCitation(guid: string, psmid: string) {
 
     c.count = c.count + 1;
     await CitationRepo.updateCitationCount(c.id, c.count);
-}
-
-async function createTreatiseRecord(psmid: string, link: string) {
-
+    console.log(`updated citation count: ${c.count}`);
 }
 
 //Creates db entry for treatise if one does not exist yet
 export async function createOrUpdateTreatiseEntry(psmid: string) {
     let t = await TreatiseRepo.getTreatise(psmid);
 
-    // console.log("oh hello");
-    // console.log(t);
-
     if (!t) {
         let bookInfo = await BookInfoRepo.getBookInfo(psmid);
-
-        // console.log(bookInfo);
 
         t = new Treatise();
         t.psmid = psmid;
@@ -46,17 +38,15 @@ export async function createOrUpdateTreatiseEntry(psmid: string) {
 
         let year = bookInfo.pubdateYear || bookInfo.pubdateComposed;
         t.year = year;
-        // console.log(t);
 
         await TreatiseRepo.createTreatise(t);
     }
     else {
-        // console.log('hello update')
 
     }
 }
 
-//everytime treatise is run, must clear previous citations
+//everytime treatise is run, must clear previous citations otherwise would be counting same citations multiple times
 export async function clearTreatiseCitations(psmid: string) {
     await CitationRepo.clearCitations(psmid);
 }
