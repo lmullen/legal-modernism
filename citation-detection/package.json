@@ -51,7 +51,7 @@
     "ejs": "^2.4.2",
     "eventemitter3": "3.0.0",
     "google-spreadsheet": "2.0.3",
-    "googleapis": "12.2.0",
+    "googleapis": "39.1.0",
     "introspect": "0.0.3",
     "inversify": "^3.0.0-rc.2",
     "json-loader": "^0.5.4",
