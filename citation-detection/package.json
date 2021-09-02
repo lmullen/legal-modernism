@@ -63,7 +63,7 @@
     "memory-cache": "0.2.0",
     "moment": "^2.29.1",
     "moment-timezone": "0.5.9",
-    "node-fetch": "^1.5.3",
+    "node-fetch": "^2.6.1",
     "objection": "^0.5.5",
     "pg": "^6.4.2",
     "q": "^1.4.1",
