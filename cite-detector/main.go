@@ -21,6 +21,7 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
+	log.Info("Connecting to database")
 	db, err := db.Connect(ctx)
 	if err != nil {
 		log.WithError(err).Fatal("Error connecting to database")
@@ -31,7 +32,7 @@ func main() {
 	genericDetector := citations.NewDetector("Generic", `[\p{L}\s\.]{4,15}?`)
 
 	// Query for all the treatise pages full text
-	queryPages := `SELECT psmid, pageid, ocrtext FROM moml.page_ocrtext LIMIT 1000;`
+	queryPages := `SELECT psmid, pageid, ocrtext FROM moml.page_ocrtext LIMIT 10000;`
 
 	rows, err := db.Query(context.TODO(), queryPages)
 	if err != nil {
@@ -48,7 +49,7 @@ func main() {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			log.WithField("page", page).Info("Detecting citations in treatise page")
+			// log.WithField("page", page).Info("Detecting citations in treatise page")
 			citations := genericDetector.Detect(page)
 			for _, cite := range citations {
 				err := citeRepo.Save(context.TODO(), cite)
@@ -60,6 +61,8 @@ func main() {
 
 	}
 
+	log.Info("Waiting for go routines to finish")
 	wg.Wait()
+	log.Info("Finished detecting citations")
 
 }
