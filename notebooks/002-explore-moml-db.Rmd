@@ -1,0 +1,35 @@
+---
+title: "Exploring MOML database"
+output: html_notebook
+---
+
+```{r}
+library(DBI)
+library(tidyverse)
+library(dbplyr)
+```
+
+Connect to the DB.
+
+```{r}
+db <- dbConnect(odbc::odbc(), "Law", timeout = 10)
+```
+
+
+```{r}
+tbl(db, in_schema("moml", "book_info")) %>% 
+  count(contenttype)
+```
+
+```{r}
+tbl(db, in_schema("moml", "book_info")) %>% 
+  count(psmid) %>% 
+  filter(n > 1)
+```
+
+
+```{r}
+dbDisconnect(db)
+```
+
+
