@@ -64,7 +64,7 @@
     "moment": "^2.29.1",
     "moment-timezone": "0.5.9",
     "node-fetch": "^2.6.1",
-    "objection": "^0.5.5",
+    "objection": "^2.2.16",
     "pg": "^6.4.2",
     "q": "^1.4.1",
     "qs": "^6.9.6",
