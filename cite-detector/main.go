@@ -5,6 +5,8 @@ import (
 	"io/ioutil"
 	"time"
 
+	"github.com/lmullen/legal-modernism/go/citations"
+	"github.com/lmullen/legal-modernism/go/treatises"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -16,40 +18,32 @@ func main() {
 		log.WithError(err).Fatal("Error reading sample treatise")
 	}
 
-	treatise := &Treatise{id: file, text: string(text)}
+	treatise := &treatises.Page{
+		DocID:    file,
+		FullText: string(text),
+	}
+
+	// Dummy treatise with the
+	// treatise := &treatises.Page{
+	// 	DocID:    "test",
+	// 	PageID:   "test",
+	// 	FullText: "This has a citation 193 Fl. Rpts. 203 inside it.",
+	// }
+
 	log.WithField("treatise", treatise).Println("Successfully loaded treatise")
 
 	start := time.Now()
 
-	// abbreviations := []string{
-	// 	`Cal\.`,
-	// 	`N\.\s*Y\.`,
-	// 	`Mo\.`,
-	// 	`Mass\.`,
-	// 	`Pa\.`,
-	// 	`Kans\.`,
-	// 	`How\.\s*Pr\.`,
-	// 	`Barb\.`,
-	// }
+	genericDetector := citations.NewDetector("Generic", `[\w\s\.]+?`)
 
-	abbreviations := []string{
-		`\w+\.*`,
-	}
-
-	var reporters []*CiteDetector
-	for _, abbr := range abbreviations {
-		reporter := NewCiteDetector(abbr, abbr)
-		reporters = append(reporters, reporter)
-	}
-
-	for _, reporter := range reporters {
-		matches := reporter.Detect(treatise)
-		for _, match := range matches {
-			fmt.Println(match)
-		}
-	}
+	citations := genericDetector.Detect(treatise)
 
 	elapsed := time.Since(start)
+
+	for _, cite := range citations {
+		fmt.Println(cite)
+	}
+
 	log.Printf("Detection and printing took %s\n", elapsed)
 
 }
