@@ -2,8 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
-	"io/ioutil"
 	"time"
 
 	"github.com/lmullen/legal-modernism/go/citations"
@@ -24,44 +22,32 @@ func main() {
 	defer db.Close()
 
 	citeRepo := citations.NewPgxRepo(db)
+	genericDetector := citations.NewDetector("Generic", `[\p{L}\s\.]{4,15}?`)
 
-	file := "../sample-treatises/Pomeroy, Remedies, 1976.txt"
-	text, err := ioutil.ReadFile(file)
+	// Query for all the treatise pages full text
+	queryPages := `SELECT psmid, pageid, ocrtext FROM moml.page_ocrtext LIMIT 1000;`
+
+	rows, err := db.Query(context.TODO(), queryPages)
 	if err != nil {
-		log.WithError(err).Fatal("Error reading sample treatise")
+		log.WithError(err).Fatal("Error querying database for treatise pages")
 	}
-
-	treatise := &treatises.Page{
-		DocID:    "19005095000",
-		PageID:   "00010",
-		FullText: string(text),
-	}
-
-	// Dummy treatise with the
-	// treatise := &treatises.Page{
-	// 	DocID:    "test",
-	// 	PageID:   "test",
-	// 	FullText: "This has a citation 193 Fl. Rpts. 203 inside it.",
-	// }
-
-	log.WithField("treatise", treatise).Println("Successfully loaded treatise")
-
-	start := time.Now()
-
-	genericDetector := citations.NewDetector("Generic", `[\w\s\.]{4,15}?`)
-
-	citations := genericDetector.Detect(treatise)
-
-	elapsed := time.Since(start)
-
-	for _, cite := range citations {
-		fmt.Println(cite)
-		err := citeRepo.Save(context.TODO(), cite)
+	defer rows.Close()
+	for rows.Next() {
+		page := &treatises.Page{}
+		err = rows.Scan(&page.DocID, &page.PageID, &page.FullText)
 		if err != nil {
-			log.WithError(err).Fatal("Error saving citation to database")
+			log.WithError(err).Error("Error scanning row of treatise page")
 		}
-	}
 
-	log.Printf("Detection and printing took %s\n", elapsed)
+		log.WithField("page", page).Info("Detecting citations in treatise page")
+		citations := genericDetector.Detect(page)
+		for _, cite := range citations {
+			err := citeRepo.Save(context.TODO(), cite)
+			if err != nil {
+				log.WithError(err).Error("Error saving citation to database")
+			}
+		}
+
+	}
 
 }
