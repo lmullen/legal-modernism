@@ -1,16 +1,29 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"io/ioutil"
 	"time"
 
 	"github.com/lmullen/legal-modernism/go/citations"
+	"github.com/lmullen/legal-modernism/go/db"
 	"github.com/lmullen/legal-modernism/go/treatises"
 	log "github.com/sirupsen/logrus"
 )
 
 func main() {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
+
+	db, err := db.Connect(ctx)
+	if err != nil {
+		log.WithError(err).Fatal("Error connecting to database")
+	}
+	defer db.Close()
+
+	citeRepo := citations.NewPgxRepo(db)
 
 	file := "../sample-treatises/Pomeroy, Remedies, 1976.txt"
 	text, err := ioutil.ReadFile(file)
@@ -19,7 +32,8 @@ func main() {
 	}
 
 	treatise := &treatises.Page{
-		DocID:    file,
+		DocID:    "19005095000",
+		PageID:   "00010",
 		FullText: string(text),
 	}
 
@@ -34,7 +48,7 @@ func main() {
 
 	start := time.Now()
 
-	genericDetector := citations.NewDetector("Generic", `[\w\s\.]+?`)
+	genericDetector := citations.NewDetector("Generic", `[\w\s\.]{4,15}?`)
 
 	citations := genericDetector.Detect(treatise)
 
@@ -42,6 +56,10 @@ func main() {
 
 	for _, cite := range citations {
 		fmt.Println(cite)
+		err := citeRepo.Save(context.TODO(), cite)
+		if err != nil {
+			log.WithError(err).Fatal("Error saving citation to database")
+		}
 	}
 
 	log.Printf("Detection and printing took %s\n", elapsed)
