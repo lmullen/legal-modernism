@@ -32,7 +32,7 @@ func main() {
 	genericDetector := citations.NewDetector("Generic", `[\p{L}\s\.]{4,15}?`)
 
 	// Query for all the treatise pages full text
-	queryPages := `SELECT psmid, pageid, ocrtext FROM moml.page_ocrtext LIMIT 10000;`
+	queryPages := `SELECT psmid, pageid, ocrtext FROM moml.page_ocrtext;`
 
 	rows, err := db.Query(context.TODO(), queryPages)
 	if err != nil {
