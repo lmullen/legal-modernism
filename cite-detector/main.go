@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"runtime"
+	"sync"
 	"time"
 
 	"github.com/lmullen/legal-modernism/go/citations"
@@ -11,6 +13,10 @@ import (
 )
 
 func main() {
+
+	// Don't take up all of Baird's CPUS
+	runtime.GOMAXPROCS(20)
+	var wg sync.WaitGroup
 
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
@@ -39,15 +45,21 @@ func main() {
 			log.WithError(err).Error("Error scanning row of treatise page")
 		}
 
-		log.WithField("page", page).Info("Detecting citations in treatise page")
-		citations := genericDetector.Detect(page)
-		for _, cite := range citations {
-			err := citeRepo.Save(context.TODO(), cite)
-			if err != nil {
-				log.WithError(err).Error("Error saving citation to database")
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			log.WithField("page", page).Info("Detecting citations in treatise page")
+			citations := genericDetector.Detect(page)
+			for _, cite := range citations {
+				err := citeRepo.Save(context.TODO(), cite)
+				if err != nil {
+					log.WithError(err).Error("Error saving citation to database")
+				}
 			}
-		}
+		}()
 
 	}
+
+	wg.Wait()
 
 }
