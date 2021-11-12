@@ -1,0 +1,16 @@
+raw,normalized,test_purpose
+"Caston v. Perry, 18 S.C.L. 104 (1831). ","Caston v. Perry, 18 S.C.L. 104 (1831)",Raw identical to normalized
+"Caston v. Perry, 18 S. C.L. 104 (1831)","Caston v. Perry, 18 S.C.L. 104 (1831)",Irregular spacing
+"Caston v. Perry, 18 S.  C. L. 104 (1831)","Caston v. Perry, 18 S.C.L. 104 (1831)",Irregular spacing
+"Caston v. Perry, 18 S C.L. 104 (1831)","Caston v. Perry, 18 S.C.L. 104 (1831)",Irregular punctuation
+"Caston v. Perry, 2 Bail. 104 (1831)","Caston v. Perry, 18 S.C.L. 104 (1831)",Parallel citation
+"Caston v. Perry, 2 Bail 104 (1831)","Caston v. Perry, 18 S.C.L. 104 (1831)",Irregular punctuation; parallel citation
+"Caston v. Perry, 2 Bail., 104 (1831)","Caston v. Perry, 18 S.C.L. 104 (1831)",Irregular punctuation; parallel citation
+"Caston v. Perry, 2 Bail.. 104 (1831)","Caston v. Perry, 18 S.C.L. 104 (1831)",Irregular punctuation; parallel citation
+"Caston v. Perry, 2 Bail, 104 (1831)","Caston v. Perry, 18 S.C.L. 104 (1831)",Irregular punctuation; parallel citation
+"Caston v. Perry, 2 bail. 104 (1831)","Caston v. Perry, 18 S.C.L. 104 (1831)",Irregular caps; parellel citation
+"Caston v. Perry, 2 bAIl. 104 (1831)","Caston v. Perry, 18 S.C.L. 104 (1831)",Irregular caps; parellel citation
+"Caston v. Perry, 18 S.C..L. 104 (1831)","Caston v. Perry, 18 S.C.L. 104 (1831)",Irregular punctuation
+"Caston v. Perry, 18 S.C.L.. 104 (1831)","Caston v. Perry, 18 S.C.L. 104 (1831)",Irregular punctuation
+"Caston v. Perry, 18 S.C. L. 104 (1831)","Caston v. Perry, 18 S.C.L. 104 (1831)",Irregular spacing
+"Caston v. Perry, 18   S.   C.   L.   104 (1831)","Caston v. Perry, 18 S.C.L. 104 (1831)",Irregular spacing
