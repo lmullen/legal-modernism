@@ -1,6 +1,8 @@
 package citations
 
 import (
+	"fmt"
+
 	"github.com/google/uuid"
 	"github.com/lmullen/legal-modernism/go/sources"
 )
@@ -13,4 +15,27 @@ type Citation struct {
 	Volume       int
 	ReporterAbbr string
 	Page         int
+}
+
+func (c Citation) String() string {
+	return fmt.Sprintf("[%s] cites [%s]", c.Source.ID(), c.CleanCite())
+}
+
+// CleanCite returns a clean citation without spaces.
+func (c *Citation) CleanCite() string {
+	return fmt.Sprintf("%v %s %v", c.Volume, c.CleanReporter(), c.Page)
+}
+
+// CleanReporter returns a normalized string for the reporter abbreviation.
+func (c *Citation) CleanReporter() string {
+	// return normalizeReporter(c.ReporterAbbr)
+	return c.ReporterAbbr
+}
+
+// Helper function to do the dirty work in normalizing the reporter
+func normalizeReporter(r string) string {
+	r = reSpace.ReplaceAllString(r, " ")
+	r = reMultiplePeriodsSpace.ReplaceAllString(r, ". ")
+	r = reMultiplePeriodsNoSpace.ReplaceAllString(r, ".")
+	return r
 }
