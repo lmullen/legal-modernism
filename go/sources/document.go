@@ -56,3 +56,11 @@ func (d *Doc) Pages() []*Document {
 func (d *Doc) HasPages() bool {
 	return false
 }
+
+// NewDoc creates a new document
+func NewDoc(id string, text string) *Doc {
+	return &Doc{
+		Identifier: id,
+		FullText:   text,
+	}
+}
