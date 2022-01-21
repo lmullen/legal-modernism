@@ -28,8 +28,7 @@ func (c *Citation) CleanCite() string {
 
 // CleanReporter returns a normalized string for the reporter abbreviation.
 func (c *Citation) CleanReporter() string {
-	// return normalizeReporter(c.ReporterAbbr)
-	return c.ReporterAbbr
+	return normalizeReporter(c.ReporterAbbr)
 }
 
 // Helper function to do the dirty work in normalizing the reporter
