@@ -4,9 +4,9 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/google/uuid"
+	"github.com/lmullen/legal-modernism/go/sources"
 )
 
 var volume = regexp.MustCompile(`^\d+`)
@@ -33,8 +33,8 @@ func NewDetector(reporter string, abbreviation string) *Detector {
 }
 
 // Detect finds all the examples matching the reporter's abbreviation.
-func (d *Detector) Detect(p *treatises.Page) []*Citation {
-	matches := d.regex.FindAllString(p.Text(), -1)
+func (d *Detector) Detect(doc sources.Document) []*Citation {
+	matches := d.regex.FindAllString(doc.Text(), -1)
 
 	var citations []*Citation
 	for _, m := range matches {
@@ -62,10 +62,7 @@ func (d *Detector) Detect(p *treatises.Page) []*Citation {
 		c.ReporterAbbr = abbr
 
 		// Save the source
-		c.Source = p
-
-		// Timestamp
-		c.CreatedAt = time.Now().UTC()
+		c.Source = doc
 
 		citations = append(citations, c)
 	}
