@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/lmullen/legal-modernism/go/treatises"
 )
 
 var volume = regexp.MustCompile(`^\d+`)

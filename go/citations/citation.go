@@ -1,19 +1,16 @@
 package citations
 
 import (
-	"time"
-
 	"github.com/google/uuid"
-	"github.com/lmullen/legal-modernism/go/treatises"
+	"github.com/lmullen/legal-modernism/go/sources"
 )
 
-// Citation represents a citation from a page to a particular case.
+// Citation represents a citation from a Document to a particular case.
 type Citation struct {
 	ID           uuid.UUID
-	Source       *treatises.Page
+	Source       sources.Document
 	Raw          string
 	Volume       int
 	ReporterAbbr string
 	Page         int
-	CreatedAt    time.Time
 }
