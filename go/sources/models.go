@@ -1,4 +1,4 @@
-package treatises
+package sources
 
 // Page represents a page from a treatise in MOML.
 type Page struct {
