@@ -1,7 +1,6 @@
 package citations
 
 import (
-	"context"
 	"time"
 
 	"github.com/google/uuid"
@@ -17,9 +16,4 @@ type Citation struct {
 	ReporterAbbr string
 	Page         int
 	CreatedAt    time.Time
-}
-
-// Repository is an interface describing a data store for objects relating to citations.
-type Repository interface {
-	Save(ctx context.Context, c *Citation) error
 }
