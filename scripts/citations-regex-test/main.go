@@ -22,6 +22,6 @@ func main() {
 
 	cites := citations.GenericDetector.Detect(doc)
 	for i, cite := range cites {
-		fmt.Printf("%v: %v\n", i, cite)
+		fmt.Printf("%4v: %v\n", i, cite)
 	}
 }
