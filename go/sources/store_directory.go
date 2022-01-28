@@ -36,9 +36,9 @@ func NewDirectoryStore(path string) (*DirectoryStore, error) {
 	return store, nil
 }
 
-// GetDocByID takes a file name and returns a document representation by reading
+// GetDocFromPath takes a file name and returns a document representation by reading
 // the file contents from the directory.
-func (ds *DirectoryStore) GetDocByID(ctx context.Context, id string) (*Doc, error) {
+func (ds *DirectoryStore) GetDocFromPath(ctx context.Context, id string) (*Doc, error) {
 	filepath := path.Join(ds.Path, id)
 	contents, err := os.ReadFile(filepath)
 	if err != nil {
@@ -46,4 +46,9 @@ func (ds *DirectoryStore) GetDocByID(ctx context.Context, id string) (*Doc, erro
 	}
 	doc := NewDoc(id, string(contents))
 	return doc, nil
+}
+
+// GetTreatisePage is not implemented for a DirectoryStore
+func (ds *DirectoryStore) GetTreatisePage(context.Context, string, string) (*TreatisePage, error) {
+	return nil, ErrNotImplemented
 }
