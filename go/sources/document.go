@@ -8,6 +8,7 @@ type Document interface {
 	HasParent() bool
 	Pages() []*Document
 	HasPages() bool
+	CorrectOCR([]*OCRSubstitution)
 }
 
 // Doc is a simple document which has no pages or other subdivisions.
