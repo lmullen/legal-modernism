@@ -15,7 +15,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	doc, err := dir.GetDocByID(context.TODO(), "pretend-document.txt")
+	doc, err := dir.GetDocFromPath(context.TODO(), "pretend-document.txt")
 	if err != nil {
 		log.Fatal(err)
 	}

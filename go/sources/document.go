@@ -3,15 +3,15 @@ package sources
 // Document models a document
 type Document interface {
 	ID() string
-	Text() string
 	ParentID() string
 	HasParent() bool
-	Pages() []*Document
-	HasPages() bool
+	Text() string
 	CorrectOCR([]*OCRSubstitution)
+	// Pages() []*Document
+	// HasPages() bool
 }
 
-// Doc is a simple document which has no pages or other subdivisions.
+// Doc is a simple document which has no pages, parent, or other subdivisions.
 type Doc struct {
 	Identifier string
 	FullText   string
@@ -42,21 +42,20 @@ func (d *Doc) ParentID() string {
 // Used to satisfy the Document interface.
 func (d *Doc) HasParent() bool {
 	return false
-
 }
 
 // Pages returns an empty slice of Documents, because a Doc by definition has no
 // parent document. Used to satisfy the Document interface.
-func (d *Doc) Pages() []*Document {
-	pages := make([]*Document, 0)
-	return pages
-}
+// func (d *Doc) Pages() []*Document {
+// 	pages := make([]*Document, 0)
+// 	return pages
+// }
 
 // HasPages returns false, because a Doc by definition has no parent document.
 // Used to satisfy the Document interface.
-func (d *Doc) HasPages() bool {
-	return false
-}
+// func (d *Doc) HasPages() bool {
+// 	return false
+// }
 
 // NewDoc creates a new document
 func NewDoc(id string, text string) *Doc {
