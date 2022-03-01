@@ -35,6 +35,12 @@ func (t *TreatisePage) HasParent() bool {
 	return true
 }
 
+// CorrectOCR takes a set of OCR mistakes to be corrected via substitution and
+// and fixes them in the document.
+func (t *TreatisePage) CorrectOCR(subs []*OCRSubstitution) {
+	t.FullText = fixOCRSubstitutions(t.FullText, subs)
+}
+
 // NewTreatisePage creates a new treatise document
 func NewTreatisePage(pageID string, treatiseID, text string) *TreatisePage {
 	return &TreatisePage{

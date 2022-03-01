@@ -44,6 +44,12 @@ func (d *Doc) HasParent() bool {
 	return false
 }
 
+// CorrectOCR takes a set of OCR mistakes to be corrected via substitution and
+// and fixes them in the document.
+func (d *Doc) CorrectOCR(subs []*OCRSubstitution) {
+	d.FullText = fixOCRSubstitutions(d.FullText, subs)
+}
+
 // Pages returns an empty slice of Documents, because a Doc by definition has no
 // parent document. Used to satisfy the Document interface.
 // func (d *Doc) Pages() []*Document {

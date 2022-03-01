@@ -14,12 +14,6 @@ type OCRSubstitution struct {
 	Correction string
 }
 
-// CorrectOCR takes a set of OCR mistakes to be corrected via substitution and
-// and fixes them in the document.
-func (d *Doc) CorrectOCR(subs []*OCRSubstitution) {
-	d.FullText = fixOCRSubstitutions(d.FullText, subs)
-}
-
 // This helper function does the work of replacing OCR substitutions in an
 // input document.
 func fixOCRSubstitutions(input string, subs []*OCRSubstitution) string {
