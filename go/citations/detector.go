@@ -27,6 +27,18 @@ func NewDetector(reporter string, abbreviation string) *Detector {
 	return detector
 }
 
+// NewSingleVolDetector creates a new citation detector and initializes its
+// regular expression. The detector will not look for a volume number
+func NewSingleVolDetector(reporter string, abbreviation string) *Detector {
+	detector := &Detector{
+		Reporter:     reporter,
+		Abbreviation: abbreviation,
+	}
+	r := abbreviation + `\s+\d{1,4}`
+	detector.regex = regexp.MustCompile(r)
+	return detector
+}
+
 // Detect finds all the examples matching the reporter's abbreviation.
 func (d *Detector) Detect(doc sources.Document) []*Citation {
 	matches := d.regex.FindAllString(doc.Text(), -1)
