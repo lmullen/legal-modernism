@@ -36,7 +36,7 @@ func TestDetector_Detect(t *testing.T) {
 	citations := GenericDetector.Detect(doc)
 	assert.Equal(t, len(expected), len(citations))
 
-	for i, v := range citations {
-		assert.Equal(t, expected[i], v.CleanCite(), fmt.Sprintf("Citation %v", i))
+	for i := range expected {
+		assert.Equal(t, expected[i], citations[i].CleanCite(), fmt.Sprintf("Citation %v", i))
 	}
 }
