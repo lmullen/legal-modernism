@@ -6,6 +6,7 @@ import (
 
 	"github.com/lmullen/legal-modernism/go/sources"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestDetector_Detect(t *testing.T) {
@@ -21,6 +22,8 @@ func TestDetector_Detect(t *testing.T) {
 	This doc has parentheses 1 C. R. (N. S.) 413 as a citation.
 	This doc has something that looks like a citation 6 Ex parte Wray, 30 but isn't.
 	This doc has something that looks like a citation 6 Rex v. Osborn, 30 but isn't.
+	This has a citation 30 Missis. 673 that is pretty clear.
+	6 Ex parte Wray, 30 Missis. 673; Street v. Tle State, 43 Missis. 1.
 	`
 	expected := []string{
 		"6 N. Y. Sup. Ct. 69",
@@ -32,11 +35,14 @@ func TestDetector_Detect(t *testing.T) {
 		"6 Watts & S. 314",
 		"43 Md. 295",
 		"1 C. R. (N. S.) 413",
+		"30 Missis. 673",
+		"30 Missis. 673",
+		"43 Missis. 1",
 	}
 
 	doc := sources.NewDoc("test", text)
 	citations := GenericDetector.Detect(doc)
-	assert.Equal(t, len(expected), len(citations))
+	require.Equal(t, len(expected), len(citations))
 
 	for i := range expected {
 		assert.Equal(t, expected[i], citations[i].CleanCite(), fmt.Sprintf("Citation %v", i))
