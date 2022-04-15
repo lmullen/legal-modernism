@@ -45,6 +45,14 @@ func (d *Detector) Detect(doc sources.Document) []*Citation {
 
 	var citations []*Citation
 	for _, m := range matches {
+		// Filter out the citations which are in these formats
+		// 	6 Ex parte Wray, 30
+		// 	5 Rex v. Osborn, 7
+		// Simply bail early if the matching string contains these substrings.
+		if strings.Contains(m, " v. ") || strings.Contains(m, "Ex parte") {
+			continue
+		}
+
 		c := &Citation{}
 		c.ID = uuid.New()
 		// Get the raw string
