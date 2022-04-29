@@ -75,3 +75,26 @@ func (p *PgxStore) GetAllTreatisePageIDs(ctx context.Context) ([]*TreatisePage, 
 
 	return pages, nil
 }
+
+// GetOCRSubstitutions gets a complete list of OCR substitutions from the database
+func (p *PgxStore) GetOCRSubstitutions(ctx context.Context) ([]*OCRSubstitution, error) {
+	query := `SELECT mistake, correction FROM legalhist.ocr_corrections;`
+	var subs []*OCRSubstitution
+
+	rows, err := p.DB.Query(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		sub := OCRSubstitution{}
+		err = rows.Scan(&sub.Mistake, &sub.Correction)
+		if err != nil {
+			return nil, err
+		}
+		subs = append(subs, &sub)
+	}
+
+	return subs, nil
+}
