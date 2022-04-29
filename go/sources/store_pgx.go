@@ -50,3 +50,28 @@ func (p *PgxStore) GetTreatisePage(ctx context.Context, treatiseID string, pageI
 
 	return page, nil
 }
+
+// GetAllTreatisePageIDs gets all the IDs (both document and page) for the treatises.
+// However, the full text will be empty.
+func (p *PgxStore) GetAllTreatisePageIDs(ctx context.Context) ([]*TreatisePage, error) {
+	query := `SELECT psmid, pageid FROM moml.page_ocrtext;`
+	var pages []*TreatisePage
+
+	rows, err := p.DB.Query(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var docID, pageID string
+	for rows.Next() {
+		err = rows.Scan(&docID, &pageID)
+		if err != nil {
+			return nil, err
+		}
+		page := NewTreatisePage(pageID, docID, "")
+		pages = append(pages, page)
+	}
+
+	return pages, nil
+}
