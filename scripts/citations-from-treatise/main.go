@@ -65,7 +65,7 @@ func main() {
 	store := sources.NewPgxStore(db)
 
 	detector := citations.GenericDetector
-	subs, err := sources.OCRSubstitutionsFromCSV("data/ocr-errors.csv")
+	subs, err := sources.OCRSubstitutionsFromCSV("test-data/ocr-errors.csv")
 	if err != nil {
 		log.WithError(err).Fatal("Error getting OCR substitutions")
 	}
