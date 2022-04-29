@@ -31,3 +31,27 @@ func (r *DBStore) SaveCitation(ctx context.Context, c *Citation) error {
 		c.Raw, c.Volume, c.ReporterAbbr, c.Page, time.Now())
 	return err
 }
+
+// GetSingleVolReporters gets the abbreviations for all the single volume
+// reporters in the database.
+func (r *DBStore) GetSingleVolReporters(ctx context.Context) ([]string, error) {
+	query := `SELECT alt_abbr FROM legalhist.reporters_single_volume_abbr;`
+	var abbreviations []string
+
+	rows, err := r.DB.Query(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var abbr string
+	for rows.Next() {
+		err = rows.Scan(&abbr)
+		if err != nil {
+			return nil, err
+		}
+		abbreviations = append(abbreviations, abbr)
+	}
+
+	return abbreviations, nil
+}
