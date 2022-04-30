@@ -6,7 +6,6 @@ import (
 	"os/signal"
 	"runtime"
 	"syscall"
-	"time"
 
 	"github.com/gammazero/workerpool"
 	"github.com/lmullen/legal-modernism/go/citations"
@@ -18,6 +17,15 @@ import (
 
 func main() {
 	log.Info("Starting the citation detector")
+
+	// Create the worker pool
+	cpuMax := runtime.NumCPU()
+	cpu := cpuMax - 4
+	if cpu < 1 {
+		cpu = 1
+	}
+	log.Infof("Found %v CPUs available, using %v", cpuMax, cpu)
+	wp := workerpool.New(cpu)
 
 	// Create a context and listen for signals to gracefully shutdown the application
 	ctx, cancel := context.WithCancel(context.Background())
@@ -34,15 +42,13 @@ func main() {
 		case <-quit:
 			log.Info("Quitting because shutdown signal received")
 			cancel()
+			// wp.Stop()
 		case <-ctx.Done():
 		}
 	}()
 
-	startup, cancel := context.WithTimeout(ctx, 30*time.Second)
-	defer cancel()
-
 	log.Info("Connecting to database")
-	db, err := db.Connect(startup)
+	db, err := db.Connect(ctx)
 	if err != nil {
 		log.WithError(err).Fatal("Error connecting to database")
 	}
@@ -81,35 +87,42 @@ func main() {
 
 	pb := progressbar.Default(int64(len(pageIDs)))
 
-	cpus := runtime.NumCPU()
-	log.Infof("Detected %v CPUs; using %v", cpus, cpus-2)
-
-	wp := workerpool.New(cpus)
+	log.Info("Detecting citations on the treatise pages")
 
 	for _, pageID := range pageIDs {
-		id := pageID
-		wp.Submit(func() {
-			// Do the actual work for each treatise page
-			page, err := sourcesDB.GetTreatisePage(ctx, id.TreatiseID, id.PageID)
-			if err != nil {
-				log.
-					WithError(err).
-					WithField("treatise id", id.TreatiseID).
-					WithField("page id", id.PageID).
-					Error("Error fetching page from database")
-			}
-			page.CorrectOCR(ocrSubs)
-			for _, detector := range detectors {
-				citations := detector.Detect(page)
-				for _, cite := range citations {
-					err = citationsDB.SaveCitation(ctx, cite)
+		select {
+		case <-ctx.Done():
+			return
+		default:
+			id := pageID
+			wp.Submit(func() {
+				select {
+				case <-ctx.Done():
+					return
+				default:
+					// Do the actual work for each treatise page
+					page, err := sourcesDB.GetTreatisePage(ctx, id.TreatiseID, id.PageID)
 					if err != nil {
-						log.WithError(err).WithField("citation", cite).Error("Error saving citation")
+						log.
+							WithError(err).
+							WithField("treatise id", id.TreatiseID).
+							WithField("page id", id.PageID).
+							Error("Error fetching page from database")
+					}
+					page.CorrectOCR(ocrSubs)
+					for _, detector := range detectors {
+						citations := detector.Detect(page)
+						for _, cite := range citations {
+							err = citationsDB.SaveCitation(ctx, cite)
+							if err != nil {
+								log.WithError(err).WithField("citation", cite).Error("Error saving citation")
+							}
+						}
 					}
 				}
-			}
-			pb.Add(1)
-		})
+				pb.Add(1)
+			})
+		}
 	}
 
 	wp.StopWait()
