@@ -13,7 +13,7 @@ func main() {
 	`
 	doc := sources.NewDoc("demo", input)
 
-	subs, err := sources.OCRSubstitutionsFromCSV("data/ocr-errors.csv")
+	subs, err := sources.OCRSubstitutionsFromCSV("test-data/ocr-errors.csv")
 	if err != nil {
 		log.Fatal(err)
 	}

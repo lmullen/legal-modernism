@@ -38,7 +38,7 @@ func (p *PgxStore) GetTreatisePage(ctx context.Context, treatiseID string, pageI
 
 	var dbID, dbTreatiseID, dbText string
 
-	err := p.DB.QueryRow(ctx, query, treatiseID, pageID).Scan(&dbID, &dbTreatiseID, &dbText)
+	err := p.DB.QueryRow(ctx, query, treatiseID, pageID).Scan(&dbTreatiseID, &dbID, &dbText)
 	if err == pgx.ErrNoRows {
 		return nil, ErrNoDocument
 	}
@@ -49,4 +49,52 @@ func (p *PgxStore) GetTreatisePage(ctx context.Context, treatiseID string, pageI
 	page := NewTreatisePage(dbID, dbTreatiseID, dbText)
 
 	return page, nil
+}
+
+// GetAllTreatisePageIDs gets all the IDs (both document and page) for the treatises.
+// However, the full text will be empty.
+func (p *PgxStore) GetAllTreatisePageIDs(ctx context.Context) ([]*TreatisePage, error) {
+	query := `SELECT psmid, pageid FROM moml.page_ocrtext;`
+	var pages []*TreatisePage
+
+	rows, err := p.DB.Query(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var docID, pageID string
+	for rows.Next() {
+		err = rows.Scan(&docID, &pageID)
+		if err != nil {
+			return nil, err
+		}
+		page := NewTreatisePage(pageID, docID, "")
+		pages = append(pages, page)
+	}
+
+	return pages, nil
+}
+
+// GetOCRSubstitutions gets a complete list of OCR substitutions from the database
+func (p *PgxStore) GetOCRSubstitutions(ctx context.Context) ([]*OCRSubstitution, error) {
+	query := `SELECT mistake, correction FROM legalhist.ocr_corrections;`
+	var subs []*OCRSubstitution
+
+	rows, err := p.DB.Query(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		sub := OCRSubstitution{}
+		err = rows.Scan(&sub.Mistake, &sub.Correction)
+		if err != nil {
+			return nil, err
+		}
+		subs = append(subs, &sub)
+	}
+
+	return subs, nil
 }
