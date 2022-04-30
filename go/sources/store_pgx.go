@@ -38,7 +38,7 @@ func (p *PgxStore) GetTreatisePage(ctx context.Context, treatiseID string, pageI
 
 	var dbID, dbTreatiseID, dbText string
 
-	err := p.DB.QueryRow(ctx, query, treatiseID, pageID).Scan(&dbID, &dbTreatiseID, &dbText)
+	err := p.DB.QueryRow(ctx, query, treatiseID, pageID).Scan(&dbTreatiseID, &dbID, &dbText)
 	if err == pgx.ErrNoRows {
 		return nil, ErrNoDocument
 	}
