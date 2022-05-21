@@ -4,7 +4,7 @@ languageCode: "en-us"
 
 params:
   tagline: "American legal history through computational methods"
-  description: "TODO"
+  description: "Law and legal practice modernized in the nineteenth century United States. We are studying and visualizing the history of the modernization of American law."
 
 markup:
   goldmark:
