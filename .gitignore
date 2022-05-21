@@ -91,3 +91,4 @@ compile/
 .idea/
 .Rproj.user
 cite-detector/cite-detector
+website/.hugo_build.lock

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.Language }}">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>
+		{{ block "title" . }}
+		<!-- Blocks may include default content. -->
+		{{ .Site.Title }}
+		{{ end }}
+	</title>
+
+	<!-- Bootstrap -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+</head>
+
+<body>
+	<!-- Code that all your templates share, like a header -->
+
+	<div class="container">
+
+		<header>
+			{{ block "header" . }}
+			<h1>{{ .Site.Title }}</h1>
+			<div id="site-authors">
+				<p>
+					<a href="https://kellenfunk.org">Kellen Funk</a>, Columbia Law School &lt;<a
+						href="mailto:krf2138@columbia.edu">krf2138@columbia.edu</a>&gt;
+				</p>
+				<p>
+					<a href="https://lincolnmullen.com">Lincoln Mullen</a>, Roy Rosenzweig Center for History and New Media &lt;<a
+						href="mailto:lincoln@lincolnmullen.com">lincoln@lincolnmullen.com</a>&gt;
+				</p>
+
+			</div>
+			{{ end }}
+		</header>
+
+		<main>
+			{{ block "main" . }}
+			<!-- The part of the page that begins to differ between templates -->
+			{{ if .Page.Title }}
+			<h2>{{ .Page.Title }}</h2>
+			{{ end }}
+			{{ .Content }}
+			{{ end }}
+		</main>
+
+		{{ block "footer" . }}
+		<!-- More shared code, perhaps a footer but that can be overridden if need be in  -->
+		{{ end }}
+
+	</div>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+		crossorigin="anonymous"></script>
+</body>
+
+</html>
