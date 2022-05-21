@@ -1,0 +1,15 @@
+title: "Legal Modernism"
+languageCode: "en-us"
+# baseURL: 'http://example.org/'
+
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
+
+disableKinds:
+  - "taxonomy"
+  - "taxonomyTerm"
+
+build:
+  noJSConfigInAssets: true
