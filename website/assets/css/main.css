@@ -28,3 +28,7 @@ header p {
   max-width: 300px;
   border-color: var(--lm-purple-muted);
 }
+
+#news ul {
+  list-style-type: square;
+}
