@@ -2,6 +2,10 @@ title: "Legal Modernism"
 languageCode: "en-us"
 # baseURL: 'http://example.org/'
 
+params:
+  tagline: "American legal history through computational methods"
+  description: "TODO"
+
 markup:
   goldmark:
     renderer:

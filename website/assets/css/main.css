@@ -1,0 +1,5 @@
+:root {
+  --lm-purple: rgb(186, 2, 232);
+  --bs-body-font-family: "IBM Plex Sans", sans-serif;
+  --bs-link-color: var(--lm-purple);
+}
