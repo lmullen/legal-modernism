@@ -36,6 +36,9 @@
 
 <section id="news">
 	<h3>Project news</h3>
+	<p><i class="icon bi-rss-fill"></i>
+		<a href="/news/index.xml">Subscribe to our feed</a> for updates on our research.
+	</p>
 	<ul>
 		{{ range (where .Site.RegularPages "Type" "news").ByDate.Reverse }}
 		<li><time datetime='{{ .Date.Format "2006-01-02" }}'>{{ .Date.Format "2 January 2006" }}</time>.

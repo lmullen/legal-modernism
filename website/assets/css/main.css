@@ -32,3 +32,7 @@ header p {
 #news ul {
   list-style-type: square;
 }
+
+.icon {
+  color: var(--lm-purple);
+}
