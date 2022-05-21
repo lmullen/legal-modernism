@@ -1,5 +1,30 @@
 :root {
-  --lm-purple: rgb(186, 2, 232);
+  --lm-purple: rgba(186, 2, 232, 1);
+  --lm-purple-muted: rgba(186, 2, 232, 0.3);
   --bs-body-font-family: "IBM Plex Sans", sans-serif;
   --bs-link-color: var(--lm-purple);
+}
+
+.page-container {
+  max-width: 1000px;
+  margin-top: 2rem;
+}
+
+header {
+  border-bottom: 1px solid var(--lm-purple);
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+}
+
+header p {
+  margin-bottom: 0.25rem;
+}
+
+.publication-item {
+  margin-bottom: 1rem;
+}
+
+.publication-item .img-thumbnail {
+  max-width: 300px;
+  border-color: var(--lm-purple-muted);
 }
