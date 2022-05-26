@@ -20,7 +20,7 @@ func main() {
 
 	// Create the worker pool
 	cpuMax := runtime.NumCPU()
-	cpu := cpuMax - 4
+	cpu := cpuMax - 2
 	if cpu < 1 {
 		cpu = 1
 	}
