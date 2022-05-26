@@ -14,6 +14,7 @@ markup:
 disableKinds:
   - "taxonomy"
   - "taxonomyTerm"
+  - "section"
 
 build:
   noJSConfigInAssets: true
