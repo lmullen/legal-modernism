@@ -6,9 +6,11 @@ require (
 	github.com/gammazero/workerpool v1.1.2
 	github.com/google/uuid v1.3.0
 	github.com/jackc/pgx/v4 v4.14.1
+	github.com/rs/zerolog v1.26.1
 	github.com/schollz/progressbar/v3 v3.8.6
 	github.com/sirupsen/logrus v1.8.1
 	github.com/stretchr/testify v1.7.0
+	github.com/ulikunitz/xz v0.5.10
 )
 
 require (
