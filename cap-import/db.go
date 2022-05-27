@@ -35,13 +35,13 @@ func (c Case) Save(ctx context.Context, db *pgxpool.Pool) error {
 
 	queryCase := `
 	INSERT INTO cap.cases
-		(id, name, name_abbreviation, decision_date_raw, decision_date, docket_number,
+		(id, name, name_abbreviation, decision_year, decision_date, decision_date_raw, docket_number,
 		first_page_raw, last_page_raw, first_page, last_page, volume, reporter, court,
 		jurisdiction, url, frontend_url, frontend_pdf_url, analysis, last_updated,
 		provenance, imported)
 	VALUES
 		($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17,
-		$18, $19, $20, $21);
+		$18, $19, $20, $21, $22);
 	`
 
 	queryCourt := `
@@ -80,8 +80,8 @@ func (c Case) Save(ctx context.Context, db *pgxpool.Pool) error {
 		return fmt.Errorf("error saving jurisdiction: %w", err)
 	}
 
-	_, err = tx.Exec(timeout, queryCase, c.ID, c.Name, c.NameAbbreviation, c.DecisionDateRaw,
-		c.DecisionDate(), c.DocketNumber, c.FirstPageRaw, c.LastPageRaw, c.FirstPage(),
+	_, err = tx.Exec(timeout, queryCase, c.ID, c.Name, c.NameAbbreviation, c.Year(), c.DecisionDate(),
+		c.DecisionDateRaw, c.DocketNumber, c.FirstPageRaw, c.LastPageRaw, c.FirstPage(),
 		c.LastPage(), c.Volume(), c.Reporter.ID, c.Court.ID, c.Jurisdiction.ID,
 		c.URL, c.FrontEndURL, c.FrontEndPDFURL, c.Analysis, c.LastUpdated, c.Provenance,
 		c.Imported())

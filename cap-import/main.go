@@ -20,23 +20,23 @@ func main() {
 		NoColor:         false})
 
 	if len(os.Args) != 2 {
-		log.Fatal().Msg("Please provide exactly one argument, the path to the .jsonl.xz file to be parsed")
+		log.Fatal().Msg("provide exactly one argument, the path to the .jsonl.xz file to be parsed")
 	}
 
 	db, err := dbConnect()
 	if err != nil {
-		log.Fatal().Err(err).Msg("Error connecting to database")
+		log.Fatal().Err(err).Msg("error connecting to database")
 	}
 
 	path := os.Args[1]
 	file, err := os.Open(path)
 	if err != nil {
-		log.Fatal().Err(err).Msg("Error opening the file")
+		log.Fatal().Err(err).Msg("error opening the file")
 	}
 
 	decompressed, err := xz.NewReader(file)
 	if err != nil {
-		log.Fatal().Err(err).Msg("Error decompressing the file")
+		log.Fatal().Err(err).Msg("error decompressing the file")
 	}
 
 	var casesImported int64
@@ -50,15 +50,15 @@ func main() {
 		c := &Case{}
 		json.Unmarshal(scanner.Bytes(), c)
 		if err := scanner.Err(); err != nil {
-			log.Fatal().Err(err).Msg("Error scanning file")
+			log.Fatal().Err(err).Msg("error scanning file")
 		}
 		err = c.Save(context.Background(), db)
 		if err != nil {
-			log.Fatal().Err(err).Msg("Error saving case to database")
+			log.Fatal().Err(err).Msg("error saving case to database")
 		}
 		casesImported += 1
 	}
 
-	fmt.Printf("Imported %v cases from %s", casesImported, path)
+	fmt.Printf("imported %v cases from %s\n", casesImported, path)
 
 }

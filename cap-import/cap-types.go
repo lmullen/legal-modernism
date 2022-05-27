@@ -12,7 +12,7 @@ type Case struct {
 	Name             string          `json:"name"`
 	NameAbbreviation string          `json:"name_abbreviation"`
 	DecisionDateRaw  string          `json:"decision_date"`
-	DocketNumber     string          `json:"docket_number"`
+	DocketNumber     sql.NullString  `json:"docket_number"`
 	FirstPageRaw     string          `json:"first_page"`
 	LastPageRaw      string          `json:"last_page"`
 	Citations        []Citation      `json:"citations"`
@@ -47,6 +47,13 @@ func (c Case) Imported() time.Time {
 
 func (c Case) Volume() string {
 	return c.VolumeRaw.Barcode
+}
+
+func (c Case) Year() sql.NullInt32 {
+	if len(c.DecisionDateRaw) < 4 {
+		return sql.NullInt32{}
+	}
+	return parseInt(c.DecisionDateRaw[0:4])
 }
 
 type Citation struct {
