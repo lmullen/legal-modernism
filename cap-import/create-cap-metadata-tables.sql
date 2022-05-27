@@ -11,7 +11,8 @@ CREATE TABLE cap.cases (
   last_page_raw text NOT NULL,
   first_page int,
   last_page int,
-  volume jsonb NOT NULL,
+  volume_raw text NOT NULL,
+  volume int NOT NULL,
   reporter bigint NOT NULL,
   court bigint NOT NULL,
   jurisdiction bigint NOT NULL,
@@ -24,7 +25,7 @@ CREATE TABLE cap.cases (
   imported timestamp with time zone NOT NULL
 );
 CREATE TABLE cap.citations (
-  cite text PRIMARY KEY,
+  cite text NOT NULL,
   type text NOT NULL,
   "case" bigint NOT NULL
 );
@@ -49,6 +50,8 @@ ALTER TABLE cap.cases
   ADD CONSTRAINT cap_cases_court_fk FOREIGN KEY (court) REFERENCES cap.courts (id);
 ALTER TABLE cap.cases
   ADD CONSTRAINT cap_cases_jurisdiction_fk FOREIGN KEY (jurisdiction) REFERENCES cap.jurisdictions (id);
+ALTER TABLE cap.cases
+  ADD CONSTRAINT cap_cases_volume_fk FOREIGN KEY (volume) REFERENCES cap.volumes (barcode);
 ALTER TABLE cap.citations
   ADD CONSTRAINT cap_citations_case_fk FOREIGN KEY ("case") REFERENCES cap.cases (id);
 COMMIT;

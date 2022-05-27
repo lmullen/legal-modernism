@@ -2,9 +2,10 @@ package main
 
 import (
 	"bufio"
+	"context"
+	"encoding/json"
 	"fmt"
 	"os"
-	"time"
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -22,6 +23,11 @@ func main() {
 		log.Fatal().Msg("Please provide exactly one argument, the path to the .jsonl.xz file to be parsed")
 	}
 
+	db, err := dbConnect()
+	if err != nil {
+		log.Fatal().Err(err).Msg("Error connecting to database")
+	}
+
 	path := os.Args[1]
 	file, err := os.Open(path)
 	if err != nil {
@@ -33,31 +39,26 @@ func main() {
 		log.Fatal().Err(err).Msg("Error decompressing the file")
 	}
 
+	var casesImported int64
+
+	// Scan line by line, but into a large buffer in case there are large cases
 	scanner := bufio.NewScanner(decompressed)
 	buf := make([]byte, 0, 128*1024)
 	scanner.Buffer(buf, 128*1024)
-	// optionally, resize scanner's capacity for lines over 64K, see next example
-	x := 0
 	for scanner.Scan() {
-		fmt.Println(scanner.Text())
-		x += 1
-		if x > 100 {
-			log.Fatal().Msg("quitting")
+		// Read in one case per line
+		c := &Case{}
+		json.Unmarshal(scanner.Bytes(), c)
+		if err := scanner.Err(); err != nil {
+			log.Fatal().Err(err).Msg("Error scanning file")
 		}
+		err = c.Save(context.Background(), db)
+		if err != nil {
+			log.Fatal().Err(err).Msg("Error saving case to database")
+		}
+		casesImported += 1
 	}
 
-	if err := scanner.Err(); err != nil {
-		log.Error().Err(err).Msg("Error scanning file")
-	}
+	fmt.Printf("Imported %v cases from %s", casesImported, path)
 
-}
-
-// consoleTimeFormat sets a simple format for the pretty logs without colors
-func consoleTimeFormat(i interface{}) string {
-	ts := i.(string)
-	t, err := time.Parse(time.RFC3339, ts)
-	if err != nil {
-		return fmt.Sprint(i)
-	}
-	return t.Format(time.Kitchen)
 }
