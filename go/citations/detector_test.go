@@ -26,6 +26,7 @@ func TestDetector_Detect(t *testing.T) {
 	6 Ex parte Wray, 30 Missis. 673; Street v. Tle State, 43 Missis. 1.
 	This has an edition 1 Leach, 4th ed. 484 associated with it.
 	This has an edition 25 Biznes, 3rd ed. 484 associated with it.
+	Citing 1 How. Sp. T. Rep. 114 is an interesting case.
 	`
 	expected := []string{
 		"6 N. Y. Sup. Ct. 69",
@@ -42,6 +43,7 @@ func TestDetector_Detect(t *testing.T) {
 		"43 Missis. 1",
 		"1 Leach, 4th ed. 484",
 		"25 Biznes, 3rd ed. 484",
+		"1 How. Sp. T. Rep. 114",
 	}
 
 	doc := sources.NewDoc("test", text)
