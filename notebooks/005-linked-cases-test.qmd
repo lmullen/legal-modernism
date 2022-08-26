@@ -1,0 +1,46 @@
+---
+title: "005-linked-cases-analysis"
+author: "Lincoln Mullen"
+format: html
+editor: visual
+---
+
+## Explore the most frequently cited cases
+
+```{r}
+library(tidyverse)
+library(DBI)
+db <- dbConnect(odbc::odbc(), "Research", timeout = 10)
+cases <- tbl(db, "temp_most_cited_cases") |> 
+  filter(!is.na(case_id)) |> 
+  collect()
+dbDisconnect(db)
+```
+
+```{r}
+cases |> 
+  group_by(decision_year) |> 
+  summarize(n = as.integer(sum(n))) |> 
+  ggplot(aes(x = decision_year, y = n)) +
+  geom_col() +
+  labs(title = "Year of cases cited",
+       subtitle = "Weighted by number of citations to the case",
+       y = NULL)
+  
+```
+
+```{r}
+cases |> 
+  rename(jurisdiction = name_long) |> 
+  group_by(jurisdiction) |> 
+  summarize(n = as.integer(sum(n))) |> 
+  arrange(desc(n)) |> 
+  ggplot(aes(x = reorder(jurisdiction, n), y = n)) +
+  geom_col() +
+  coord_flip() +
+  labs(title = "Most frequently cited jurisdictions",
+       subtitle = "Weighted by number of citations to cases",
+       y = NULL,
+       x = "Jurisdiction")
+```
+
