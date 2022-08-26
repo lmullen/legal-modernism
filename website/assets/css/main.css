@@ -5,6 +5,16 @@
   --bs-link-color: var(--lm-purple);
 }
 
+a,
+a:visited {
+  color: var(--lm-purple);
+}
+
+a:hover,
+a:active {
+  color: var(--lm-purple-muted);
+}
+
 .page-container {
   max-width: 1000px;
   margin-top: 2rem;
@@ -35,4 +45,15 @@ header p {
 
 .icon {
   color: var(--lm-purple);
+}
+
+footer {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  margin-bottom: 4rem;
+  border-top: 1px solid var(--lm-purple-muted);
+}
+
+img.logo {
+  max-width: 20rem;
 }
