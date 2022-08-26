@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v4/pgxpool"
 )
 
@@ -54,4 +55,20 @@ func (r *DBStore) GetSingleVolReporters(ctx context.Context) ([]string, error) {
 	}
 
 	return abbreviations, nil
+}
+
+func (r *DBStore) GetLinkedCitationByID(ctx context.Context, ID uuid.UUID) (*LinkedCitation, error) {
+	query := `
+	SELECT moml_treatise, moml_page, raw, volume, reporter_abbr, page
+	FROM output.moml_citations
+	WHERE id = $1;
+	`
+
+	c := LinkedCitation{ID: ID}
+	err := r.DB.QueryRow(ctx, query, ID).Scan(&c.MOMLTreatise, &c.MOMLPage, &c.Volume, &c.Raw, &c.ReporterAbbr, &c.Page)
+	if err != nil {
+		return nil, err
+	}
+
+	return &c, nil
 }
