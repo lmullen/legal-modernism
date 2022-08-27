@@ -5,6 +5,10 @@
   --bs-link-color: var(--lm-purple);
 }
 
+section {
+  margin-top: 2rem;
+}
+
 a,
 a:visited {
   color: var(--lm-purple);
@@ -55,9 +59,13 @@ footer {
 }
 
 img.logo {
-  max-width: 20rem;
+  max-width: 100%;
 }
 
 #contributors p {
   margin-bottom: 0.5rem;
+}
+
+.suggested-citation {
+  margin-left: 2rem;
 }

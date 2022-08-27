@@ -1,6 +1,6 @@
 title: "Legal Modernism"
 languageCode: "en-us"
-# baseURL: 'http://example.org/'
+baseURL: "https://legalmodernism.org/"
 
 params:
   tagline: "American legal history through computational methods"
