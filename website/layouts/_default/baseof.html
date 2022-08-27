@@ -40,7 +40,8 @@
 
 		<header>
 			{{ block "header" . }}
-			<h1>{{ .Site.Title }}</h1>
+			<h1 class="site-title">{{ .Site.Title }}</h1>
+			<p class="tagline">{{ .Site.Params.Tagline }}</p>
 			<div id="site-authors">
 				<p>
 					<a href="https://kellenfunk.org" class="author">Kellen Funk</a>, Columbia Law School &lt;<a

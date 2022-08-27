@@ -5,8 +5,20 @@
   --bs-link-color: var(--lm-purple);
 }
 
-h1 {
+h1.site-title {
   font-weight: 700;
+  margin-bottom: 0;
+}
+.tagline {
+  display: block;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-weight: 500;
+  color: var(--lm-purple);
+  font-size: 1.25rem;
+}
+.site-authors {
+  margin-bottom: 1rem;
 }
 
 h2,
@@ -41,8 +53,8 @@ a:active {
 
 header {
   border-bottom: 1px solid var(--lm-purple);
-  padding-bottom: 1rem;
-  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  margin-bottom: 3rem;
 }
 
 header p {
