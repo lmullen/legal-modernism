@@ -9,6 +9,7 @@ h1.site-title {
   font-weight: 700;
   margin-bottom: 0;
 }
+
 .tagline {
   display: block;
   margin-top: 0;
@@ -65,8 +66,13 @@ header p {
   margin-bottom: 1rem;
 }
 
-.publication-item .img-thumbnail {
+.publication-item .img-thumbnail,
+.publication-item .video-border {
   max-width: 100%;
+  border-color: var(--lm-purple-muted);
+}
+
+.video-border {
   border-color: var(--lm-purple-muted);
 }
 

@@ -14,7 +14,7 @@
 </div>
 
 <section id="publications">
-	<h2>Publications &amp; visualizations</h2>
+	<h2>Publications, visualizations, &amp; talks</h2>
 
 	<div class="container-fluid">
 
@@ -34,13 +34,29 @@
 				{{ .Content }}
 			</div>
 			{{ end}}
+			{{ if .Params.Video }}
+			{{ $img := .Resources.GetMatch "thumbnail.png"}}
+			<div class="col-sm-4">
+				<div class="embed-responsive video-border embed-responsive-16by9">
+					<video class="embed-responsive-item" width="100%" controls allowfullscreen preload=none
+						poster="{{ $img.Permalink }}">
+						<source src="{{ .Params.Video }}" type="{{ .Params.VideoType }}">
+						Your browser does not support the video tag.
+					</video>
+				</div>
+			</div>
+			<div class="col-sm-8">
+				{{ .Content }}
+			</div>
+			{{ end }}
+
 
 		</div>
 		{{ end }}
 	</div>
 </section>
 
-<section id="code">
+<section id=" code">
 	<h3>Source code and datasets</h3>
 	<p>
 		We are commited to publishing our source code and any datasets that we generated as open access, open source
@@ -54,14 +70,17 @@
 	</p>
 
 	<p>
-		<i class="icon bi-file-earmark-bar-graph"></i> Our article on &ldquo;The Spine of American Law&rdquo; featured a
+		<i class="icon bi-file-earmark-bar-graph"></i> Our article on &ldquo;The Spine of American Law&rdquo;
+		featured a
 		research compendium with the datasets that supported the article. The <a
-			href="https://academic.oup.com/ahr/article/123/1/132/4840258#supplementary-data">entire compendium</a> can be
+			href="https://academic.oup.com/ahr/article/123/1/132/4840258#supplementary-data">entire compendium</a> can
+		be
 		download at the <em>American Historical Review</em>.
 	</p>
 
 	<p id="field-code-clusters">
-		<i class="icon bi-file-earmark-bar-graph"></i> That article featured clusters of sections from the state codes of
+		<i class="icon bi-file-earmark-bar-graph"></i> That article featured clusters of sections from the state
+		codes of
 		civil procedure derived from Field Code. We believe those clusters would be useful to researchers seeking to
 		understand the development of procedural law. Those <a
 			href="/datasets/spine-of-american-law-clusters-of-sections.zip">procedure code clusters</a> can be
