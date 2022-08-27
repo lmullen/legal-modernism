@@ -10,7 +10,6 @@ build :
 deploy : build
 	@echo "\nDeploying the website ..."
 	rsync --omit-dir-times \
-	  --exclude '.htaccess' \
 	  --exclude '.DS_Store' \
 		--checksum -avz \
 		--itemize-changes \
