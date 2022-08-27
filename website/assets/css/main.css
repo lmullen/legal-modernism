@@ -35,7 +35,7 @@ header p {
 }
 
 .publication-item .img-thumbnail {
-  max-width: 300px;
+  max-width: 100%;
   border-color: var(--lm-purple-muted);
 }
 
@@ -56,4 +56,8 @@ footer {
 
 img.logo {
   max-width: 20rem;
+}
+
+#contributors p {
+  margin-bottom: 0.5rem;
 }

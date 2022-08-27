@@ -10,21 +10,21 @@
 <section id="publications">
 	<h2>Publications &amp; visualizations</h2>
 
-	<div class="container">
+	<div class="container-fluid">
 
 		{{ range where .Site.RegularPages "Type" "work" }}
 		<div class="row publication-item">
 			{{ if .Params.External }}
-			<div class="col-4">
+			<div class="col-sm-4">
 				{{ $img := .Resources.GetMatch "thumbnail.png"}}
 				{{ $thumb1x := $img.Fill "300x200 TopLeft webp" }}
 				{{ $thumb2x := $img.Fill "600x400 TopLeft webp" }}
 				<a href="{{ .Params.External }}">
-					<img class="img-thumbnail" src="{{ $thumb2x.Permalink }}"
+					<img class="img-thumbnail d-none d-sm-block" src="{{ $thumb2x.Permalink }}"
 						srcset="{{ $thumb1x.Permalink }} 1x {{ $thumb2x.Permalink }} 2x" />
 				</a>
 			</div>
-			<div class="col-8">
+			<div class="col-sm-8">
 				{{ .Content }}
 			</div>
 			{{ end}}
@@ -45,6 +45,24 @@
 			{{.Params.News | markdownify }}</li>
 		{{ end }}
 	</ul>
+</section>
+
+<section id="contributors">
+	<h3>Contributors</h3>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md">
+				<p>Kellen Funk, lead researcher, Columbia Law School</p>
+				<p>Sean Kwon, research assistant, Columbia Law School</p>
+				<p>Lincoln Mullen, lead researcher, Roy Rosenzweig Center for History and New Media</p>
+			</div>
+			<div class="col-md">
+				<p>Jay Zern Ng, research assistant, Columbia Law School</p>
+				<p>Conor Regan, research assistant, Columbia Law School</p>
+				<p>Samier Saeed, research assistant, Columbia Law School</p>
+			</div>
+		</div>
+	</div>
 </section>
 
 {{ end }}
