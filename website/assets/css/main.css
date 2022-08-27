@@ -15,7 +15,8 @@ h4,
 h5,
 h6,
 .lede,
-.author {
+.author,
+.semibold {
   font-weight: 500;
 }
 
