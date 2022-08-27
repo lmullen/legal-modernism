@@ -2,7 +2,7 @@
 title: Home
 ---
 
-<p class="fs-4">Law and legal practice modernized in the nineteenth-century United States. We are studying and visualizing the history of the modernization of American law.</p>
+<p class="fs-4 lede">Law and legal practice modernized in the nineteenth-century United States. We are studying and visualizing the history of the modernization of American law.</p>
 
 Oral pleadings and oracular judges gave way to published decisions and codified statutes. Local customs and agrarian rhythms were exchanged for nationally uniform creditor remedies in sync with fast-paced merchant finance. Jurists systematized law into hardened categories of public and private, learned and lay, independent white men and dependent, women, children, and ethnic and religious minorities. 
 
