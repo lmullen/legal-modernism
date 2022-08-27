@@ -11,10 +11,5 @@ markup:
     renderer:
       unsafe: true
 
-disableKinds:
-  - "taxonomy"
-  - "taxonomyTerm"
-  - "section"
-
 build:
   noJSConfigInAssets: true
