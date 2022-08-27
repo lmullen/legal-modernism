@@ -21,7 +21,7 @@
 				{{ $thumb2x := $img.Fill "600x400 TopLeft webp" }}
 				<a href="{{ .Params.External }}">
 					<img class="img-thumbnail d-none d-sm-block" src="{{ $thumb2x.Permalink }}"
-						srcset="{{ $thumb1x.Permalink }} 1x {{ $thumb2x.Permalink }} 2x" />
+						srcset="{{ $thumb1x.Permalink }} 1x, {{ $thumb2x.Permalink }} 2x" alt="Thumbnail for publication" />
 				</a>
 			</div>
 			<div class="col-sm-8">
