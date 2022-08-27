@@ -1,5 +1,6 @@
 scratch/*
 out/*
+website/public/*
 
 # C extensions
 *.so

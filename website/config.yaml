@@ -1,0 +1,15 @@
+title: "Legal Modernism"
+languageCode: "en-us"
+baseURL: "https://legalmodernism.org/"
+
+params:
+  tagline: "American legal history through computational methods"
+  description: "Law and legal practice modernized in the nineteenth century United States. We are studying and visualizing the history of the modernization of American law."
+
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
+
+build:
+  noJSConfigInAssets: true

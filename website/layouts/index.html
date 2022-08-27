@@ -1,0 +1,110 @@
+{{ define "description" }}
+<meta name="description" content="{{ .Site.Params.Description }}">
+{{ end }}
+
+{{ define "main" }}
+<div id="home-summary">
+	{{ .Content }}
+</div>
+
+<section id="publications">
+	<h2>Publications &amp; visualizations</h2>
+
+	<div class="container-fluid">
+
+		{{ range where .Site.RegularPages "Type" "work" }}
+		<div class="row publication-item">
+			{{ if .Params.External }}
+			<div class="col-sm-4">
+				{{ $img := .Resources.GetMatch "thumbnail.png"}}
+				{{ $thumb1x := $img.Fill "300x200 TopLeft webp" }}
+				{{ $thumb2x := $img.Fill "600x400 TopLeft webp" }}
+				<a href="{{ .Params.External }}">
+					<img class="img-thumbnail d-none d-sm-block" src="{{ $thumb2x.Permalink }}"
+						srcset="{{ $thumb1x.Permalink }} 1x {{ $thumb2x.Permalink }} 2x" />
+				</a>
+			</div>
+			<div class="col-sm-8">
+				{{ .Content }}
+			</div>
+			{{ end}}
+
+		</div>
+		{{ end }}
+	</div>
+</section>
+
+<section id="code">
+	<h3>Source code and datasets</h3>
+	<p>
+		We are commited to publishing our source code and any datasets that we generated as open access, open source
+		resources.
+	</p>
+
+	<p>
+		<i class="icon bi-github"></i> The source code for our ongoing work is published in a <a
+			href="https://github.com/lmullen/legal-modernism">GitHub
+			repository.</a>
+	</p>
+
+	<p>
+		<i class="icon bi-file-earmark-bar-graph"></i> Our article on &ldquo;The Spine of American Law&rdquo; featured a
+		research compendium with the datasets that supported the article. The <a
+			href="https://academic.oup.com/ahr/article/123/1/132/4840258#supplementary-data">entire compendium</a> can be
+		download at the <em>American Historical Review</em>.
+	</p>
+
+	<p id="field-code-clusters">
+		<i class="icon bi-file-earmark-bar-graph"></i> That article featured clusters of sections from the state codes of
+		civil procedure derived from Field Code. We believe those clusters would be useful to researchers seeking to
+		understand the development of procedural law. Those <a
+			href="/datasets/spine-of-american-law-clusters-of-sections.zip">procedure code clusters</a> can be
+		downloaded from this website. They have been assigned the following DOI: <a
+			href="https://doi.org/10.31835/legalmodernism.field-code-clusters">https://doi.org/10.31835/legalmodernism.field-code-clusters</a>.
+	</p>
+
+</section>
+
+<section id="news">
+	<h3>Project news</h3>
+	<p><i class="icon bi-rss-fill"></i>
+		<a href="/news/index.xml">Subscribe to our feed</a> for updates on our research.
+	</p>
+	<ul>
+		{{ range (where .Site.RegularPages "Type" "news").ByDate.Reverse }}
+		<li><time datetime='{{ .Date.Format "2006-01-02" }}'>{{ .Date.Format "2 January 2006" }}</time>.
+			{{.Params.News | markdownify }}</li>
+		{{ end }}
+	</ul>
+</section>
+
+<section id="contributors">
+	<h3>Contributors</h3>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md">
+				<p>Kellen Funk, lead researcher, Columbia Law School</p>
+				<p>Sean Kwon, research assistant, Columbia Law School</p>
+				<p>Lincoln Mullen, lead researcher, Roy Rosenzweig Center for History and New Media</p>
+			</div>
+			<div class="col-md">
+				<p>Jay Zern Ng, research assistant, Columbia Law School</p>
+				<p>Conor Regan, research assistant, Columbia Law School</p>
+				<p>Samier Saeed, research assistant, Columbia Law School</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+<section id="citation">
+	<h3>Suggested citation</h3>
+	<p>
+		If you would like to cite this project, we recommend the following citatation.
+	</p>
+	<blockquote class="suggested-citation">
+		Kellen Funk and Lincoln Mullen, <em>Legal Modernism</em>, Roy Rosenzweig Center for History and New Media
+		(2022&ndash;): <a href="https://doi.org/10.31835/legalmodernism">https://doi.org/10.31835/legalmodernism</a>.
+	</blockquote>
+</section>
+
+{{ end }}
