@@ -9,8 +9,10 @@ build :
 
 deploy : build
 	@echo "\nDeploying the website ..."
-	rsync --omit-dir-times \
+	rsync --delete --omit-dir-times \
 	  --exclude '.DS_Store' \
+	  --exclude '.well-known/*' \
+	  --exclude 'cgi-bin/' \
 		--checksum -avz \
 		--itemize-changes \
 		public/ reclaim:~/legalmodernism.org/ | egrep -v '^\.'
