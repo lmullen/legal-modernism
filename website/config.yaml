@@ -11,5 +11,9 @@ markup:
     renderer:
       unsafe: true
 
+disableKinds:
+  - taxonomy
+  - taxonomyTerm
+
 build:
   noJSConfigInAssets: true

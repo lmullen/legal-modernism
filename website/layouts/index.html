@@ -1,5 +1,11 @@
 {{ define "description" }}
 <meta name="description" content="{{ .Site.Params.Description }}">
+<meta property="og:title" content="{{ .Site.Title }}" />
+<meta property="og:description" content="{{ .Site.Params.Description }}" />
+<meta property="og:url" content="{{ .Site.BaseURL }}" />
+<meta property="og:image" content="/img/og-cover.webp" />
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="en_US" />
 {{ end }}
 
 {{ define "main" }}
