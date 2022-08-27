@@ -11,7 +11,7 @@ deploy : build
 	@echo "\nDeploying the website ..."
 	rsync --delete --omit-dir-times \
 	  --exclude '.DS_Store' \
-	  --exclude '.well-known/*' \
+	  --exclude '.well-known' \
 	  --exclude 'cgi-bin/' \
 		--checksum -avz \
 		--itemize-changes \
