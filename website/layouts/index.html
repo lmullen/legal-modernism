@@ -1,11 +1,19 @@
 {{ define "description" }}
 <meta name="description" content="{{ .Site.Params.Description }}">
+
 <meta property="og:title" content="{{ .Site.Title }}" />
 <meta property="og:description" content="{{ .Site.Params.Description }}" />
 <meta property="og:url" content="{{ .Site.BaseURL }}" />
 <meta property="og:image" content="{{ .Site.BaseURL }}/img/og-cover.png" />
 <meta property="og:type" content="website" />
 <meta property="og:locale" content="en_US" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:domain" content="legalmodernism.org" />
+<meta name="twitter:title" content="{{ .Site.Title }}" />
+<meta name="twitter:description" content="{{ .Site.Params.Description }}" />
+<meta name="twitter:image" content="{{ .Site.BaseURL }}/img/og-cover.png" />
+<meta name="twitter:url" content="{{ .Site.BaseURL }}" />
 {{ end }}
 
 {{ define "main" }}
