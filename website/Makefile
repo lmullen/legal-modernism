@@ -1,6 +1,6 @@
 preview :
 	@echo "Serving the preview site ..."
-	hugo serve --buildDrafts --buildFuture --disableFastRender --port=52643
+	hugo serve --buildDrafts --buildFuture --disableFastRender --port=54321
 
 build : 
 	@echo "\nBuilding the website ..."
