@@ -12,7 +12,7 @@ type Case struct {
 	Name             string          `json:"name"`
 	NameAbbreviation string          `json:"name_abbreviation"`
 	DecisionDateRaw  string          `json:"decision_date"`
-	DocketNumber     sql.NullString  `json:"docket_number"`
+	DocketNumber     string          `json:"docket_number"`
 	FirstPageRaw     string          `json:"first_page"`
 	LastPageRaw      string          `json:"last_page"`
 	Citations        []Citation      `json:"citations"`
