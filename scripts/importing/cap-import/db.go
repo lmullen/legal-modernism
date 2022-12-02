@@ -38,10 +38,11 @@ func (c Case) Save(ctx context.Context, db *pgxpool.Pool) error {
 		(id, name, name_abbreviation, decision_year, decision_date, decision_date_raw, docket_number,
 		first_page_raw, last_page_raw, first_page, last_page, volume, reporter, court,
 		jurisdiction, url, frontend_url, frontend_pdf_url, analysis, last_updated,
-		provenance, imported)
+		provenance, imported, judges, parties, attorneys)
 	VALUES
 		($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17,
-		$18, $19, $20, $21, $22);
+		$18, $19, $20, $21, $22, $23, $24, $25)
+		ON CONFLICT DO NOTHING;
 	`
 
 	queryCourt := `
@@ -65,6 +66,11 @@ func (c Case) Save(ctx context.Context, db *pgxpool.Pool) error {
 	VALUES ($1, $2, $3);
 	`
 
+	opinionQuery := `
+	INSERT INTO cap.opinions ("case", type, author, text)
+	VALUES ($1, $2, $3, $4);
+	`
+
 	_, err = tx.Exec(timeout, queryCourt, c.Court.ID, c.Court.Name, c.Court.NameAbbreviation,
 		c.Court.Slug, c.Court.URL)
 	if err != nil {
@@ -84,7 +90,7 @@ func (c Case) Save(ctx context.Context, db *pgxpool.Pool) error {
 		c.DecisionDateRaw, c.DocketNumber, c.FirstPageRaw, c.LastPageRaw, c.FirstPage(),
 		c.LastPage(), c.Volume(), c.Reporter.ID, c.Court.ID, c.Jurisdiction.ID,
 		c.URL, c.FrontEndURL, c.FrontEndPDFURL, c.Analysis, c.LastUpdated, c.Provenance,
-		c.Imported())
+		c.Imported(), c.Casebody.Data.Judges, c.Casebody.Data.Parties, c.Casebody.Data.Attorneys)
 	if err != nil {
 		tx.Rollback(timeout)
 		return fmt.Errorf("error saving case: %w", err)
@@ -95,6 +101,14 @@ func (c Case) Save(ctx context.Context, db *pgxpool.Pool) error {
 		if err != nil {
 			tx.Rollback(timeout)
 			return fmt.Errorf("error saving citation: %w", err)
+		}
+	}
+
+	for _, opinion := range c.Casebody.Data.Opinions {
+		_, err := tx.Exec(timeout, opinionQuery, c.ID, opinion.Type, opinion.Author, opinion.Text)
+		if err != nil {
+			tx.Rollback(timeout)
+			return fmt.Errorf("error saving opinion: %w", err)
 		}
 	}
 

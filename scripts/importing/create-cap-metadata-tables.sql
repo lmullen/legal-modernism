@@ -1,6 +1,6 @@
 -- Create the key CAP metadata tables
 BEGIN;
-CREATE TABLE cap.cases (
+CREATE TABLE IF NOT EXISTS cap.cases (
   id bigint PRIMARY KEY,
   name_abbreviation text NOT NULL,
   name text NOT NULL,
@@ -21,22 +21,25 @@ CREATE TABLE cap.cases (
   last_page_raw text NOT NULL,
   analysis jsonb NOT NULL,
   provenance jsonb NOT NULL,
+  judges jsonb NOT NULL,
+  parties jsonb NOT NULL,
+  attorneys jsonb NOT NULL,
   last_updated timestamp with time zone NOT NULL,
   imported timestamp with time zone NOT NULL
 );
-CREATE TABLE cap.citations (
+CREATE TABLE IF NOT EXISTS cap.citations (
   cite text NOT NULL,
   type text NOT NULL,
   "case" bigint NOT NULL
 );
-CREATE TABLE cap.courts (
+CREATE TABLE IF NOT EXISTS cap.courts (
   id bigint PRIMARY KEY,
   name text NOT NULL,
   name_abbreviation text NOT NULL,
   slug text NOT NULL,
   url text NOT NULL
 );
-CREATE TABLE cap.jurisdictions (
+CREATE TABLE IF NOT EXISTS cap.jurisdictions (
   id bigint PRIMARY KEY,
   name_long text NOT NULL,
   name text NOT NULL,
@@ -44,6 +47,13 @@ CREATE TABLE cap.jurisdictions (
   whitelisted bool NOT NULL,
   url text NOT NULL
 );
+CREATE TABLE IF NOT EXISTS cap.opinions (
+  "case" bigint NOT NULL,
+  "type" text NOT NULL,
+  author jsonb NOT NULL,
+  "text" text NOT NULL
+);
+
 ALTER TABLE cap.cases
   ADD CONSTRAINT cap_cases_reporter_fk FOREIGN KEY (reporter) REFERENCES cap.reporters (id);
 ALTER TABLE cap.cases
@@ -54,6 +64,8 @@ ALTER TABLE cap.cases
   ADD CONSTRAINT cap_cases_volume_fk FOREIGN KEY (volume) REFERENCES cap.volumes (barcode);
 ALTER TABLE cap.citations
   ADD CONSTRAINT cap_citations_case_fk FOREIGN KEY ("case") REFERENCES cap.cases (id);
+ALTER TABLE cap.opinions
+  ADD CONSTRAINT cap_opinions_case_fk FOREIGN KEY ("case") REFERENCES cap.cases (id);
 CREATE INDEX cap_case_year_idx ON cap.cases (decision_year);
 CREATE INDEX cap_case_first_page_idx ON cap.cases (first_page);
 CREATE INDEX cap_case_last_page_idx ON cap.cases (last_page);

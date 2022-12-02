@@ -43,12 +43,17 @@ func main() {
 
 	// Scan line by line, but into a large buffer in case there are large cases
 	scanner := bufio.NewScanner(decompressed)
-	buf := make([]byte, 0, 128*1024)
-	scanner.Buffer(buf, 128*1024)
+	maxSize := 1024 * 1000 * 1000 * 2 // 2 gigabytes
+	buf := make([]byte, 0, maxSize)
+	scanner.Buffer(buf, maxSize)
 	for scanner.Scan() {
 		// Read in one case per line
 		c := &Case{}
-		json.Unmarshal(scanner.Bytes(), c)
+		err = json.Unmarshal(scanner.Bytes(), c)
+		if err != nil {
+			log.Fatal().Err(err).Msg("error unmarshalling case JSON")
+		}
+		// log.Info().Msg(fmt.Sprint(c.ID))
 		if err := scanner.Err(); err != nil {
 			log.Fatal().Err(err).Msg("error scanning file")
 		}

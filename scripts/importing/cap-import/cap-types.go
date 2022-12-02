@@ -12,7 +12,7 @@ type Case struct {
 	Name             string          `json:"name"`
 	NameAbbreviation string          `json:"name_abbreviation"`
 	DecisionDateRaw  string          `json:"decision_date"`
-	DocketNumber     sql.NullString  `json:"docket_number"`
+	DocketNumber     string          `json:"docket_number"`
 	FirstPageRaw     string          `json:"first_page"`
 	LastPageRaw      string          `json:"last_page"`
 	Citations        []Citation      `json:"citations"`
@@ -25,8 +25,7 @@ type Case struct {
 	Analysis         json.RawMessage `json:"analysis"`
 	LastUpdated      time.Time       `json:"last_updated"`
 	Provenance       json.RawMessage `json:"provenanance"`
-	// CitesTo       json.RawMessage `json:"cites_to"`
-	// Preview       json.RawMessage `json:"preview"`
+	Casebody         Casebody        `json:"casebody"`
 }
 
 func (c Case) DecisionDate() sql.NullTime {
@@ -86,4 +85,21 @@ type Volume struct {
 	URL          string `json:"url"`
 	VolumeNumber string `json:"volume_number"`
 	Barcode      string `json:"barcode"`
+}
+
+type Opinion struct {
+	Type   string          `json:"type"`
+	Author json.RawMessage `json:"author"`
+	Text   string          `json:"text"`
+}
+
+type Casebody struct {
+	Data Data `json:"data"`
+}
+
+type Data struct {
+	Opinions  []Opinion       `json:"opinions"`
+	Judges    json.RawMessage `json:"judges"`
+	Parties   json.RawMessage `json:"parties"`
+	Attorneys json.RawMessage `json:"attorneys"`
 }
