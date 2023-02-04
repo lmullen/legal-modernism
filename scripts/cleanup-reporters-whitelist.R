@@ -1,6 +1,6 @@
 library(tidyverse)
 
-raw <- read_csv("~/Downloads/reporters_citation_to_cap_whitelist-4.csv")
+raw <- read_csv("~/Downloads/reporters_citation_to_cap_whitelist-9.csv")
 
 raw |>
   mutate(
