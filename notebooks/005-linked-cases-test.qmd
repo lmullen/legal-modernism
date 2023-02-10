@@ -1,8 +1,9 @@
 ---
 title: "005-linked-cases-analysis"
 author: "Lincoln Mullen"
-format: html
-editor: visual
+format: 
+  html:
+    code-fold: true
 ---
 
 ## Explore the most frequently cited cases
