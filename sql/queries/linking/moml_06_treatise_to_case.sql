@@ -1,0 +1,1 @@
+select moml_treatise, "case", count(*) from linking.moml_05_moml_to_cap group by moml_treatise, "case";
