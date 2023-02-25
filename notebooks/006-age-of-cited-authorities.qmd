@@ -1,0 +1,131 @@
+---
+title: "Age of cited authorities"
+format: 
+  html:
+    code-fold: true
+    df-print: kable
+    embed-resources: true
+---
+
+We have a list of treatises (well, so far, volumes in treatises) that cite specific cases. We want to understand how old the cases were when a treatise cited them.
+
+```{r}
+#| output: false
+library(tidyverse)
+library(DBI)
+library(dbplyr)
+db <- dbConnect(odbc::odbc(), "Research", timeout = 10)
+```
+
+Here are all citations in U.S. treatises to U.S. case law that we can link. This shows a sample of what the data looks like.
+
+```{r}
+citations <- tbl(db, in_schema("linking", "moml_06_treatise_to_case"))
+treatises <- tbl(db, in_schema("moml", "us_treatises"))
+cases <- tbl(db, in_schema("cap", "cases"))
+subjects <- tbl(db, in_schema("moml", "book_subject")) |>
+  select(-source) |>
+  filter(subject != "US", subject != "UK") |>
+  collect()
+
+citations <- citations |>
+  left_join(treatises |> select(psmid, treatise_year = year), by = c("moml_treatise" = "psmid")) |>
+  left_join(cases |> select(id, case_year = decision_year), by = c("case" = "id")) |>
+  select(-n) |>
+  rename(treatise = moml_treatise) |>
+  filter(treatise_year >= case_year) |>
+  collect()
+head(citations, 10)
+```
+
+We should group the treatises by decade. And we can compute the age of the citations.
+
+```{r}
+decade <- function(x) {
+  trunc(x / 10, 0) * 10
+}
+
+citations <- citations |> 
+  mutate(treatise_decade = decade((treatise_year))) |>
+  mutate(cite_age = treatise_year - case_year)
+
+head(citations, 10)
+```
+
+Here is a table of the average age of the case cited in treatises published in a certain year. 
+
+```{r}
+avg_age <- citations |>
+  group_by(treatise_year) %>%
+  summarize(
+    avg_age = cite_age |> mean() |> round(1),
+    n = n()) 
+avg_age
+```
+
+Since some of those data points are outliers because there are so few treatises, we will exclude them when making a plot.
+
+```{r}
+#| warning: false
+avg_age |>
+  filter(n > 100) |>
+  ggplot(aes(x = treatise_year, y = avg_age)) + 
+  geom_point() +
+  geom_line() +
+  geom_smooth(se = FALSE, color = "red") + 
+  labs(
+    x = "Year treatise published",
+    y = "Average age of cases cited",
+    title = "Age of cases cited in U.S. treatises"
+  ) +
+  theme_light()
+```
+
+We can instead visualize this as a boxplot per decade.
+
+```{r}
+citations |>
+ggplot(aes(x = factor(treatise_decade), y = cite_age)) +
+geom_boxplot(outlier.shape = NA) +
+  labs(
+    x = "Decade treatise published",
+    y = "Age of cases cited",
+    title = "Age of cases cited in U.S. treatises"
+  ) +
+  ylim(0, 100) +
+  theme_light()
+```
+
+Let's try to split this by topic. We only want to keep some of them.
+
+```{r}
+subjects |>
+count(subject, sort = TRUE) %>% 
+head(20)
+```
+
+Now we can plot the change over time by subject.
+
+```{r}
+#| warning: false
+subject_keepers <- c("Procedural Law", "Real Property", "Criminal Law",
+"Constitutional Law", "Civil Procedure", "Equity", "Trusts and Estates", "Family Law")
+citations |>
+left_join(subjects |> filter(subject %in% subject_keepers), by = c("treatise" = "psmid"), multiple = 'all') |>
+group_by(subject, treatise_year) %>%
+summarize(
+    avg_age = cite_age |> mean() |> round(1),
+    n = n()
+) |>
+ggplot(aes(x = treatise_year, y = avg_age)) + facet_wrap(~subject, nrow = 3, scales = "free_y") + 
+geom_smooth(se = FALSE) + 
+geom_point(alpha = 0.25) +
+labs(title = "Average age of cited cases by subject of treatise",
+x = "Year treatise published", y = "Average age of cases cited")
+```
+
+
+```{r}
+#| output: false
+dbDisconnect(db)
+```
