@@ -1,0 +1,161 @@
+---
+title: "Age of cited authorities"
+format: 
+  html:
+    code-fold: true
+    df-print: paged
+    embed-resources: true
+execute:
+  cache: true
+---
+
+```{r}
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(DBI))
+suppressPackageStartupMessages(library(dbplyr))
+suppressPackageStartupMessages(library(igraph))
+suppressPackageStartupMessages(library(tidygraph))
+suppressPackageStartupMessages(library(ggraph))
+```
+
+The purpose of this notebook is to create preliminary visualizations of how treatises are related to one another. We are going to do this through the concept of bibliographic coupling, which is in effect the inverse of co-citation. Treatises are related to one another if they cite the same cases. This makes a kind of intuitive sense: if a case worth citing is about a discrete contribution to legal knowledge, then treatises that use the same cases are an aggregation of that knowledge.
+
+The database contains a directed network of treatises (identified by their bibliographic identifier, and thus including multiple volumes under a single title). The strength of the connection is determined by the number of cases. 
+
+```{r}
+min_cases <- 100
+```
+
+We are going to pull the network nodes and edges (limited to edges where there are at least `r min_cases` in common) from the database, along with the relevant metadata. Then we will handle the rest in the notebook without the database.
+
+```{r}
+db <- dbConnect(odbc::odbc(), "Research", timeout = 10)
+treatises <- tbl(db, in_schema("moml", "us_treatises")) |> 
+	select(-vols, -subjects, -psmid) |>
+	collect()
+treatise_subjects <- dbGetQuery(db, "SELECT bibliographicid, unnest(subjects) AS subject FROM moml.us_treatises;")|>
+	filter(subject != "US") |>
+	collect()|>
+	as_tibble()
+edges <- tbl(db, in_schema("networks", "treatise_bibliocouple")) |>
+	filter(n >= 100)|>
+	collect() |>
+	mutate(n = as.integer(n))
+dbDisconnect(db)
+```
+
+We can examine the resulting tables.
+
+```{r}
+treatises |> head()
+treatise_subjects |> head()
+edges |> head()
+```
+
+The subjects are kind of a pain, since each treatise can have multiple subjects. Let's keep the top ten most used subjects, eliminating the more specialized subjects that are duplicates of broader topics.
+
+```{r}
+subjects_to_keep <- treatise_subjects |>
+	count(subject, sort = TRUE) |>
+	filter(!subject %in% c("Administration of Justice and Administrative Law", "General Studies", "Taxation and Public Finance")) |>
+	top_n(10)
+subjects_to_keep
+```
+
+Then let's make sure each treatise gets at most one subject from that top ten list.
+
+```{r}
+subject_for_treatises <- subjects_to_keep |>
+	select(-n) |>
+	left_join(treatise_subjects, by = "subject", multiple = "all") |> 
+	group_by(bibliographicid) |> 
+	slice(1)
+
+treatises <- treatises |>
+	left_join(subject_for_treatises, by = "bibliographicid")
+treatises |> head()
+```
+
+We want to turn this into a graph object so that we can manipulate it. As it is now, the graph is directed but symmetrical. We want to make it undirected but keep the edge weights (`n`). Here is the resulting object.
+
+```{r}
+# # This is a more complicated way to get to the undirected graph. 
+# # Preserving it in case the shorter version doesn't work like I expect.
+# g1 <- graph_from_data_frame(edges, directed = TRUE, treatises) 
+# m <- as_adjacency_matrix(g1, attr = "n")
+# g2 <- graph_from_adjacency_matrix(m, mode = "upper", weighted = "n", diag = FALSE)
+# e <- as_data_frame(g2, "edges")
+# g <- graph_from_data_frame(e, directed = FALSE, treatises)
+g <- graph_from_data_frame(edges, directed = TRUE, treatises) |>
+	as.undirected(mode = "collapse", edge.attr.comb = "max") 
+g
+```
+
+It can be helpful to understand the distribution of the strength of the edges.
+
+```{r}
+g  |>
+	as_data_frame("edges") |>
+	ggplot(aes(x = n)) + 
+	geom_histogram(binwidth = 10) +
+	xlim(0, 1000) +
+	labs(title = "Histogram of strengths of connections")
+```
+
+We can now manipulate the graph. Let's set some parameters.
+
+```{r}
+min_cases2 <- 500
+max_year <- 1870
+```
+
+We will only keep treatises which have at least one connection, where the connections is at least `r min_cases2` cases, and where the maximum year for the treatise is `r max_year`.
+
+Here is the result.
+
+```{r}
+tg <- g |>
+	as_tbl_graph() |>
+	activate(edges) |>
+	filter(n >= min_cases2) |>
+	activate(nodes) |>
+	filter(year < max_year) |>
+	filter(centrality_degree() > 0) |>
+	mutate(betweenness = centrality_betweenness()) |>
+	arrange(desc(betweenness))
+tg
+```
+
+We can now try to plot this.
+
+```{r}
+ggraph(tg, layout = 'kk') + 
+    geom_edge_fan(alpha = 0.2) + 
+    geom_node_point(aes(size = betweenness, color = subject)) + 
+		guides(size = "none") +
+    theme_graph()
+```
+
+It may be easier to plot only the biggest subgraph. We can get that subgraph.
+
+```{r}
+g2 <- tg |> as.igraph() 
+components <- g2 |> clusters(mode="weak")
+biggest_cluster_id <- which.max(components$csize)
+vert_ids <- V(g2)[components$membership == biggest_cluster_id]
+tg2 <- induced_subgraph(g2, vert_ids) |> as_tbl_graph() |> arrange(desc(betweenness))
+tg2
+```
+
+The plot it.
+
+```{r}
+ggraph(tg2, layout = 'kk') + 
+    geom_edge_fan(alpha = 0.1) + 
+    geom_node_point(aes(size = betweenness, color = subject)) + 
+		guides(size = "none") +
+    theme_graph() +
+		labs(color = "MOML subject", title = "U.S. treatises citing shared cases", subtitle = str_glue("Treatises from MOML before {max_year}"))
+```
+
+So far, so promising. 
