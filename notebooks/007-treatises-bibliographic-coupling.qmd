@@ -1,5 +1,5 @@
 ---
-title: "Age of cited authorities"
+title: "Bibliographic coupling of treatises"
 format: 
   html:
     code-fold: true
@@ -58,7 +58,7 @@ The subjects are kind of a pain, since each treatise can have multiple subjects.
 subjects_to_keep <- treatise_subjects |>
 	count(subject, sort = TRUE) |>
 	filter(!subject %in% c("Administration of Justice and Administrative Law", "General Studies", "Taxation and Public Finance")) |>
-	top_n(10)
+	top_n(15)
 subjects_to_keep
 ```
 
@@ -105,8 +105,8 @@ g  |>
 We can now manipulate the graph. Let's set some parameters.
 
 ```{r}
-min_cases2 <- 500
-max_year <- 1870
+min_cases2 <- 300
+max_year <- 1860
 ```
 
 We will only keep treatises which have at least one connection, where the connections is at least `r min_cases2` cases, and where the maximum year for the treatise is `r max_year`.
@@ -130,7 +130,7 @@ We can now try to plot this.
 
 ```{r}
 ggraph(tg, layout = 'kk') + 
-    geom_edge_fan(alpha = 0.2) + 
+    geom_edge_fan(alpha = 0.1) + 
     geom_node_point(aes(size = betweenness, color = subject)) + 
 		guides(size = "none") +
     theme_graph()
@@ -150,12 +150,28 @@ tg2
 The plot it.
 
 ```{r}
-ggraph(tg2, layout = 'kk') + 
+#| warning: false
+#| fig-height: 9.5
+#| fig-width: 8
+tg2 |>
+mutate(subject = if_else(is.na(subject), "Other", subject)) |> 
+ggraph(layout = 'kk') + 
     geom_edge_fan(alpha = 0.1) + 
     geom_node_point(aes(size = betweenness, color = subject)) + 
 		guides(size = "none") +
     theme_graph() +
-		labs(color = "MOML subject", title = "U.S. treatises citing shared cases", subtitle = str_glue("Treatises from MOML before {max_year}"))
+		labs(color = "MOML subject", title = "U.S. treatises citing shared cases", subtitle = str_glue("Treatises from MOML before {max_year} citing at least {min_cases2} cases in common")) +
+    theme(legend.position="bottom")
 ```
 
 So far, so promising. 
+
+
+```{r}
+tg2 |> 
+as.data.frame() |> 
+arrange(desc(betweenness)) |>
+ top_n(10, betweenness) |> 
+ mutate(title = str_remove(title, ":.+$")) |>
+ select(year, title)
+```

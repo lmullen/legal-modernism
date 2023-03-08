@@ -1,0 +1,90 @@
+---
+title: "Visualizations for OWCAL paper"
+format: 
+  html:
+    code-fold: true
+    df-print: paged
+    embed-resources: true
+execute:
+  cache: true
+---
+
+```{r}
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(DBI))
+suppressPackageStartupMessages(library(dbplyr))
+suppressPackageStartupMessages(library(igraph))
+suppressPackageStartupMessages(library(tidygraph))
+suppressPackageStartupMessages(library(ggraph))
+```
+
+
+```{r}
+db <- dbConnect(odbc::odbc(), "Research", timeout = 10)
+
+cases_per_year <- tbl(db, in_schema("cap", "cases")) |>
+count(decision_year) |>
+mutate(n = as.integer(n)) |>
+collect()
+```
+
+```{r}
+cases_per_year |>
+filter(decision_year <= 1875, decision_year >= 1775) |>
+ggplot(aes(x = decision_year, y = n)) + geom_line() +
+labs(title = "Cases reported per year in U.S. jurisdictions", subtitle = "Cases digitized in Caselaw Access Project", caption = "Legal Modernism project", x = NULL, y = "Cases reported") + 
+theme_bw() + scale_x_continuous(breaks = seq(1775, 1875, by = 10)) + scale_y_continuous(labels = scales::comma, breaks = seq(0, 12000, by = 1000))
+```
+
+```{r}
+kelly_cites <- read_csv("~/Desktop/citations-to-kelly-by-year.csv")
+decade <- function(x) {
+  trunc(x / 10) * 10
+}
+kelly_cites |>
+mutate(dec = decade(year)) |>
+group_by(dec) |>
+summarize(n = sum(n)) |>
+filter(dec >= 1840)  |>
+ggplot(aes(x = dec, y = n)) + geom_col() +
+scale_x_continuous(breaks = seq(1840, 1920, by = 10), labels = function(x) {str_c(x, "s")}) + 
+scale_y_continuous(breaks = seq(0, 500, by = 100)) +
+labs(title = "Citations to Kelly by decade in U.S. treatises", subtitle = "These citations were to 'Kelly' and not to the official 'Ga.' reporter", caption = "Legal Modernism project", x = NULL, y = "Nymber of citations") + 
+theme_bw()
+```
+
+
+```{r}
+citations <- tbl(db, in_schema("cap_citations", "citations"))
+metadata <- tbl(db, in_schema("cap_citations", "metadata"))
+
+citations_meta <- citations  |>
+  left_join(metadata  |>
+              select(id, 
+                     jurisdiction_from = jurisdiction_name,
+                     year_from = decision_year),
+            by = c("cites_from" = "id")) |>
+  left_join(metadata %>%
+              select(id, 
+                     jurisdiction_to = jurisdiction_name,
+                     year_to = decision_year),
+            by = c("cites_to" = "id"))  |> 
+  select(ends_with("_from"), ends_with("_to"), everything())  |>
+  filter(year_from <= 1926) |>
+  collect()
+```
+
+```{r}
+citations_meta %>% 
+  mutate(time_gap = year_from - year_to) %>% 
+  filter(time_gap <= 150) %>% 
+  count(time_gap) %>% 
+  arrange(time_gap) %>% 
+  mutate(n = as.integer(n)) %>% 
+  ggplot(aes(x = time_gap, y = n)) +
+  geom_col() +
+  labs(title = "Gap in years between case and the case cited", x = "Age of citation", y = "Number of citations", caption = "Legal Modernism project", subtitle = "Cases before 1926 citing other cases, as detected by the Caselaw Access Project") +
+  scale_y_continuous(label = scales::label_number_si(), breaks = seq(0, 300e3, by = 50e3)) +
+  theme_bw() +
+  scale_x_continuous(breaks = seq(0, 100, by = 10), limits = c(0, 100))  
+```

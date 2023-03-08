@@ -21,7 +21,7 @@ Here are all citations in U.S. treatises to U.S. case law that we can link. This
 
 ```{r}
 citations <- tbl(db, in_schema("linking", "moml_06_treatise_to_case"))
-treatises <- tbl(db, in_schema("moml", "us_treatises"))
+treatises <- tbl(db, in_schema("moml", "us_treatises")) |> mutate(psmid = as.character(psmid))
 cases <- tbl(db, in_schema("cap", "cases"))
 subjects <- tbl(db, in_schema("moml", "book_subject")) |>
   select(-source) |>
