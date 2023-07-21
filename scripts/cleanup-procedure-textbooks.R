@@ -11,7 +11,18 @@ raw_tb <- read_csv("temp/procedure_textbooks.csv") |>
   select(-moml_psmid) |>
   rename(webid = moml_webid)
 
-raw_tb |>
+clean_tb <- raw_tb |>
   left_join(book_info, by = "webid") |>
   select(bibliographicid, psmid, webid, everything()) |>
+  mutate(year_begin = as.integer(begin_year),
+         year_end = as.integer(end_year)) |>
+  select(-begin_year, -end_year)
+
+clean_tb |>
   write_csv("temp/procedure-textbooks-cleaned.csv")
+
+dbWriteTable(db, Id(schema = "legalhist", table = "textbooks"), clean_tb)
+
+
+
+
