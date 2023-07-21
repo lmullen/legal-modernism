@@ -88,3 +88,19 @@ citations_meta %>%
   theme_bw() +
   scale_x_continuous(breaks = seq(0, 100, by = 10), limits = c(0, 100))  
 ```
+
+```{r}
+#| fig-height: 11
+#| fig-width: 8.5
+most_cited <- read_csv("~/Desktop/most-cited-cases-by-year.csv")
+case_titles <- read_csv("~/Desktop/most-cited-case-titles.csv")
+
+most_cited |>
+mutate(n = as.integer(n)) |>
+left_join(case_titles, by = c("case" = "case")) |> 
+mutate(across(title, factor, levels=case_titles$title)) |>
+ggplot(aes(x = year, y = n)) + facet_wrap(~ title, scales = "free_y", ncol = 2) + geom_smooth(se = FALSE, color = "black") + geom_point(alpha = 0.2) + labs(title = "Citations from legal treatises to most significant state cases, 1800–1926", subtitle = "Smoothed citations per year", x = NULL, y = "Citations per year", caption = "Legal Modernism project") +
+scale_x_continuous(NULL, limits = c(1800, 1926), breaks = seq(1800, 1925, by = 25)) +
+scale_y_continuous(breaks = seq(0, 40, by = 5))+
+theme_bw()
+```

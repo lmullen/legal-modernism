@@ -30,17 +30,17 @@ We are going to pull the network nodes and edges (limited to edges where there a
 
 ```{r}
 db <- dbConnect(odbc::odbc(), "Research", timeout = 10)
-treatises <- tbl(db, in_schema("moml", "us_treatises")) |> 
-	select(-vols, -subjects, -psmid) |>
-	collect()
-treatise_subjects <- dbGetQuery(db, "SELECT bibliographicid, unnest(subjects) AS subject FROM moml.us_treatises;")|>
-	filter(subject != "US") |>
-	collect()|>
-	as_tibble()
+treatises <- tbl(db, in_schema("moml", "us_treatises")) |>
+  select(-vols, -subjects, -psmid) |>
+  collect()
+treatise_subjects <- dbGetQuery(db, "SELECT bibliographicid, unnest(subjects) AS subject FROM moml.us_treatises;") |>
+  filter(subject != "US") |>
+  collect() |>
+  as_tibble()
 edges <- tbl(db, in_schema("networks", "treatise_bibliocouple")) |>
-	filter(n >= 100)|>
-	collect() |>
-	mutate(n = as.integer(n))
+  filter(n >= 100) |>
+  collect() |>
+  mutate(n = as.integer(n))
 dbDisconnect(db)
 ```
 
@@ -56,9 +56,9 @@ The subjects are kind of a pain, since each treatise can have multiple subjects.
 
 ```{r}
 subjects_to_keep <- treatise_subjects |>
-	count(subject, sort = TRUE) |>
-	filter(!subject %in% c("Administration of Justice and Administrative Law", "General Studies", "Taxation and Public Finance")) |>
-	top_n(15)
+  count(subject, sort = TRUE) |>
+  filter(!subject %in% c("Administration of Justice and Administrative Law", "General Studies", "Taxation and Public Finance")) |>
+  top_n(15)
 subjects_to_keep
 ```
 
@@ -66,40 +66,40 @@ Then let's make sure each treatise gets at most one subject from that top ten li
 
 ```{r}
 subject_for_treatises <- subjects_to_keep |>
-	select(-n) |>
-	left_join(treatise_subjects, by = "subject", multiple = "all") |> 
-	group_by(bibliographicid) |> 
-	slice(1)
+  select(-n) |>
+  left_join(treatise_subjects, by = "subject", multiple = "all") |>
+  group_by(bibliographicid) |>
+  slice(1)
 
 treatises <- treatises |>
-	left_join(subject_for_treatises, by = "bibliographicid")
+  left_join(subject_for_treatises, by = "bibliographicid")
 treatises |> head()
 ```
 
 We want to turn this into a graph object so that we can manipulate it. As it is now, the graph is directed but symmetrical. We want to make it undirected but keep the edge weights (`n`). Here is the resulting object.
 
 ```{r}
-# # This is a more complicated way to get to the undirected graph. 
+# # This is a more complicated way to get to the undirected graph.
 # # Preserving it in case the shorter version doesn't work like I expect.
-# g1 <- graph_from_data_frame(edges, directed = TRUE, treatises) 
+# g1 <- graph_from_data_frame(edges, directed = TRUE, treatises)
 # m <- as_adjacency_matrix(g1, attr = "n")
 # g2 <- graph_from_adjacency_matrix(m, mode = "upper", weighted = "n", diag = FALSE)
 # e <- as_data_frame(g2, "edges")
 # g <- graph_from_data_frame(e, directed = FALSE, treatises)
 g <- graph_from_data_frame(edges, directed = TRUE, treatises) |>
-	as.undirected(mode = "collapse", edge.attr.comb = "max") 
+  as.undirected(mode = "collapse", edge.attr.comb = "max")
 g
 ```
 
 It can be helpful to understand the distribution of the strength of the edges.
 
 ```{r}
-g  |>
-	as_data_frame("edges") |>
-	ggplot(aes(x = n)) + 
-	geom_histogram(binwidth = 10) +
-	xlim(0, 1000) +
-	labs(title = "Histogram of strengths of connections")
+g |>
+  as_data_frame("edges") |>
+  ggplot(aes(x = n)) +
+  geom_histogram(binwidth = 10) +
+  xlim(0, 1000) +
+  labs(title = "Histogram of strengths of connections")
 ```
 
 We can now manipulate the graph. Let's set some parameters.
@@ -115,35 +115,37 @@ Here is the result.
 
 ```{r}
 tg <- g |>
-	as_tbl_graph() |>
-	activate(edges) |>
-	filter(n >= min_cases2) |>
-	activate(nodes) |>
-	filter(year < max_year) |>
-	filter(centrality_degree() > 0) |>
-	mutate(betweenness = centrality_betweenness()) |>
-	arrange(desc(betweenness))
+  as_tbl_graph() |>
+  activate(edges) |>
+  filter(n >= min_cases2) |>
+  activate(nodes) |>
+  filter(year < max_year) |>
+  filter(centrality_degree() > 0) |>
+  mutate(betweenness = centrality_betweenness()) |>
+  arrange(desc(betweenness))
 tg
 ```
 
 We can now try to plot this.
 
 ```{r}
-ggraph(tg, layout = 'kk') + 
-    geom_edge_fan(alpha = 0.1) + 
-    geom_node_point(aes(size = betweenness, color = subject)) + 
-		guides(size = "none") +
-    theme_graph()
+ggraph(tg, layout = "kk") +
+  geom_edge_fan(alpha = 0.1) +
+  geom_node_point(aes(size = betweenness, color = subject)) +
+  guides(size = "none") +
+  theme_graph()
 ```
 
 It may be easier to plot only the biggest subgraph. We can get that subgraph.
 
 ```{r}
-g2 <- tg |> as.igraph() 
-components <- g2 |> clusters(mode="weak")
+g2 <- tg |> as.igraph()
+components <- g2 |> clusters(mode = "weak")
 biggest_cluster_id <- which.max(components$csize)
 vert_ids <- V(g2)[components$membership == biggest_cluster_id]
-tg2 <- induced_subgraph(g2, vert_ids) |> as_tbl_graph() |> arrange(desc(betweenness))
+tg2 <- induced_subgraph(g2, vert_ids) |>
+  as_tbl_graph() |>
+  arrange(desc(betweenness))
 tg2
 ```
 
@@ -154,24 +156,24 @@ The plot it.
 #| fig-height: 9.5
 #| fig-width: 8
 tg2 |>
-mutate(subject = if_else(is.na(subject), "Other", subject)) |> 
-ggraph(layout = 'kk') + 
-    geom_edge_fan(alpha = 0.1) + 
-    geom_node_point(aes(size = betweenness, color = subject)) + 
-		guides(size = "none") +
-    theme_graph() +
-		labs(color = "MOML subject", title = "U.S. treatises citing shared cases", subtitle = str_glue("Treatises from MOML before {max_year} citing at least {min_cases2} cases in common")) +
-    theme(legend.position="bottom")
+  mutate(subject = if_else(is.na(subject), "Other", subject)) |>
+  ggraph(layout = "kk") +
+  geom_edge_fan(alpha = 0.1) +
+  geom_node_point(aes(size = betweenness, color = subject)) +
+  guides(size = "none") +
+  theme_graph() +
+  labs(color = "MOML subject", title = "U.S. treatises citing shared cases", subtitle = str_glue("Treatises from MOML before {max_year} citing at least {min_cases2} cases in common")) +
+  theme(legend.position = "bottom")
 ```
 
 So far, so promising. 
 
 
 ```{r}
-tg2 |> 
-as.data.frame() |> 
-arrange(desc(betweenness)) |>
- top_n(10, betweenness) |> 
- mutate(title = str_remove(title, ":.+$")) |>
- select(year, title)
+tg2 |>
+  as.data.frame() |>
+  arrange(desc(betweenness)) |>
+  top_n(10, betweenness) |>
+  mutate(title = str_remove(title, ":.+$")) |>
+  select(year, title)
 ```

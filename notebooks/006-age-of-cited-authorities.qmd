@@ -121,7 +121,7 @@ ggplot(aes(x = treatise_year, y = avg_age)) + facet_wrap(~subject, nrow = 3, sca
 geom_smooth(se = FALSE) + 
 geom_point(alpha = 0.25) +
 labs(title = "Average age of cited cases by subject of treatise",
-x = "Year treatise published", y = "Average age of cases cited")
+x = "Year treatise published", y = "Average age of cases cited") + theme_bw()
 ```
 
 
