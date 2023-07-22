@@ -1,0 +1,206 @@
+---
+title: "The legal canon according to textbooks"
+format: html
+---
+
+
+```{r}
+library(tidyverse)
+library(DBI)
+library(igraph)
+library(tidygraph)
+library(ggraph)
+```
+
+
+```{r}
+db <- dbConnect(odbc::odbc(), "Research", timeout = 10)
+```
+
+Get the textbook IDs, but also the textbooks with titles and topics. In essence, the nodes.
+
+```{r}
+textbook_ids <- tbl(db, Id(schema = "legalhist", table = "textbooks")) |> 
+  distinct(bibliographicid) |> 
+  collect() |> 
+  pull(bibliographicid)
+
+textbook_vol_ids <- tbl(db, Id(schema = "legalhist", table = "textbooks")) |> 
+  distinct(psmid) |> 
+  collect() |> 
+  pull(psmid)
+
+textbooks <- tbl(db, Id(schema = "legalhist", table = "textbooks")) |> 
+  collect() |> 
+  select(bibliographicid, title, topic) |> 
+  distinct(bibliographicid, .keep_all = TRUE)
+
+schools <- tbl(db, Id(schema = "legalhist", table = "textbooks")) |> 
+  collect() |> 
+  select(school, bibliographicid) |> 
+  distinct()
+
+textbooks_used <- tbl(db, Id(schema = "legalhist", table = "textbooks")) |> 
+  collect()
+```
+
+This will give us the edges.
+
+```{r}
+textbook_coupling <- tbl(db, Id(schema = "networks", table = "treatise_bibliocouple")) |> 
+  collect() |> 
+  filter(t1 %in% textbook_ids,
+         t2 %in% textbook_ids) |> 
+  mutate(n = as.integer(n)) |> 
+  arrange(desc(n))
+```
+
+```{r}
+school_coupling <- textbook_coupling |> 
+  left_join(schools |> rename(s1 = school), by = c("t1" = "bibliographicid")) |> 
+  left_join(schools |> rename(s2 = school), by = c("t2" = "bibliographicid")) |> 
+  filter(s1 != s2) |> 
+  group_by(s1, s2) |> 
+  summarize(n = sum(n)) |> 
+  arrange(desc(n))
+```
+
+
+Now turn it into a graph.
+
+```{r}
+g <- graph_from_data_frame(textbook_coupling, directed = TRUE, textbooks) |> 
+  as.undirected(mode = "collapse", edge.attr.comb = "max")
+g
+```
+
+```{r}
+min_cases <- 20
+tg <- g |>
+  as_tbl_graph() |>
+  activate(edges) |>
+  filter(n >= min_cases) |>
+  activate(nodes) |>
+  # filter(centrality_degree() > 0) |>
+  mutate(betweenness = centrality_betweenness()) |>
+  arrange(desc(betweenness))
+tg
+```
+
+And plot it
+
+```{r}
+ggraph(tg, layout = "kk") +
+  geom_edge_fan(alpha = 0.1) +
+  geom_node_point(aes(size = betweenness, color = topic)) +
+  geom_node_text(aes(label = title)) +
+  guides(size = "none") +
+  theme_graph()
+```
+
+```{r}
+graph_from_data_frame(school_coupling) |> 
+  as_tbl_graph() |>
+  activate(edges) |>
+  filter(n >= 20) |>
+  activate(nodes) |>
+  mutate(betweenness = centrality_betweenness()) |>
+ggraph(layout = "kk") +
+  geom_edge_fan(alpha = 0.1) +
+  geom_node_point(aes(size = betweenness), color = "green") +
+  geom_node_text(aes(label = name)) +
+  guides(size = "none") +
+  theme_graph()
+```
+## Finding cases cited in textbooks
+
+We want to get the list of cases cited in the textbooks first, then we can do any analysis.
+
+```{r}
+citations <- tbl(db, Id(schema = "linking", table = "moml_06_treatise_to_case")) 
+cases <- tbl(db, Id(schema = "cap", table = "cases"))
+
+textbook_citations <- citations |> 
+  filter(moml_treatise %in% textbook_vol_ids) |> 
+  left_join(cases, by = c("case" = "id")) |> 
+  select(-frontend_pdf_url, -decision_date_raw, -docket_number, -first_page_raw,
+         -last_page_raw, -analysis, -provenance, -judges, -parties, 
+         -attorneys, -last_updated, -imported) |> 
+  collect()
+  
+cites_with_school <- textbooks_used |> 
+  left_join(textbook_citations, by = c("psmid" = "moml_treatise"),
+            multiple = "all", relationship = "many-to-many") 
+
+write_csv(cites_with_school, "../temp/textbook-cites-with-school.csv")
+```
+
+We can aggregate that in various ways.
+
+```{r}
+cites_with_school |> 
+  count(bibliographicid, title, edition, topic, case, name_abbreviation, decision_year, frontend_url) |> 
+  arrange(desc(n)) |> 
+  write_csv("../temp/textbook-most-cited-per-treatise.csv")
+
+cites_with_school |> 
+  count(topic, case, name_abbreviation, decision_year, frontend_url) |> 
+  arrange(topic, desc(n)) |> 
+  write_csv("../temp/textbook-most-cited-by-topic.csv")
+
+cites_with_school |> 
+  count(topic, case, name_abbreviation, decision_year, frontend_url) |> 
+  arrange(topic, desc(n)) |> 
+  pivot_wider(names_from = topic, values_from = n, values_fill = 0) |> 
+  arrange(decision_year) |> 
+  write_csv("../temp/textbook-matrix-by-topic.csv")
+
+```
+
+Create a network of schools to cases
+
+```{r}
+school_to_case_edges <- cites_with_school |> 
+  select(school, case, n) |> 
+  mutate(case = as.character(case),
+         n = as.integer(n)) |>
+  filter(!is.na(case)) |> 
+  group_by(school, case) |> 
+  summarize(n = sum(n))
+
+schools <- school_to_case_edges$school |> unique()
+cases <- school_to_case_edges$case |> unique() |> as.character()
+
+school_to_case_nodes <- data_frame(id = c(schools, cases), 
+           type = c(rep("school", length(schools)), rep("case", length(cases))))
+write_csv(school_to_case_edges |> rename(Source = school, Target = case), "~/Desktop/edges.csv")
+write_csv(school_to_case_nodes, "~/Desktop/nodes.csv")
+```
+
+Turn it into a network object.
+
+```{r}
+graph_from_data_frame(school_to_case_edges,
+                      directed = TRUE,
+                      vertices = school_to_case_nodes) |> 
+  as_tbl_graph() |> 
+ggraph(layout = "kk") +
+  geom_edge_fan(alpha = 0.1) +
+  geom_node_point(aes(color = type)) +
+  # geom_node_text(aes(label = name)) +
+  guides(size = "none") +
+  theme_graph()
+```
+
+That's not going to be easy to visualize
+
+```{r}
+
+```
+
+
+
+
+```{r}
+dbDisconnect(db)
+```
