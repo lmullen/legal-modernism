@@ -13,7 +13,6 @@ markup:
 
 disableKinds:
   - taxonomy
-  - taxonomyTerm
 
 build:
   noJSConfigInAssets: true
