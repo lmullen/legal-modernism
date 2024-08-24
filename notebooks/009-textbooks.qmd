@@ -172,7 +172,7 @@ schools <- school_to_case_edges$school |> unique()
 cases <- school_to_case_edges$case |> unique() |> as.character()
 
 school_to_case_nodes <- data_frame(id = c(schools, cases), 
-           type = c(rep("school", length(schools)), rep("case", length(cases))))
+           type = c(rep(TRUE, length(schools)), rep(FALSE, length(cases))))
 write_csv(school_to_case_edges |> rename(Source = school, Target = case), "~/Desktop/edges.csv")
 write_csv(school_to_case_nodes, "~/Desktop/nodes.csv")
 ```
@@ -180,22 +180,37 @@ write_csv(school_to_case_nodes, "~/Desktop/nodes.csv")
 Turn it into a network object.
 
 ```{r}
-graph_from_data_frame(school_to_case_edges,
+school_case_g <- graph_from_data_frame(school_to_case_edges,
                       directed = TRUE,
                       vertices = school_to_case_nodes) |> 
-  as_tbl_graph() |> 
-ggraph(layout = "kk") +
-  geom_edge_fan(alpha = 0.1) +
-  geom_node_point(aes(color = type)) +
-  # geom_node_text(aes(label = name)) +
-  guides(size = "none") +
-  theme_graph()
+  as_tbl_graph()
 ```
 
 That's not going to be easy to visualize
 
 ```{r}
+bipartite_projection_size(school_case_g)
+school_school_g <- bipartite_projection(school_case_g, which = "true")
+as_adjacency_matrix(school_school_g, attr = "weight", type = "upper")
+```
 
+Trying to show the cases in each cluster:
+
+```{r}
+cases_in_clusters <- cites_with_school |> select(, school1 = school, case) |> 
+  left_join(select(cites_with_school, school2 = school, case), by = "case") |> 
+  filter(school1 != school2) |> 
+  distinct() |> 
+  arrange(case)
+
+case_metadata <- tbl(db, Id(schema = "cap", table = "cases")) |> 
+  select(id, decision_year, name_abbreviation, frontend_url) |> 
+  collect()
+
+cases_in_clusters |> 
+  left_join(case_metadata, by = c("case" = "id")) |> 
+  filter(school1 == "Michigan", school2 == "Columbia") |> 
+  write_csv("../temp/textbooks-cases-in-clusters-Michigan-Columbia.csv")
 ```
 
 

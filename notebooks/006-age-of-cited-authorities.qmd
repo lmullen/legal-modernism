@@ -124,6 +124,11 @@ labs(title = "Average age of cited cases by subject of treatise",
 x = "Year treatise published", y = "Average age of cases cited") + theme_bw()
 ```
 
+```{r}
+
+```
+
+
 
 ```{r}
 #| output: false
