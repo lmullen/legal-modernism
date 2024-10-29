@@ -1,0 +1,141 @@
+---
+title: "Textbooks Poster"
+format: html
+---
+
+```{r}
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(DBI))
+suppressPackageStartupMessages(library(dbplyr))
+suppressPackageStartupMessages(library(igraph))
+suppressPackageStartupMessages(library(tidygraph))
+suppressPackageStartupMessages(library(ggraph))
+```
+
+
+
+```{r}
+db <- dbConnect(odbc::odbc(), "Law", timeout = 10)
+```
+
+```{r}
+school_to_textbooks_raw <- tbl(db, Id(schema = "networks", table = "schools_to_textbooks")) |> 
+  collect() |> 
+  filter(!is.na(school)) # ideally remove this
+
+stt_nodes <- tibble(id = c(school_to_textbooks_raw$school, school_to_textbooks_raw$workid)) |> distinct(id) |> 
+  mutate(type = str_detect(id, "w\\d+"))
+```
+
+```{r}
+g <- graph_from_data_frame(school_to_textbooks_raw, directed = TRUE, stt_nodes) 
+schools_g <- bipartite_projection(g, which = FALSE)
+
+min_works <- 25
+schools_tg <- schools_g |>
+  as_tbl_graph() |> 
+  activate(edges) |>
+  filter(weight >= min_works) |> 
+  activate(nodes) |>
+  # filter(centrality_degree() > 0) |>
+  mutate(betweenness = centrality_betweenness()) |>
+  arrange(desc(betweenness))
+schools_tg
+
+set.seed(23413)
+ggraph(schools_tg, layout = "kk") +
+  geom_edge_fan(alpha = 0.1) +
+  geom_node_point(aes(size = betweenness), color = "gray") +
+  geom_node_text(aes(label = name)) +
+  guides(size = "none") +
+  theme_graph() +
+  labs(title = "Law schools connected by shared curriculum",
+       subtitle = str_glue("Schools connected by at least {min_works} shared works"))
+```
+
+```{r}
+# year_begin_f <- 1890
+year_end_f <- 1890
+# topic_f <- "procedure"
+school_to_case <- tbl(db, Id(schema = "networks", table = "schools_to_cases")) |> 
+  # filter(year_begin >= year_begin_f) |>
+  filter(year_end <= year_end_f) |>
+  # filter(topic == topic_f) |> 
+  collect() |> 
+  distinct(school, case) |> 
+  mutate(case = as.integer(case)) |> 
+  filter(!is.na(case))
+
+school_to_case_nodes = tibble(id = c(school_to_case$school, 
+                                     school_to_case$case |> as.integer())) |> 
+  distinct(id) |> 
+  mutate(type = str_detect(id, "\\d+")) 
+  
+
+gs <- graph_from_data_frame(school_to_case, directed = TRUE, school_to_case_nodes) 
+s2cg <- bipartite_projection(gs, which = FALSE)
+
+min_cases <- 10e3 
+s2c_tg <- s2cg |>
+  as_tbl_graph() |> 
+  activate(edges) |>
+  filter(weight >= min_cases) |> 
+  activate(nodes) |>
+  # filter(centrality_degree() > 0) |>
+  # mutate(betweenness = centrality_betweenness()) |>
+  # arrange(desc(betweenness)) |> 
+  activate(nodes) |> 
+  mutate(group = group_louvain(resolution = 1.1))
+s2c_tg
+
+set.seed(123)
+ggraph(s2c_tg, layout = "kk") +
+  geom_edge_link(strength = 0.6, aes(width = weight, alpha = weight)) +
+  geom_node_point(size = 24, aes(color = as.factor(group))) +
+  geom_node_text(aes(label = name)) +
+  theme_graph(base_size = 40) +
+  #labs(title = str_glue("Law schools connected by the shared cases cited in their textbooks")) +
+  guides(edge_width = "none", color = "none", size = "none", edge_alpha = "none") +
+  scale_edge_alpha(range = c(0.1, 0.2))
+  ggsave("~/Downloads/main-network.png", width = 16, height = 9, dpi = 400)
+```
+
+```{r}
+s2c_tg |> activate(nodes) |>  as_tibble() |> View( )
+as_adjacency_matrix(s2c_tg, attr = "weight", type = "upper") |> as.matrix() |> View()
+
+```
+
+Histogram of number of schools teaching cases
+
+```{r}
+# Get the schools to cases views locally
+schools_to_cases <- tbl(db, Id(schema = "networks", table = "schools_to_cases")) |> collect() |> mutate(case = as.integer(case))
+```
+
+```{r}
+schools_to_cases |> 
+  distinct(school, topic, case) |> 
+  count(case, topic) |> 
+  filter(!is.na(topic)) |> 
+  filter(topic != "professional responsibility") |> 
+  filter(topic != "international law") |> 
+  filter(topic != "remedies") |> 
+  filter(topic != "regulation") |> 
+  ggplot(aes(x = n, color = topic, fill = topic)) +
+  geom_histogram(binwidth = 1) +
+  facet_wrap(~topic, ncol = 3, scales = "free_y") +
+  theme_bw(base_size = 20) +
+  scale_x_continuous(breaks = seq(0, 21, by = 5)) +
+  labs(#title = "Cases shared in law school textbooks by topic",
+       x = "Number of law schools",
+       y = "Number of cases") +
+  guides(color = "none", fill = "none")
+ggsave("~/Downloads/histogram.png", height = 12, width = 9)
+```
+
+
+```{r}
+dbDisconnect(db)
+```
+
