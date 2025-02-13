@@ -9,7 +9,7 @@ import (
 	"github.com/jackc/pgx/v4/pgxpool"
 )
 
-// Connect returns a pool of connection to the database, which is conncurrency
+// Connect returns a pool of connections to the database, which is concurrency
 // safe. Uses the pgx interface.
 func Connect(ctx context.Context) (*pgxpool.Pool, error) {
 	connstr, err := getConnString()
