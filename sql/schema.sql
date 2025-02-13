@@ -63,6 +63,15 @@ CREATE SCHEMA moml;
 ALTER SCHEMA moml OWNER TO lmullen;
 
 --
+-- Name: moml_citations; Type: SCHEMA; Schema: -; Owner: lmullen
+--
+
+CREATE SCHEMA moml_citations;
+
+
+ALTER SCHEMA moml_citations OWNER TO lmullen;
+
+--
 -- Name: networks; Type: SCHEMA; Schema: -; Owner: lmullen
 --
 
@@ -70,15 +79,6 @@ CREATE SCHEMA networks;
 
 
 ALTER SCHEMA networks OWNER TO lmullen;
-
---
--- Name: output; Type: SCHEMA; Schema: -; Owner: lmullen
---
-
-CREATE SCHEMA output;
-
-
-ALTER SCHEMA output OWNER TO lmullen;
 
 --
 -- Name: public; Type: SCHEMA; Schema: -; Owner: postgres
@@ -106,15 +106,6 @@ CREATE SCHEMA sys_admin;
 
 
 ALTER SCHEMA sys_admin OWNER TO postgres;
-
---
--- Name: to_delete; Type: SCHEMA; Schema: -; Owner: lmullen
---
-
-CREATE SCHEMA to_delete;
-
-
-ALTER SCHEMA to_delete OWNER TO lmullen;
 
 --
 -- Name: pgcrypto; Type: EXTENSION; Schema: -; Owner: -
@@ -546,6 +537,33 @@ CREATE TABLE cap_citations.metadata (
 ALTER TABLE cap_citations.metadata OWNER TO lmullen;
 
 --
+-- Name: cap_to_cap_citations; Type: MATERIALIZED VIEW; Schema: cap_citations; Owner: lmullen
+--
+
+CREATE MATERIALIZED VIEW cap_citations.cap_to_cap_citations AS
+ SELECT c.cites_from AS from_id,
+    f.cites AS from_case_name,
+    f.jurisdiction_name AS from_jurisdiction,
+    f.jurisdiction_id AS from_jurisdiction_id,
+    f.decision_year AS from_year,
+    f.court_name_abbreviation AS from_court,
+    f.court_id AS from_court_id,
+    c.cites_to AS to_id,
+    t.cites AS to_case_name,
+    t.jurisdiction_name AS to_jurisdiction,
+    t.jurisdiction_id AS to_jurisdiction_id,
+    t.decision_year AS to_year,
+    t.court_name_abbreviation AS to_court,
+    t.court_id AS to_court_id
+   FROM ((cap_citations.citations c
+     LEFT JOIN cap_citations.metadata f ON ((c.cites_from = f.id)))
+     LEFT JOIN cap_citations.metadata t ON ((c.cites_to = t.id)))
+  WITH NO DATA;
+
+
+ALTER MATERIALIZED VIEW cap_citations.cap_to_cap_citations OWNER TO lmullen;
+
+--
 -- Name: pagerank; Type: TABLE; Schema: cap_citations; Owner: lmullen
 --
 
@@ -756,10 +774,10 @@ CREATE TABLE legalhist.textbooks_works (
 ALTER TABLE legalhist.textbooks_works OWNER TO lmullen;
 
 --
--- Name: moml_citations; Type: TABLE; Schema: output; Owner: lmullen
+-- Name: citations_unlinked; Type: TABLE; Schema: moml_citations; Owner: lmullen
 --
 
-CREATE TABLE output.moml_citations (
+CREATE TABLE moml_citations.citations_unlinked (
     id uuid NOT NULL,
     moml_treatise text NOT NULL,
     moml_page text NOT NULL,
@@ -771,7 +789,42 @@ CREATE TABLE output.moml_citations (
 );
 
 
-ALTER TABLE output.moml_citations OWNER TO lmullen;
+ALTER TABLE moml_citations.citations_unlinked OWNER TO lmullen;
+
+--
+-- Name: top_reporters; Type: MATERIALIZED VIEW; Schema: legalhist; Owner: lmullen
+--
+
+CREATE MATERIALIZED VIEW legalhist.top_reporters AS
+ SELECT reporter_abbr,
+    count(*) AS n
+   FROM moml_citations.citations_unlinked
+  GROUP BY reporter_abbr
+  ORDER BY (count(*)) DESC
+  WITH NO DATA;
+
+
+ALTER MATERIALIZED VIEW legalhist.top_reporters OWNER TO lmullen;
+
+--
+-- Name: top_reporters_not_whitelisted; Type: VIEW; Schema: legalhist; Owner: lmullen
+--
+
+CREATE VIEW legalhist.top_reporters_not_whitelisted AS
+ SELECT tr.reporter_abbr AS reporter_found,
+    wl.reporter_standard,
+    wl.reporter_cap,
+    wl.statute,
+    wl.uk,
+    wl.junk,
+    tr.n
+   FROM (legalhist.top_reporters tr
+     LEFT JOIN legalhist.reporters_citation_to_cap wl ON ((tr.reporter_abbr = wl.reporter_found)))
+  WHERE (wl.reporter_found IS NULL)
+  ORDER BY tr.n DESC;
+
+
+ALTER VIEW legalhist.top_reporters_not_whitelisted OWNER TO lmullen;
 
 --
 -- Name: moml_01_clean_cites_agg; Type: VIEW; Schema: linking; Owner: lmullen
@@ -783,7 +836,7 @@ CREATE VIEW linking.moml_01_clean_cites_agg AS
     clean.reporter_standard,
     cites.page,
     ((((cites.volume || ' '::text) || clean.reporter_standard) || ' '::text) || cites.page) AS cleaner_cite
-   FROM (output.moml_citations cites
+   FROM (moml_citations.citations_unlinked cites
      LEFT JOIN legalhist.reporters_citation_to_cap clean ON ((cites.reporter_abbr = clean.reporter_found)))
   WHERE (clean.reporter_cap IS NOT NULL)
   GROUP BY cites.volume, clean.reporter_standard, cites.page
@@ -870,7 +923,7 @@ CREATE MATERIALIZED VIEW linking.moml_05_moml_to_cap AS
             cites.moml_treatise,
             cites.moml_page,
             ((((cites.volume || ' '::text) || clean.reporter_standard) || ' '::text) || cites.page) AS cite_in_moml
-           FROM (output.moml_citations cites
+           FROM (moml_citations.citations_unlinked cites
              LEFT JOIN legalhist.reporters_citation_to_cap clean ON ((cites.reporter_abbr = clean.reporter_found)))) moml_w_clean_cite
      LEFT JOIN linking.moml_04_cap_case with_links ON ((moml_w_clean_cite.cite_in_moml = with_links.cleaner_cite)))
   WHERE (with_links."case" IS NOT NULL)
@@ -1110,6 +1163,36 @@ CREATE VIEW moml.us_treatises AS
 ALTER VIEW moml.us_treatises OWNER TO lmullen;
 
 --
+-- Name: page_to_case; Type: TABLE; Schema: moml_citations; Owner: lmullen
+--
+
+CREATE TABLE moml_citations.page_to_case (
+    id uuid NOT NULL,
+    moml_treatise text,
+    moml_page text,
+    cite_in_moml text,
+    cap_link_cite text,
+    "case" bigint
+);
+
+
+ALTER TABLE moml_citations.page_to_case OWNER TO lmullen;
+
+--
+-- Name: treatise_to_case; Type: VIEW; Schema: moml_citations; Owner: lmullen
+--
+
+CREATE VIEW moml_citations.treatise_to_case AS
+ SELECT moml_treatise,
+    "case",
+    count(*) AS n
+   FROM moml_citations.page_to_case
+  GROUP BY moml_treatise, "case";
+
+
+ALTER VIEW moml_citations.treatise_to_case OWNER TO lmullen;
+
+--
 -- Name: schools_to_cases; Type: MATERIALIZED VIEW; Schema: networks; Owner: lmullen
 --
 
@@ -1206,68 +1289,6 @@ CREATE MATERIALIZED VIEW networks.treatise_bibliocouple AS
 ALTER MATERIALIZED VIEW networks.treatise_bibliocouple OWNER TO lmullen;
 
 --
--- Name: top_reporters; Type: MATERIALIZED VIEW; Schema: output; Owner: lmullen
---
-
-CREATE MATERIALIZED VIEW output.top_reporters AS
- SELECT reporter_abbr,
-    count(*) AS n
-   FROM output.moml_citations
-  GROUP BY reporter_abbr
-  ORDER BY (count(*)) DESC
-  WITH NO DATA;
-
-
-ALTER MATERIALIZED VIEW output.top_reporters OWNER TO lmullen;
-
---
--- Name: top_reporters_not_whitelisted; Type: VIEW; Schema: output; Owner: lmullen
---
-
-CREATE VIEW output.top_reporters_not_whitelisted AS
- SELECT tr.reporter_abbr AS reporter_found,
-    wl.reporter_standard,
-    wl.reporter_cap,
-    wl.statute,
-    wl.uk,
-    wl.junk,
-    tr.n
-   FROM (output.top_reporters tr
-     LEFT JOIN legalhist.reporters_citation_to_cap wl ON ((tr.reporter_abbr = wl.reporter_found)))
-  WHERE (wl.reporter_found IS NULL)
-  ORDER BY tr.n DESC;
-
-
-ALTER VIEW output.top_reporters_not_whitelisted OWNER TO lmullen;
-
---
--- Name: cap_to_cap_citations; Type: MATERIALIZED VIEW; Schema: public; Owner: lmullen
---
-
-CREATE MATERIALIZED VIEW public.cap_to_cap_citations AS
- SELECT c.cites_from AS from_id,
-    f.cites AS from_case_name,
-    f.jurisdiction_name AS from_jurisdiction,
-    f.jurisdiction_id AS from_jurisdiction_id,
-    f.decision_year AS from_year,
-    f.court_name_abbreviation AS from_court,
-    f.court_id AS from_court_id,
-    c.cites_to AS to_id,
-    t.cites AS to_case_name,
-    t.jurisdiction_name AS to_jurisdiction,
-    t.jurisdiction_id AS to_jurisdiction_id,
-    t.decision_year AS to_year,
-    t.court_name_abbreviation AS to_court,
-    t.court_id AS to_court_id
-   FROM ((cap_citations.citations c
-     LEFT JOIN cap_citations.metadata f ON ((c.cites_from = f.id)))
-     LEFT JOIN cap_citations.metadata t ON ((c.cites_to = t.id)))
-  WITH NO DATA;
-
-
-ALTER MATERIALIZED VIEW public.cap_to_cap_citations OWNER TO lmullen;
-
---
 -- Name: database_size; Type: VIEW; Schema: stats; Owner: lmullen
 --
 
@@ -1305,22 +1326,6 @@ CREATE TABLE sys_admin.migrations_dbmate (
 
 
 ALTER TABLE sys_admin.migrations_dbmate OWNER TO postgres;
-
---
--- Name: reporters_citation_to_cap_bak; Type: TABLE; Schema: to_delete; Owner: lmullen
---
-
-CREATE TABLE to_delete.reporters_citation_to_cap_bak (
-    reporter_found text,
-    reporter_standard text,
-    reporter_cap text,
-    statute boolean,
-    uk boolean,
-    junk boolean
-);
-
-
-ALTER TABLE to_delete.reporters_citation_to_cap_bak OWNER TO lmullen;
 
 --
 -- Name: cases cases_pkey; Type: CONSTRAINT; Schema: cap; Owner: lmullen
@@ -1451,19 +1456,27 @@ ALTER TABLE ONLY moml.page
 
 
 --
--- Name: moml_citations moml_citations_id_key; Type: CONSTRAINT; Schema: output; Owner: lmullen
+-- Name: citations_unlinked moml_citations_id_key; Type: CONSTRAINT; Schema: moml_citations; Owner: lmullen
 --
 
-ALTER TABLE ONLY output.moml_citations
+ALTER TABLE ONLY moml_citations.citations_unlinked
     ADD CONSTRAINT moml_citations_id_key UNIQUE (id);
 
 
 --
--- Name: moml_citations moml_citations_pkey; Type: CONSTRAINT; Schema: output; Owner: lmullen
+-- Name: citations_unlinked moml_citations_pkey; Type: CONSTRAINT; Schema: moml_citations; Owner: lmullen
 --
 
-ALTER TABLE ONLY output.moml_citations
+ALTER TABLE ONLY moml_citations.citations_unlinked
     ADD CONSTRAINT moml_citations_pkey PRIMARY KEY (moml_treatise, moml_page, volume, reporter_abbr, page);
+
+
+--
+-- Name: page_to_case moml_page_to_cap_case_pkey; Type: CONSTRAINT; Schema: moml_citations; Owner: lmullen
+--
+
+ALTER TABLE ONLY moml_citations.page_to_case
+    ADD CONSTRAINT moml_page_to_cap_case_pkey PRIMARY KEY (id);
 
 
 --
@@ -1552,10 +1565,38 @@ CREATE INDEX reporters_short_name_idx ON cap.reporters USING btree (short_name);
 
 
 --
+-- Name: reporters_to_jurisdictions_jurisdiction_idx; Type: INDEX; Schema: cap; Owner: lmullen
+--
+
+CREATE INDEX reporters_to_jurisdictions_jurisdiction_idx ON cap.reporters_to_jurisdictions USING btree (jurisdiction);
+
+
+--
+-- Name: reporters_to_jurisdictions_reporter_idx; Type: INDEX; Schema: cap; Owner: lmullen
+--
+
+CREATE INDEX reporters_to_jurisdictions_reporter_idx ON cap.reporters_to_jurisdictions USING btree (reporter);
+
+
+--
 -- Name: volumes_volume_number_idx; Type: INDEX; Schema: cap; Owner: lmullen
 --
 
 CREATE INDEX volumes_volume_number_idx ON cap.volumes USING btree (volume_number);
+
+
+--
+-- Name: citations_cites_from_idx; Type: INDEX; Schema: cap_citations; Owner: lmullen
+--
+
+CREATE INDEX citations_cites_from_idx ON cap_citations.citations USING btree (cites_from);
+
+
+--
+-- Name: citations_cites_to_idx; Type: INDEX; Schema: cap_citations; Owner: lmullen
+--
+
+CREATE INDEX citations_cites_to_idx ON cap_citations.citations USING btree (cites_to);
 
 
 --
@@ -1671,6 +1712,13 @@ CREATE INDEX textbooks_psmid_idx ON legalhist.textbooks_vols USING btree (psmid)
 
 
 --
+-- Name: top_reporters_reporter_abbr_idx; Type: INDEX; Schema: legalhist; Owner: lmullen
+--
+
+CREATE INDEX top_reporters_reporter_abbr_idx ON legalhist.top_reporters USING btree (reporter_abbr);
+
+
+--
 -- Name: moml_05_moml_to_cap_case_idx; Type: INDEX; Schema: linking; Owner: lmullen
 --
 
@@ -1710,6 +1758,27 @@ CREATE INDEX book_info_webid_idx ON moml.book_info USING btree (webid);
 --
 
 CREATE INDEX book_subject_subject_idx ON moml.book_subject USING btree (subject);
+
+
+--
+-- Name: moml_page_to_cap_case_case_idx; Type: INDEX; Schema: moml_citations; Owner: lmullen
+--
+
+CREATE INDEX moml_page_to_cap_case_case_idx ON moml_citations.page_to_case USING btree ("case");
+
+
+--
+-- Name: moml_page_to_cap_case_moml_page_idx; Type: INDEX; Schema: moml_citations; Owner: lmullen
+--
+
+CREATE INDEX moml_page_to_cap_case_moml_page_idx ON moml_citations.page_to_case USING btree (moml_page);
+
+
+--
+-- Name: moml_page_to_cap_case_moml_treatise_idx; Type: INDEX; Schema: moml_citations; Owner: lmullen
+--
+
+CREATE INDEX moml_page_to_cap_case_moml_treatise_idx ON moml_citations.page_to_case USING btree (moml_treatise);
 
 
 --
@@ -1957,11 +2026,11 @@ GRANT ALL ON SCHEMA moml TO law_admin;
 
 
 --
--- Name: SCHEMA output; Type: ACL; Schema: -; Owner: lmullen
+-- Name: SCHEMA moml_citations; Type: ACL; Schema: -; Owner: lmullen
 --
 
-GRANT USAGE ON SCHEMA output TO law_service;
-GRANT ALL ON SCHEMA output TO law_admin;
+GRANT USAGE ON SCHEMA moml_citations TO law_service;
+GRANT ALL ON SCHEMA moml_citations TO law_admin;
 
 
 --
@@ -1979,14 +2048,6 @@ GRANT ALL ON SCHEMA public TO law_dev;
 
 GRANT USAGE ON SCHEMA stats TO law_service;
 GRANT ALL ON SCHEMA stats TO law_admin;
-
-
---
--- Name: SCHEMA to_delete; Type: ACL; Schema: -; Owner: lmullen
---
-
-GRANT USAGE ON SCHEMA to_delete TO law_service;
-GRANT ALL ON SCHEMA to_delete TO law_admin;
 
 
 --
@@ -2182,12 +2243,30 @@ GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE legalhist
 
 
 --
--- Name: TABLE moml_citations; Type: ACL; Schema: output; Owner: lmullen
+-- Name: TABLE citations_unlinked; Type: ACL; Schema: moml_citations; Owner: lmullen
 --
 
-GRANT SELECT ON TABLE output.moml_citations TO law_service;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE output.moml_citations TO law_admin;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE output.moml_citations TO kfunk;
+GRANT SELECT ON TABLE moml_citations.citations_unlinked TO law_service;
+GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE moml_citations.citations_unlinked TO law_admin;
+GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE moml_citations.citations_unlinked TO kfunk;
+
+
+--
+-- Name: TABLE top_reporters; Type: ACL; Schema: legalhist; Owner: lmullen
+--
+
+GRANT SELECT ON TABLE legalhist.top_reporters TO law_service;
+GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE legalhist.top_reporters TO law_admin;
+GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE legalhist.top_reporters TO kfunk;
+
+
+--
+-- Name: TABLE top_reporters_not_whitelisted; Type: ACL; Schema: legalhist; Owner: lmullen
+--
+
+GRANT SELECT ON TABLE legalhist.top_reporters_not_whitelisted TO law_service;
+GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE legalhist.top_reporters_not_whitelisted TO law_admin;
+GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE legalhist.top_reporters_not_whitelisted TO kfunk;
 
 
 --
@@ -2319,6 +2398,20 @@ GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE moml.us_t
 
 
 --
+-- Name: TABLE page_to_case; Type: ACL; Schema: moml_citations; Owner: lmullen
+--
+
+GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE moml_citations.page_to_case TO kfunk;
+
+
+--
+-- Name: TABLE treatise_to_case; Type: ACL; Schema: moml_citations; Owner: lmullen
+--
+
+GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE moml_citations.treatise_to_case TO kfunk;
+
+
+--
 -- Name: TABLE schools_to_cases; Type: ACL; Schema: networks; Owner: lmullen
 --
 
@@ -2340,24 +2433,6 @@ GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE networks.
 
 
 --
--- Name: TABLE top_reporters; Type: ACL; Schema: output; Owner: lmullen
---
-
-GRANT SELECT ON TABLE output.top_reporters TO law_service;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE output.top_reporters TO law_admin;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE output.top_reporters TO kfunk;
-
-
---
--- Name: TABLE top_reporters_not_whitelisted; Type: ACL; Schema: output; Owner: lmullen
---
-
-GRANT SELECT ON TABLE output.top_reporters_not_whitelisted TO law_service;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE output.top_reporters_not_whitelisted TO law_admin;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE output.top_reporters_not_whitelisted TO kfunk;
-
-
---
 -- Name: TABLE database_size; Type: ACL; Schema: stats; Owner: lmullen
 --
 
@@ -2374,14 +2449,6 @@ GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE stats.tab
 
 
 --
--- Name: TABLE reporters_citation_to_cap_bak; Type: ACL; Schema: to_delete; Owner: lmullen
---
-
-GRANT SELECT ON TABLE to_delete.reporters_citation_to_cap_bak TO law_service;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE to_delete.reporters_citation_to_cap_bak TO law_admin;
-
-
---
 -- Name: DEFAULT PRIVILEGES FOR TABLES; Type: DEFAULT ACL; Schema: legalhist; Owner: lmullen
 --
 
@@ -2389,17 +2456,17 @@ ALTER DEFAULT PRIVILEGES FOR ROLE lmullen IN SCHEMA legalhist GRANT SELECT,INSER
 
 
 --
+-- Name: DEFAULT PRIVILEGES FOR TABLES; Type: DEFAULT ACL; Schema: moml_citations; Owner: lmullen
+--
+
+ALTER DEFAULT PRIVILEGES FOR ROLE lmullen IN SCHEMA moml_citations GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLES TO kfunk;
+
+
+--
 -- Name: DEFAULT PRIVILEGES FOR TABLES; Type: DEFAULT ACL; Schema: networks; Owner: lmullen
 --
 
 ALTER DEFAULT PRIVILEGES FOR ROLE lmullen IN SCHEMA networks GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLES TO kfunk;
-
-
---
--- Name: DEFAULT PRIVILEGES FOR TABLES; Type: DEFAULT ACL; Schema: output; Owner: lmullen
---
-
-ALTER DEFAULT PRIVILEGES FOR ROLE lmullen IN SCHEMA output GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLES TO kfunk;
 
 
 --
