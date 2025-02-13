@@ -1,0 +1,37 @@
+services:
+  db:
+    profiles:
+      - db
+    image: postgres:17
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 15s
+        max_attempts: 3
+        window: 120s
+    environment:
+      POSTGRES_PASSWORD: ${LAW_DEV_DB_PASSWD:-lawdevpass}
+      POSTGRES_USER: lmullen
+      POSTGRES_DB: law_dev
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256"
+      PGDATA: /var/lib/postgresql/data/pgdata
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U lmullen -d law_dev" ]
+      interval: 60s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5433:5432"
+    volumes:
+      - law_dev-dbdata:/var/lib/postgresql/data
+    networks:
+      - law_dev
+
+volumes:
+  law_dev-dbdata:
+    name: law_dev-dbdata
+
+networks:
+  law_dev-network:
+    name: law_dev-network
+    driver: bridge
