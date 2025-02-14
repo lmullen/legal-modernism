@@ -11,9 +11,11 @@ import (
 	"time"
 )
 
-func main() {
-
+func init() {
 	initLogger()
+}
+
+func main() {
 
 	// Create a context and listen for signals to gracefully shutdown the application
 	ctx, cancel := context.WithCancel(context.Background())
