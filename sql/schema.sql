@@ -18,85 +18,85 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- Name: cap; Type: SCHEMA; Schema: -; Owner: lmullen
+-- Name: cap; Type: SCHEMA; Schema: -; Owner: law_admin
 --
 
 CREATE SCHEMA cap;
 
 
-ALTER SCHEMA cap OWNER TO lmullen;
+ALTER SCHEMA cap OWNER TO law_admin;
 
 --
--- Name: cap_citations; Type: SCHEMA; Schema: -; Owner: lmullen
+-- Name: cap_citations; Type: SCHEMA; Schema: -; Owner: law_admin
 --
 
 CREATE SCHEMA cap_citations;
 
 
-ALTER SCHEMA cap_citations OWNER TO lmullen;
+ALTER SCHEMA cap_citations OWNER TO law_admin;
 
 --
--- Name: legalhist; Type: SCHEMA; Schema: -; Owner: lmullen
+-- Name: legalhist; Type: SCHEMA; Schema: -; Owner: law_admin
 --
 
 CREATE SCHEMA legalhist;
 
 
-ALTER SCHEMA legalhist OWNER TO lmullen;
+ALTER SCHEMA legalhist OWNER TO law_admin;
 
 --
--- Name: moml; Type: SCHEMA; Schema: -; Owner: lmullen
+-- Name: moml; Type: SCHEMA; Schema: -; Owner: law_admin
 --
 
 CREATE SCHEMA moml;
 
 
-ALTER SCHEMA moml OWNER TO lmullen;
+ALTER SCHEMA moml OWNER TO law_admin;
 
 --
--- Name: moml_citations; Type: SCHEMA; Schema: -; Owner: lmullen
+-- Name: moml_citations; Type: SCHEMA; Schema: -; Owner: law_admin
 --
 
 CREATE SCHEMA moml_citations;
 
 
-ALTER SCHEMA moml_citations OWNER TO lmullen;
+ALTER SCHEMA moml_citations OWNER TO law_admin;
 
 --
--- Name: public; Type: SCHEMA; Schema: -; Owner: postgres
+-- Name: public; Type: SCHEMA; Schema: -; Owner: law_admin
 --
 
 -- *not* creating schema, since initdb creates it
 
 
-ALTER SCHEMA public OWNER TO postgres;
+ALTER SCHEMA public OWNER TO law_admin;
 
 --
--- Name: stats; Type: SCHEMA; Schema: -; Owner: lmullen
+-- Name: stats; Type: SCHEMA; Schema: -; Owner: law_admin
 --
 
 CREATE SCHEMA stats;
 
 
-ALTER SCHEMA stats OWNER TO lmullen;
+ALTER SCHEMA stats OWNER TO law_admin;
 
 --
--- Name: sys_admin; Type: SCHEMA; Schema: -; Owner: postgres
+-- Name: sys_admin; Type: SCHEMA; Schema: -; Owner: law_admin
 --
 
 CREATE SCHEMA sys_admin;
 
 
-ALTER SCHEMA sys_admin OWNER TO postgres;
+ALTER SCHEMA sys_admin OWNER TO law_admin;
 
 --
--- Name: textbooks; Type: SCHEMA; Schema: -; Owner: lmullen
+-- Name: textbooks; Type: SCHEMA; Schema: -; Owner: law_admin
 --
 
 CREATE SCHEMA textbooks;
 
 
-ALTER SCHEMA textbooks OWNER TO lmullen;
+ALTER SCHEMA textbooks OWNER TO law_admin;
 
 --
 -- Name: pgcrypto; Type: EXTENSION; Schema: -; Owner: -
@@ -113,7 +113,7 @@ COMMENT ON EXTENSION pgcrypto IS 'cryptographic functions';
 
 
 --
--- Name: chnm_authorize(text, text, text, text, boolean); Type: PROCEDURE; Schema: sys_admin; Owner: postgres
+-- Name: chnm_authorize(text, text, text, text, boolean); Type: PROCEDURE; Schema: sys_admin; Owner: law_admin
 --
 
 CREATE PROCEDURE sys_admin.chnm_authorize(IN v_flag text, IN v_schema_privs text, IN v_schema_table_privs text, IN v_role text, IN v_dryrun boolean)
@@ -235,10 +235,10 @@ END;
 $$;
 
 
-ALTER PROCEDURE sys_admin.chnm_authorize(IN v_flag text, IN v_schema_privs text, IN v_schema_table_privs text, IN v_role text, IN v_dryrun boolean) OWNER TO postgres;
+ALTER PROCEDURE sys_admin.chnm_authorize(IN v_flag text, IN v_schema_privs text, IN v_schema_table_privs text, IN v_role text, IN v_dryrun boolean) OWNER TO law_admin;
 
 --
--- Name: chnm_reassign_database_owner(text); Type: PROCEDURE; Schema: sys_admin; Owner: postgres
+-- Name: chnm_reassign_database_owner(text); Type: PROCEDURE; Schema: sys_admin; Owner: law_admin
 --
 
 CREATE PROCEDURE sys_admin.chnm_reassign_database_owner(IN v_owner text)
@@ -294,10 +294,10 @@ END;
 $$;
 
 
-ALTER PROCEDURE sys_admin.chnm_reassign_database_owner(IN v_owner text) OWNER TO postgres;
+ALTER PROCEDURE sys_admin.chnm_reassign_database_owner(IN v_owner text) OWNER TO law_admin;
 
 --
--- Name: chnm_revoke_role_from_users(text); Type: PROCEDURE; Schema: sys_admin; Owner: postgres
+-- Name: chnm_revoke_role_from_users(text); Type: PROCEDURE; Schema: sys_admin; Owner: law_admin
 --
 
 CREATE PROCEDURE sys_admin.chnm_revoke_role_from_users(IN v_role text)
@@ -326,14 +326,14 @@ END;
 $$;
 
 
-ALTER PROCEDURE sys_admin.chnm_revoke_role_from_users(IN v_role text) OWNER TO postgres;
+ALTER PROCEDURE sys_admin.chnm_revoke_role_from_users(IN v_role text) OWNER TO law_admin;
 
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
 
 --
--- Name: cases; Type: TABLE; Schema: cap; Owner: lmullen
+-- Name: cases; Type: TABLE; Schema: cap; Owner: law_admin
 --
 
 CREATE TABLE cap.cases (
@@ -365,10 +365,10 @@ CREATE TABLE cap.cases (
 );
 
 
-ALTER TABLE cap.cases OWNER TO lmullen;
+ALTER TABLE cap.cases OWNER TO law_admin;
 
 --
--- Name: citations; Type: TABLE; Schema: cap; Owner: lmullen
+-- Name: citations; Type: TABLE; Schema: cap; Owner: law_admin
 --
 
 CREATE TABLE cap.citations (
@@ -378,10 +378,10 @@ CREATE TABLE cap.citations (
 );
 
 
-ALTER TABLE cap.citations OWNER TO lmullen;
+ALTER TABLE cap.citations OWNER TO law_admin;
 
 --
--- Name: courts; Type: TABLE; Schema: cap; Owner: lmullen
+-- Name: courts; Type: TABLE; Schema: cap; Owner: law_admin
 --
 
 CREATE TABLE cap.courts (
@@ -393,10 +393,10 @@ CREATE TABLE cap.courts (
 );
 
 
-ALTER TABLE cap.courts OWNER TO lmullen;
+ALTER TABLE cap.courts OWNER TO law_admin;
 
 --
--- Name: jurisdictions; Type: TABLE; Schema: cap; Owner: lmullen
+-- Name: jurisdictions; Type: TABLE; Schema: cap; Owner: law_admin
 --
 
 CREATE TABLE cap.jurisdictions (
@@ -409,10 +409,10 @@ CREATE TABLE cap.jurisdictions (
 );
 
 
-ALTER TABLE cap.jurisdictions OWNER TO lmullen;
+ALTER TABLE cap.jurisdictions OWNER TO law_admin;
 
 --
--- Name: opinions; Type: TABLE; Schema: cap; Owner: lmullen
+-- Name: opinions; Type: TABLE; Schema: cap; Owner: law_admin
 --
 
 CREATE TABLE cap.opinions (
@@ -423,10 +423,10 @@ CREATE TABLE cap.opinions (
 );
 
 
-ALTER TABLE cap.opinions OWNER TO lmullen;
+ALTER TABLE cap.opinions OWNER TO law_admin;
 
 --
--- Name: reporters; Type: TABLE; Schema: cap; Owner: lmullen
+-- Name: reporters; Type: TABLE; Schema: cap; Owner: law_admin
 --
 
 CREATE TABLE cap.reporters (
@@ -440,10 +440,10 @@ CREATE TABLE cap.reporters (
 );
 
 
-ALTER TABLE cap.reporters OWNER TO lmullen;
+ALTER TABLE cap.reporters OWNER TO law_admin;
 
 --
--- Name: reporters_to_jurisdictions; Type: TABLE; Schema: cap; Owner: lmullen
+-- Name: reporters_to_jurisdictions; Type: TABLE; Schema: cap; Owner: law_admin
 --
 
 CREATE TABLE cap.reporters_to_jurisdictions (
@@ -452,10 +452,10 @@ CREATE TABLE cap.reporters_to_jurisdictions (
 );
 
 
-ALTER TABLE cap.reporters_to_jurisdictions OWNER TO lmullen;
+ALTER TABLE cap.reporters_to_jurisdictions OWNER TO law_admin;
 
 --
--- Name: volumes; Type: TABLE; Schema: cap; Owner: lmullen
+-- Name: volumes; Type: TABLE; Schema: cap; Owner: law_admin
 --
 
 CREATE TABLE cap.volumes (
@@ -478,10 +478,10 @@ CREATE TABLE cap.volumes (
 );
 
 
-ALTER TABLE cap.volumes OWNER TO lmullen;
+ALTER TABLE cap.volumes OWNER TO law_admin;
 
 --
--- Name: volumes_to_jurisdictions; Type: TABLE; Schema: cap; Owner: lmullen
+-- Name: volumes_to_jurisdictions; Type: TABLE; Schema: cap; Owner: law_admin
 --
 
 CREATE TABLE cap.volumes_to_jurisdictions (
@@ -490,10 +490,10 @@ CREATE TABLE cap.volumes_to_jurisdictions (
 );
 
 
-ALTER TABLE cap.volumes_to_jurisdictions OWNER TO lmullen;
+ALTER TABLE cap.volumes_to_jurisdictions OWNER TO law_admin;
 
 --
--- Name: citations; Type: TABLE; Schema: cap_citations; Owner: lmullen
+-- Name: citations; Type: TABLE; Schema: cap_citations; Owner: law_admin
 --
 
 CREATE TABLE cap_citations.citations (
@@ -502,10 +502,10 @@ CREATE TABLE cap_citations.citations (
 );
 
 
-ALTER TABLE cap_citations.citations OWNER TO lmullen;
+ALTER TABLE cap_citations.citations OWNER TO law_admin;
 
 --
--- Name: metadata; Type: TABLE; Schema: cap_citations; Owner: lmullen
+-- Name: metadata; Type: TABLE; Schema: cap_citations; Owner: law_admin
 --
 
 CREATE TABLE cap_citations.metadata (
@@ -525,7 +525,7 @@ CREATE TABLE cap_citations.metadata (
 );
 
 
-ALTER TABLE cap_citations.metadata OWNER TO lmullen;
+ALTER TABLE cap_citations.metadata OWNER TO law_admin;
 
 --
 -- Name: cap_to_cap_citations; Type: MATERIALIZED VIEW; Schema: cap_citations; Owner: lmullen
@@ -555,7 +555,7 @@ CREATE MATERIALIZED VIEW cap_citations.cap_to_cap_citations AS
 ALTER MATERIALIZED VIEW cap_citations.cap_to_cap_citations OWNER TO lmullen;
 
 --
--- Name: pagerank; Type: TABLE; Schema: cap_citations; Owner: lmullen
+-- Name: pagerank; Type: TABLE; Schema: cap_citations; Owner: law_admin
 --
 
 CREATE TABLE cap_citations.pagerank (
@@ -565,10 +565,10 @@ CREATE TABLE cap_citations.pagerank (
 );
 
 
-ALTER TABLE cap_citations.pagerank OWNER TO lmullen;
+ALTER TABLE cap_citations.pagerank OWNER TO law_admin;
 
 --
--- Name: page_ocrtext; Type: TABLE; Schema: moml; Owner: lmullen
+-- Name: page_ocrtext; Type: TABLE; Schema: moml; Owner: law_admin
 --
 
 CREATE TABLE moml.page_ocrtext (
@@ -578,7 +578,7 @@ CREATE TABLE moml.page_ocrtext (
 );
 
 
-ALTER TABLE moml.page_ocrtext OWNER TO lmullen;
+ALTER TABLE moml.page_ocrtext OWNER TO law_admin;
 
 --
 -- Name: all_page_id; Type: MATERIALIZED VIEW; Schema: legalhist; Owner: lmullen
@@ -594,7 +594,7 @@ CREATE MATERIALIZED VIEW legalhist.all_page_id AS
 ALTER MATERIALIZED VIEW legalhist.all_page_id OWNER TO lmullen;
 
 --
--- Name: ocr_corrections; Type: TABLE; Schema: legalhist; Owner: lmullen
+-- Name: ocr_corrections; Type: TABLE; Schema: legalhist; Owner: law_admin
 --
 
 CREATE TABLE legalhist.ocr_corrections (
@@ -603,10 +603,10 @@ CREATE TABLE legalhist.ocr_corrections (
 );
 
 
-ALTER TABLE legalhist.ocr_corrections OWNER TO lmullen;
+ALTER TABLE legalhist.ocr_corrections OWNER TO law_admin;
 
 --
--- Name: reporters_alt_diffvols_abbreviations; Type: TABLE; Schema: legalhist; Owner: lmullen
+-- Name: reporters_alt_diffvols_abbreviations; Type: TABLE; Schema: legalhist; Owner: law_admin
 --
 
 CREATE TABLE legalhist.reporters_alt_diffvols_abbreviations (
@@ -616,17 +616,17 @@ CREATE TABLE legalhist.reporters_alt_diffvols_abbreviations (
 );
 
 
-ALTER TABLE legalhist.reporters_alt_diffvols_abbreviations OWNER TO lmullen;
+ALTER TABLE legalhist.reporters_alt_diffvols_abbreviations OWNER TO law_admin;
 
 --
--- Name: TABLE reporters_alt_diffvols_abbreviations; Type: COMMENT; Schema: legalhist; Owner: lmullen
+-- Name: TABLE reporters_alt_diffvols_abbreviations; Type: COMMENT; Schema: legalhist; Owner: law_admin
 --
 
 COMMENT ON TABLE legalhist.reporters_alt_diffvols_abbreviations IS 'The mapping between abbreviations and CAP reporters and our alternative reporters';
 
 
 --
--- Name: reporters_alt_diffvols_reporters; Type: TABLE; Schema: legalhist; Owner: lmullen
+-- Name: reporters_alt_diffvols_reporters; Type: TABLE; Schema: legalhist; Owner: law_admin
 --
 
 CREATE TABLE legalhist.reporters_alt_diffvols_reporters (
@@ -639,17 +639,17 @@ CREATE TABLE legalhist.reporters_alt_diffvols_reporters (
 );
 
 
-ALTER TABLE legalhist.reporters_alt_diffvols_reporters OWNER TO lmullen;
+ALTER TABLE legalhist.reporters_alt_diffvols_reporters OWNER TO law_admin;
 
 --
--- Name: TABLE reporters_alt_diffvols_reporters; Type: COMMENT; Schema: legalhist; Owner: lmullen
+-- Name: TABLE reporters_alt_diffvols_reporters; Type: COMMENT; Schema: legalhist; Owner: law_admin
 --
 
 COMMENT ON TABLE legalhist.reporters_alt_diffvols_reporters IS 'Alternative reporters to reporters in CAP, where the volume numbers are different from CAP';
 
 
 --
--- Name: reporters_alt_diffvols_volumes; Type: TABLE; Schema: legalhist; Owner: lmullen
+-- Name: reporters_alt_diffvols_volumes; Type: TABLE; Schema: legalhist; Owner: law_admin
 --
 
 CREATE TABLE legalhist.reporters_alt_diffvols_volumes (
@@ -660,17 +660,17 @@ CREATE TABLE legalhist.reporters_alt_diffvols_volumes (
 );
 
 
-ALTER TABLE legalhist.reporters_alt_diffvols_volumes OWNER TO lmullen;
+ALTER TABLE legalhist.reporters_alt_diffvols_volumes OWNER TO law_admin;
 
 --
--- Name: TABLE reporters_alt_diffvols_volumes; Type: COMMENT; Schema: legalhist; Owner: lmullen
+-- Name: TABLE reporters_alt_diffvols_volumes; Type: COMMENT; Schema: legalhist; Owner: law_admin
 --
 
 COMMENT ON TABLE legalhist.reporters_alt_diffvols_volumes IS 'The mapping between volumes from our alternative reporters to the CAP reporter volume numbers';
 
 
 --
--- Name: reporters_alt_samevols_abbreviations; Type: TABLE; Schema: legalhist; Owner: lmullen
+-- Name: reporters_alt_samevols_abbreviations; Type: TABLE; Schema: legalhist; Owner: law_admin
 --
 
 CREATE TABLE legalhist.reporters_alt_samevols_abbreviations (
@@ -679,17 +679,17 @@ CREATE TABLE legalhist.reporters_alt_samevols_abbreviations (
 );
 
 
-ALTER TABLE legalhist.reporters_alt_samevols_abbreviations OWNER TO lmullen;
+ALTER TABLE legalhist.reporters_alt_samevols_abbreviations OWNER TO law_admin;
 
 --
--- Name: TABLE reporters_alt_samevols_abbreviations; Type: COMMENT; Schema: legalhist; Owner: lmullen
+-- Name: TABLE reporters_alt_samevols_abbreviations; Type: COMMENT; Schema: legalhist; Owner: law_admin
 --
 
 COMMENT ON TABLE legalhist.reporters_alt_samevols_abbreviations IS 'Alternative reporters to reporters in CAP, where the volume numbers are the same as CAP but abbreviations/names are different';
 
 
 --
--- Name: reporters_citation_to_cap; Type: TABLE; Schema: legalhist; Owner: lmullen
+-- Name: reporters_citation_to_cap; Type: TABLE; Schema: legalhist; Owner: law_admin
 --
 
 CREATE TABLE legalhist.reporters_citation_to_cap (
@@ -703,10 +703,10 @@ CREATE TABLE legalhist.reporters_citation_to_cap (
 );
 
 
-ALTER TABLE legalhist.reporters_citation_to_cap OWNER TO lmullen;
+ALTER TABLE legalhist.reporters_citation_to_cap OWNER TO law_admin;
 
 --
--- Name: reporters_single_volume_abbr; Type: VIEW; Schema: legalhist; Owner: lmullen
+-- Name: reporters_single_volume_abbr; Type: VIEW; Schema: legalhist; Owner: law_admin
 --
 
 CREATE VIEW legalhist.reporters_single_volume_abbr AS
@@ -718,17 +718,17 @@ CREATE VIEW legalhist.reporters_single_volume_abbr AS
   WHERE (r.single_vol = true);
 
 
-ALTER VIEW legalhist.reporters_single_volume_abbr OWNER TO lmullen;
+ALTER VIEW legalhist.reporters_single_volume_abbr OWNER TO law_admin;
 
 --
--- Name: VIEW reporters_single_volume_abbr; Type: COMMENT; Schema: legalhist; Owner: lmullen
+-- Name: VIEW reporters_single_volume_abbr; Type: COMMENT; Schema: legalhist; Owner: law_admin
 --
 
 COMMENT ON VIEW legalhist.reporters_single_volume_abbr IS 'Abbreviations for single volume reporters';
 
 
 --
--- Name: textbooks_vols; Type: TABLE; Schema: legalhist; Owner: lmullen
+-- Name: textbooks_vols; Type: TABLE; Schema: legalhist; Owner: law_admin
 --
 
 CREATE TABLE legalhist.textbooks_vols (
@@ -749,10 +749,10 @@ CREATE TABLE legalhist.textbooks_vols (
 );
 
 
-ALTER TABLE legalhist.textbooks_vols OWNER TO lmullen;
+ALTER TABLE legalhist.textbooks_vols OWNER TO law_admin;
 
 --
--- Name: textbooks_works; Type: TABLE; Schema: legalhist; Owner: lmullen
+-- Name: textbooks_works; Type: TABLE; Schema: legalhist; Owner: law_admin
 --
 
 CREATE TABLE legalhist.textbooks_works (
@@ -762,10 +762,10 @@ CREATE TABLE legalhist.textbooks_works (
 );
 
 
-ALTER TABLE legalhist.textbooks_works OWNER TO lmullen;
+ALTER TABLE legalhist.textbooks_works OWNER TO law_admin;
 
 --
--- Name: citations_unlinked; Type: TABLE; Schema: moml_citations; Owner: lmullen
+-- Name: citations_unlinked; Type: TABLE; Schema: moml_citations; Owner: law_admin
 --
 
 CREATE TABLE moml_citations.citations_unlinked (
@@ -780,7 +780,7 @@ CREATE TABLE moml_citations.citations_unlinked (
 );
 
 
-ALTER TABLE moml_citations.citations_unlinked OWNER TO lmullen;
+ALTER TABLE moml_citations.citations_unlinked OWNER TO law_admin;
 
 --
 -- Name: top_reporters; Type: MATERIALIZED VIEW; Schema: legalhist; Owner: lmullen
@@ -798,7 +798,7 @@ CREATE MATERIALIZED VIEW legalhist.top_reporters AS
 ALTER MATERIALIZED VIEW legalhist.top_reporters OWNER TO lmullen;
 
 --
--- Name: top_reporters_not_whitelisted; Type: VIEW; Schema: legalhist; Owner: lmullen
+-- Name: top_reporters_not_whitelisted; Type: VIEW; Schema: legalhist; Owner: law_admin
 --
 
 CREATE VIEW legalhist.top_reporters_not_whitelisted AS
@@ -815,10 +815,10 @@ CREATE VIEW legalhist.top_reporters_not_whitelisted AS
   ORDER BY tr.n DESC;
 
 
-ALTER VIEW legalhist.top_reporters_not_whitelisted OWNER TO lmullen;
+ALTER VIEW legalhist.top_reporters_not_whitelisted OWNER TO law_admin;
 
 --
--- Name: book_citation; Type: TABLE; Schema: moml; Owner: lmullen
+-- Name: book_citation; Type: TABLE; Schema: moml; Owner: law_admin
 --
 
 CREATE TABLE moml.book_citation (
@@ -847,10 +847,10 @@ CREATE TABLE moml.book_citation (
 );
 
 
-ALTER TABLE moml.book_citation OWNER TO lmullen;
+ALTER TABLE moml.book_citation OWNER TO law_admin;
 
 --
--- Name: book_info; Type: TABLE; Schema: moml; Owner: lmullen
+-- Name: book_info; Type: TABLE; Schema: moml; Owner: law_admin
 --
 
 CREATE TABLE moml.book_info (
@@ -887,10 +887,10 @@ CREATE TABLE moml.book_info (
 );
 
 
-ALTER TABLE moml.book_info OWNER TO lmullen;
+ALTER TABLE moml.book_info OWNER TO law_admin;
 
 --
--- Name: book_locsubjecthead; Type: TABLE; Schema: moml; Owner: lmullen
+-- Name: book_locsubjecthead; Type: TABLE; Schema: moml; Owner: law_admin
 --
 
 CREATE TABLE moml.book_locsubjecthead (
@@ -901,10 +901,10 @@ CREATE TABLE moml.book_locsubjecthead (
 );
 
 
-ALTER TABLE moml.book_locsubjecthead OWNER TO lmullen;
+ALTER TABLE moml.book_locsubjecthead OWNER TO law_admin;
 
 --
--- Name: book_subject; Type: TABLE; Schema: moml; Owner: lmullen
+-- Name: book_subject; Type: TABLE; Schema: moml; Owner: law_admin
 --
 
 CREATE TABLE moml.book_subject (
@@ -914,10 +914,10 @@ CREATE TABLE moml.book_subject (
 );
 
 
-ALTER TABLE moml.book_subject OWNER TO lmullen;
+ALTER TABLE moml.book_subject OWNER TO law_admin;
 
 --
--- Name: book_volumeset; Type: TABLE; Schema: moml; Owner: lmullen
+-- Name: book_volumeset; Type: TABLE; Schema: moml; Owner: law_admin
 --
 
 CREATE TABLE moml.book_volumeset (
@@ -928,10 +928,10 @@ CREATE TABLE moml.book_volumeset (
 );
 
 
-ALTER TABLE moml.book_volumeset OWNER TO lmullen;
+ALTER TABLE moml.book_volumeset OWNER TO law_admin;
 
 --
--- Name: legal_treatises_metadata; Type: TABLE; Schema: moml; Owner: lmullen
+-- Name: legal_treatises_metadata; Type: TABLE; Schema: moml; Owner: law_admin
 --
 
 CREATE TABLE moml.legal_treatises_metadata (
@@ -946,10 +946,10 @@ CREATE TABLE moml.legal_treatises_metadata (
 );
 
 
-ALTER TABLE moml.legal_treatises_metadata OWNER TO lmullen;
+ALTER TABLE moml.legal_treatises_metadata OWNER TO law_admin;
 
 --
--- Name: page; Type: TABLE; Schema: moml; Owner: lmullen
+-- Name: page; Type: TABLE; Schema: moml; Owner: law_admin
 --
 
 CREATE TABLE moml.page (
@@ -970,10 +970,10 @@ CREATE TABLE moml.page (
 );
 
 
-ALTER TABLE moml.page OWNER TO lmullen;
+ALTER TABLE moml.page OWNER TO law_admin;
 
 --
--- Name: page_content; Type: TABLE; Schema: moml; Owner: lmullen
+-- Name: page_content; Type: TABLE; Schema: moml; Owner: law_admin
 --
 
 CREATE TABLE moml.page_content (
@@ -984,10 +984,10 @@ CREATE TABLE moml.page_content (
 );
 
 
-ALTER TABLE moml.page_content OWNER TO lmullen;
+ALTER TABLE moml.page_content OWNER TO law_admin;
 
 --
--- Name: treatises; Type: VIEW; Schema: moml; Owner: lmullen
+-- Name: treatises; Type: VIEW; Schema: moml; Owner: law_admin
 --
 
 CREATE VIEW moml.treatises AS
@@ -1007,17 +1007,17 @@ CREATE VIEW moml.treatises AS
   ORDER BY (min(bi.year)), (array_agg(DISTINCT bc.displaytitle))[1];
 
 
-ALTER VIEW moml.treatises OWNER TO lmullen;
+ALTER VIEW moml.treatises OWNER TO law_admin;
 
 --
--- Name: VIEW treatises; Type: COMMENT; Schema: moml; Owner: lmullen
+-- Name: VIEW treatises; Type: COMMENT; Schema: moml; Owner: law_admin
 --
 
 COMMENT ON VIEW moml.treatises IS 'Treatises aggregated from their individual volumes';
 
 
 --
--- Name: us_treatises; Type: VIEW; Schema: moml; Owner: lmullen
+-- Name: us_treatises; Type: VIEW; Schema: moml; Owner: law_admin
 --
 
 CREATE VIEW moml.us_treatises AS
@@ -1031,10 +1031,10 @@ CREATE VIEW moml.us_treatises AS
   WHERE (('UK'::text <> ALL ((subjects)::text[])) AND ('Biography'::text <> ALL ((subjects)::text[])) AND ('Collected Essays'::text <> ALL ((subjects)::text[])) AND ('Trials'::text <> ALL ((subjects)::text[])) AND (NOT (title ~* '\Woration\W'::text)) AND (NOT (title ~* '\Wremarks of\W'::text)) AND (NOT (title ~* '\Waddress\W'::text)));
 
 
-ALTER VIEW moml.us_treatises OWNER TO lmullen;
+ALTER VIEW moml.us_treatises OWNER TO law_admin;
 
 --
--- Name: page_to_case; Type: TABLE; Schema: moml_citations; Owner: lmullen
+-- Name: page_to_case; Type: TABLE; Schema: moml_citations; Owner: law_admin
 --
 
 CREATE TABLE moml_citations.page_to_case (
@@ -1047,10 +1047,10 @@ CREATE TABLE moml_citations.page_to_case (
 );
 
 
-ALTER TABLE moml_citations.page_to_case OWNER TO lmullen;
+ALTER TABLE moml_citations.page_to_case OWNER TO law_admin;
 
 --
--- Name: volume_to_case; Type: VIEW; Schema: moml_citations; Owner: lmullen
+-- Name: volume_to_case; Type: VIEW; Schema: moml_citations; Owner: law_admin
 --
 
 CREATE VIEW moml_citations.volume_to_case AS
@@ -1061,7 +1061,7 @@ CREATE VIEW moml_citations.volume_to_case AS
   GROUP BY moml_treatise, "case";
 
 
-ALTER VIEW moml_citations.volume_to_case OWNER TO lmullen;
+ALTER VIEW moml_citations.volume_to_case OWNER TO law_admin;
 
 --
 -- Name: bibliocouple_treatises; Type: MATERIALIZED VIEW; Schema: moml_citations; Owner: lmullen
@@ -1091,17 +1091,17 @@ CREATE MATERIALIZED VIEW moml_citations.bibliocouple_treatises AS
 ALTER MATERIALIZED VIEW moml_citations.bibliocouple_treatises OWNER TO lmullen;
 
 --
--- Name: database_size; Type: VIEW; Schema: stats; Owner: lmullen
+-- Name: database_size; Type: VIEW; Schema: stats; Owner: law_admin
 --
 
 CREATE VIEW stats.database_size AS
  SELECT pg_size_pretty(pg_database_size('law'::name)) AS pg_size_pretty;
 
 
-ALTER VIEW stats.database_size OWNER TO lmullen;
+ALTER VIEW stats.database_size OWNER TO law_admin;
 
 --
--- Name: table_sizes; Type: VIEW; Schema: stats; Owner: lmullen
+-- Name: table_sizes; Type: VIEW; Schema: stats; Owner: law_admin
 --
 
 CREATE VIEW stats.table_sizes AS
@@ -1116,10 +1116,10 @@ CREATE VIEW stats.table_sizes AS
   ORDER BY (pg_total_relation_size((c.oid)::regclass)) DESC;
 
 
-ALTER VIEW stats.table_sizes OWNER TO lmullen;
+ALTER VIEW stats.table_sizes OWNER TO law_admin;
 
 --
--- Name: migrations_dbmate; Type: TABLE; Schema: sys_admin; Owner: postgres
+-- Name: migrations_dbmate; Type: TABLE; Schema: sys_admin; Owner: law_admin
 --
 
 CREATE TABLE sys_admin.migrations_dbmate (
@@ -1127,7 +1127,7 @@ CREATE TABLE sys_admin.migrations_dbmate (
 );
 
 
-ALTER TABLE sys_admin.migrations_dbmate OWNER TO postgres;
+ALTER TABLE sys_admin.migrations_dbmate OWNER TO law_admin;
 
 --
 -- Name: schools_to_cases; Type: MATERIALIZED VIEW; Schema: textbooks; Owner: lmullen
@@ -1181,7 +1181,7 @@ CREATE MATERIALIZED VIEW textbooks.schools_to_cases AS
 ALTER MATERIALIZED VIEW textbooks.schools_to_cases OWNER TO lmullen;
 
 --
--- Name: schools_to_textbooks; Type: VIEW; Schema: textbooks; Owner: lmullen
+-- Name: schools_to_textbooks; Type: VIEW; Schema: textbooks; Owner: law_admin
 --
 
 CREATE VIEW textbooks.schools_to_textbooks AS
@@ -1196,10 +1196,10 @@ CREATE VIEW textbooks.schools_to_textbooks AS
   ORDER BY tw.workid;
 
 
-ALTER VIEW textbooks.schools_to_textbooks OWNER TO lmullen;
+ALTER VIEW textbooks.schools_to_textbooks OWNER TO law_admin;
 
 --
--- Name: cases cases_pkey; Type: CONSTRAINT; Schema: cap; Owner: lmullen
+-- Name: cases cases_pkey; Type: CONSTRAINT; Schema: cap; Owner: law_admin
 --
 
 ALTER TABLE ONLY cap.cases
@@ -1207,7 +1207,7 @@ ALTER TABLE ONLY cap.cases
 
 
 --
--- Name: courts courts_pkey; Type: CONSTRAINT; Schema: cap; Owner: lmullen
+-- Name: courts courts_pkey; Type: CONSTRAINT; Schema: cap; Owner: law_admin
 --
 
 ALTER TABLE ONLY cap.courts
@@ -1215,7 +1215,7 @@ ALTER TABLE ONLY cap.courts
 
 
 --
--- Name: jurisdictions jurisdictions_pkey; Type: CONSTRAINT; Schema: cap; Owner: lmullen
+-- Name: jurisdictions jurisdictions_pkey; Type: CONSTRAINT; Schema: cap; Owner: law_admin
 --
 
 ALTER TABLE ONLY cap.jurisdictions
@@ -1223,7 +1223,7 @@ ALTER TABLE ONLY cap.jurisdictions
 
 
 --
--- Name: reporters reporters_pkey; Type: CONSTRAINT; Schema: cap; Owner: lmullen
+-- Name: reporters reporters_pkey; Type: CONSTRAINT; Schema: cap; Owner: law_admin
 --
 
 ALTER TABLE ONLY cap.reporters
@@ -1231,7 +1231,7 @@ ALTER TABLE ONLY cap.reporters
 
 
 --
--- Name: volumes volumes_pkey; Type: CONSTRAINT; Schema: cap; Owner: lmullen
+-- Name: volumes volumes_pkey; Type: CONSTRAINT; Schema: cap; Owner: law_admin
 --
 
 ALTER TABLE ONLY cap.volumes
@@ -1239,7 +1239,7 @@ ALTER TABLE ONLY cap.volumes
 
 
 --
--- Name: metadata metadata_pkey1; Type: CONSTRAINT; Schema: cap_citations; Owner: lmullen
+-- Name: metadata metadata_pkey1; Type: CONSTRAINT; Schema: cap_citations; Owner: law_admin
 --
 
 ALTER TABLE ONLY cap_citations.metadata
@@ -1247,7 +1247,7 @@ ALTER TABLE ONLY cap_citations.metadata
 
 
 --
--- Name: ocr_corrections ocr_corrections_unique; Type: CONSTRAINT; Schema: legalhist; Owner: lmullen
+-- Name: ocr_corrections ocr_corrections_unique; Type: CONSTRAINT; Schema: legalhist; Owner: law_admin
 --
 
 ALTER TABLE ONLY legalhist.ocr_corrections
@@ -1255,7 +1255,7 @@ ALTER TABLE ONLY legalhist.ocr_corrections
 
 
 --
--- Name: reporters_alt_samevols_abbreviations reporter_alt_abbr_unique; Type: CONSTRAINT; Schema: legalhist; Owner: lmullen
+-- Name: reporters_alt_samevols_abbreviations reporter_alt_abbr_unique; Type: CONSTRAINT; Schema: legalhist; Owner: law_admin
 --
 
 ALTER TABLE ONLY legalhist.reporters_alt_samevols_abbreviations
@@ -1263,7 +1263,7 @@ ALTER TABLE ONLY legalhist.reporters_alt_samevols_abbreviations
 
 
 --
--- Name: reporters_alt_diffvols_abbreviations reporter_alt_diff_vols_abbr_unique; Type: CONSTRAINT; Schema: legalhist; Owner: lmullen
+-- Name: reporters_alt_diffvols_abbreviations reporter_alt_diff_vols_abbr_unique; Type: CONSTRAINT; Schema: legalhist; Owner: law_admin
 --
 
 ALTER TABLE ONLY legalhist.reporters_alt_diffvols_abbreviations
@@ -1271,7 +1271,7 @@ ALTER TABLE ONLY legalhist.reporters_alt_diffvols_abbreviations
 
 
 --
--- Name: reporters_alt_diffvols_reporters reporters_alt_diff_vols_pkey; Type: CONSTRAINT; Schema: legalhist; Owner: lmullen
+-- Name: reporters_alt_diffvols_reporters reporters_alt_diff_vols_pkey; Type: CONSTRAINT; Schema: legalhist; Owner: law_admin
 --
 
 ALTER TABLE ONLY legalhist.reporters_alt_diffvols_reporters
@@ -1279,7 +1279,7 @@ ALTER TABLE ONLY legalhist.reporters_alt_diffvols_reporters
 
 
 --
--- Name: reporters_citation_to_cap reporters_citation_to_cap_pkey; Type: CONSTRAINT; Schema: legalhist; Owner: lmullen
+-- Name: reporters_citation_to_cap reporters_citation_to_cap_pkey; Type: CONSTRAINT; Schema: legalhist; Owner: law_admin
 --
 
 ALTER TABLE ONLY legalhist.reporters_citation_to_cap
@@ -1287,7 +1287,7 @@ ALTER TABLE ONLY legalhist.reporters_citation_to_cap
 
 
 --
--- Name: textbooks_works textbooks_works_pkey; Type: CONSTRAINT; Schema: legalhist; Owner: lmullen
+-- Name: textbooks_works textbooks_works_pkey; Type: CONSTRAINT; Schema: legalhist; Owner: law_admin
 --
 
 ALTER TABLE ONLY legalhist.textbooks_works
@@ -1295,7 +1295,7 @@ ALTER TABLE ONLY legalhist.textbooks_works
 
 
 --
--- Name: book_info book_info_pkey; Type: CONSTRAINT; Schema: moml; Owner: lmullen
+-- Name: book_info book_info_pkey; Type: CONSTRAINT; Schema: moml; Owner: law_admin
 --
 
 ALTER TABLE ONLY moml.book_info
@@ -1303,7 +1303,7 @@ ALTER TABLE ONLY moml.book_info
 
 
 --
--- Name: legal_treatises_metadata legal_treatises_metadata_pkey; Type: CONSTRAINT; Schema: moml; Owner: lmullen
+-- Name: legal_treatises_metadata legal_treatises_metadata_pkey; Type: CONSTRAINT; Schema: moml; Owner: law_admin
 --
 
 ALTER TABLE ONLY moml.legal_treatises_metadata
@@ -1311,7 +1311,7 @@ ALTER TABLE ONLY moml.legal_treatises_metadata
 
 
 --
--- Name: page_ocrtext moml_page_ocrtext_pk; Type: CONSTRAINT; Schema: moml; Owner: lmullen
+-- Name: page_ocrtext moml_page_ocrtext_pk; Type: CONSTRAINT; Schema: moml; Owner: law_admin
 --
 
 ALTER TABLE ONLY moml.page_ocrtext
@@ -1319,7 +1319,7 @@ ALTER TABLE ONLY moml.page_ocrtext
 
 
 --
--- Name: page page_pkey; Type: CONSTRAINT; Schema: moml; Owner: lmullen
+-- Name: page page_pkey; Type: CONSTRAINT; Schema: moml; Owner: law_admin
 --
 
 ALTER TABLE ONLY moml.page
@@ -1327,7 +1327,7 @@ ALTER TABLE ONLY moml.page
 
 
 --
--- Name: citations_unlinked moml_citations_id_key; Type: CONSTRAINT; Schema: moml_citations; Owner: lmullen
+-- Name: citations_unlinked moml_citations_id_key; Type: CONSTRAINT; Schema: moml_citations; Owner: law_admin
 --
 
 ALTER TABLE ONLY moml_citations.citations_unlinked
@@ -1335,7 +1335,7 @@ ALTER TABLE ONLY moml_citations.citations_unlinked
 
 
 --
--- Name: citations_unlinked moml_citations_pkey; Type: CONSTRAINT; Schema: moml_citations; Owner: lmullen
+-- Name: citations_unlinked moml_citations_pkey; Type: CONSTRAINT; Schema: moml_citations; Owner: law_admin
 --
 
 ALTER TABLE ONLY moml_citations.citations_unlinked
@@ -1343,7 +1343,7 @@ ALTER TABLE ONLY moml_citations.citations_unlinked
 
 
 --
--- Name: page_to_case moml_page_to_cap_case_pkey; Type: CONSTRAINT; Schema: moml_citations; Owner: lmullen
+-- Name: page_to_case moml_page_to_cap_case_pkey; Type: CONSTRAINT; Schema: moml_citations; Owner: law_admin
 --
 
 ALTER TABLE ONLY moml_citations.page_to_case
@@ -1351,7 +1351,7 @@ ALTER TABLE ONLY moml_citations.page_to_case
 
 
 --
--- Name: migrations_dbmate migrations_dbmate_pkey; Type: CONSTRAINT; Schema: sys_admin; Owner: postgres
+-- Name: migrations_dbmate migrations_dbmate_pkey; Type: CONSTRAINT; Schema: sys_admin; Owner: law_admin
 --
 
 ALTER TABLE ONLY sys_admin.migrations_dbmate
@@ -1359,224 +1359,224 @@ ALTER TABLE ONLY sys_admin.migrations_dbmate
 
 
 --
--- Name: cap_case_first_page_idx; Type: INDEX; Schema: cap; Owner: lmullen
+-- Name: cap_case_first_page_idx; Type: INDEX; Schema: cap; Owner: law_admin
 --
 
 CREATE INDEX cap_case_first_page_idx ON cap.cases USING btree (first_page);
 
 
 --
--- Name: cap_case_jurisdiction_idx; Type: INDEX; Schema: cap; Owner: lmullen
+-- Name: cap_case_jurisdiction_idx; Type: INDEX; Schema: cap; Owner: law_admin
 --
 
 CREATE INDEX cap_case_jurisdiction_idx ON cap.cases USING btree (jurisdiction);
 
 
 --
--- Name: cap_case_last_page_idx; Type: INDEX; Schema: cap; Owner: lmullen
+-- Name: cap_case_last_page_idx; Type: INDEX; Schema: cap; Owner: law_admin
 --
 
 CREATE INDEX cap_case_last_page_idx ON cap.cases USING btree (last_page);
 
 
 --
--- Name: cap_case_reporter_idx; Type: INDEX; Schema: cap; Owner: lmullen
+-- Name: cap_case_reporter_idx; Type: INDEX; Schema: cap; Owner: law_admin
 --
 
 CREATE INDEX cap_case_reporter_idx ON cap.cases USING btree (reporter);
 
 
 --
--- Name: cap_case_volume_idx; Type: INDEX; Schema: cap; Owner: lmullen
+-- Name: cap_case_volume_idx; Type: INDEX; Schema: cap; Owner: law_admin
 --
 
 CREATE INDEX cap_case_volume_idx ON cap.cases USING btree (volume);
 
 
 --
--- Name: cap_case_year_idx; Type: INDEX; Schema: cap; Owner: lmullen
+-- Name: cap_case_year_idx; Type: INDEX; Schema: cap; Owner: law_admin
 --
 
 CREATE INDEX cap_case_year_idx ON cap.cases USING btree (decision_year);
 
 
 --
--- Name: cap_citations_case_idx; Type: INDEX; Schema: cap; Owner: lmullen
+-- Name: cap_citations_case_idx; Type: INDEX; Schema: cap; Owner: law_admin
 --
 
 CREATE INDEX cap_citations_case_idx ON cap.citations USING btree ("case");
 
 
 --
--- Name: cap_citations_cite_idx; Type: INDEX; Schema: cap; Owner: lmullen
+-- Name: cap_citations_cite_idx; Type: INDEX; Schema: cap; Owner: law_admin
 --
 
 CREATE INDEX cap_citations_cite_idx ON cap.citations USING btree (cite);
 
 
 --
--- Name: cap_reporters_to_jurisdictions_idx; Type: INDEX; Schema: cap; Owner: lmullen
+-- Name: cap_reporters_to_jurisdictions_idx; Type: INDEX; Schema: cap; Owner: law_admin
 --
 
 CREATE UNIQUE INDEX cap_reporters_to_jurisdictions_idx ON cap.reporters_to_jurisdictions USING btree (reporter, jurisdiction);
 
 
 --
--- Name: cap_volumes_to_jurisdictions_idx; Type: INDEX; Schema: cap; Owner: lmullen
+-- Name: cap_volumes_to_jurisdictions_idx; Type: INDEX; Schema: cap; Owner: law_admin
 --
 
 CREATE UNIQUE INDEX cap_volumes_to_jurisdictions_idx ON cap.volumes_to_jurisdictions USING btree (barcode, jurisdiction);
 
 
 --
--- Name: reporters_short_name_idx; Type: INDEX; Schema: cap; Owner: lmullen
+-- Name: reporters_short_name_idx; Type: INDEX; Schema: cap; Owner: law_admin
 --
 
 CREATE INDEX reporters_short_name_idx ON cap.reporters USING btree (short_name);
 
 
 --
--- Name: reporters_to_jurisdictions_jurisdiction_idx; Type: INDEX; Schema: cap; Owner: lmullen
+-- Name: reporters_to_jurisdictions_jurisdiction_idx; Type: INDEX; Schema: cap; Owner: law_admin
 --
 
 CREATE INDEX reporters_to_jurisdictions_jurisdiction_idx ON cap.reporters_to_jurisdictions USING btree (jurisdiction);
 
 
 --
--- Name: reporters_to_jurisdictions_reporter_idx; Type: INDEX; Schema: cap; Owner: lmullen
+-- Name: reporters_to_jurisdictions_reporter_idx; Type: INDEX; Schema: cap; Owner: law_admin
 --
 
 CREATE INDEX reporters_to_jurisdictions_reporter_idx ON cap.reporters_to_jurisdictions USING btree (reporter);
 
 
 --
--- Name: volumes_volume_number_idx; Type: INDEX; Schema: cap; Owner: lmullen
+-- Name: volumes_volume_number_idx; Type: INDEX; Schema: cap; Owner: law_admin
 --
 
 CREATE INDEX volumes_volume_number_idx ON cap.volumes USING btree (volume_number);
 
 
 --
--- Name: citations_cites_from_idx; Type: INDEX; Schema: cap_citations; Owner: lmullen
+-- Name: citations_cites_from_idx; Type: INDEX; Schema: cap_citations; Owner: law_admin
 --
 
 CREATE INDEX citations_cites_from_idx ON cap_citations.citations USING btree (cites_from);
 
 
 --
--- Name: citations_cites_to_idx; Type: INDEX; Schema: cap_citations; Owner: lmullen
+-- Name: citations_cites_to_idx; Type: INDEX; Schema: cap_citations; Owner: law_admin
 --
 
 CREATE INDEX citations_cites_to_idx ON cap_citations.citations USING btree (cites_to);
 
 
 --
--- Name: metadata_decision_year_idx; Type: INDEX; Schema: cap_citations; Owner: lmullen
+-- Name: metadata_decision_year_idx; Type: INDEX; Schema: cap_citations; Owner: law_admin
 --
 
 CREATE INDEX metadata_decision_year_idx ON cap_citations.metadata USING btree (decision_year);
 
 
 --
--- Name: metadata_jurisdiction__name_idx; Type: INDEX; Schema: cap_citations; Owner: lmullen
+-- Name: metadata_jurisdiction__name_idx; Type: INDEX; Schema: cap_citations; Owner: law_admin
 --
 
 CREATE INDEX metadata_jurisdiction__name_idx ON cap_citations.metadata USING btree (jurisdiction_name);
 
 
 --
--- Name: reporter_alt_same_vols_alt_abbr_idx; Type: INDEX; Schema: legalhist; Owner: lmullen
+-- Name: reporter_alt_same_vols_alt_abbr_idx; Type: INDEX; Schema: legalhist; Owner: law_admin
 --
 
 CREATE INDEX reporter_alt_same_vols_alt_abbr_idx ON legalhist.reporters_alt_samevols_abbreviations USING btree (alt_abbr);
 
 
 --
--- Name: reporter_alt_same_vols_cap_abbr_idx; Type: INDEX; Schema: legalhist; Owner: lmullen
+-- Name: reporter_alt_same_vols_cap_abbr_idx; Type: INDEX; Schema: legalhist; Owner: law_admin
 --
 
 CREATE INDEX reporter_alt_same_vols_cap_abbr_idx ON legalhist.reporters_alt_samevols_abbreviations USING btree (cap_abbr);
 
 
 --
--- Name: reporters_alt_diff_vols_single_vol_idx; Type: INDEX; Schema: legalhist; Owner: lmullen
+-- Name: reporters_alt_diff_vols_single_vol_idx; Type: INDEX; Schema: legalhist; Owner: law_admin
 --
 
 CREATE INDEX reporters_alt_diff_vols_single_vol_idx ON legalhist.reporters_alt_diffvols_reporters USING btree (single_vol);
 
 
 --
--- Name: reporters_alt_diffvols_abbreviations_alt_abbr_idx; Type: INDEX; Schema: legalhist; Owner: lmullen
+-- Name: reporters_alt_diffvols_abbreviations_alt_abbr_idx; Type: INDEX; Schema: legalhist; Owner: law_admin
 --
 
 CREATE INDEX reporters_alt_diffvols_abbreviations_alt_abbr_idx ON legalhist.reporters_alt_diffvols_abbreviations USING btree (alt_abbr);
 
 
 --
--- Name: reporters_alt_diffvols_abbreviations_cap_abbr_idx; Type: INDEX; Schema: legalhist; Owner: lmullen
+-- Name: reporters_alt_diffvols_abbreviations_cap_abbr_idx; Type: INDEX; Schema: legalhist; Owner: law_admin
 --
 
 CREATE INDEX reporters_alt_diffvols_abbreviations_cap_abbr_idx ON legalhist.reporters_alt_diffvols_abbreviations USING btree (cap_abbr);
 
 
 --
--- Name: reporters_alt_diffvols_abbreviations_reporter_title_idx; Type: INDEX; Schema: legalhist; Owner: lmullen
+-- Name: reporters_alt_diffvols_abbreviations_reporter_title_idx; Type: INDEX; Schema: legalhist; Owner: law_admin
 --
 
 CREATE INDEX reporters_alt_diffvols_abbreviations_reporter_title_idx ON legalhist.reporters_alt_diffvols_abbreviations USING btree (reporter_title);
 
 
 --
--- Name: reporters_alt_diffvols_volumes_cap_reporter_idx; Type: INDEX; Schema: legalhist; Owner: lmullen
+-- Name: reporters_alt_diffvols_volumes_cap_reporter_idx; Type: INDEX; Schema: legalhist; Owner: law_admin
 --
 
 CREATE INDEX reporters_alt_diffvols_volumes_cap_reporter_idx ON legalhist.reporters_alt_diffvols_volumes USING btree (cap_reporter);
 
 
 --
--- Name: reporters_alt_diffvols_volumes_vol_idx; Type: INDEX; Schema: legalhist; Owner: lmullen
+-- Name: reporters_alt_diffvols_volumes_vol_idx; Type: INDEX; Schema: legalhist; Owner: law_admin
 --
 
 CREATE INDEX reporters_alt_diffvols_volumes_vol_idx ON legalhist.reporters_alt_diffvols_volumes USING btree (vol);
 
 
 --
--- Name: reporters_citation_to_cap_reporter_cap_idx; Type: INDEX; Schema: legalhist; Owner: lmullen
+-- Name: reporters_citation_to_cap_reporter_cap_idx; Type: INDEX; Schema: legalhist; Owner: law_admin
 --
 
 CREATE INDEX reporters_citation_to_cap_reporter_cap_idx ON legalhist.reporters_citation_to_cap USING btree (reporter_cap);
 
 
 --
--- Name: reporters_citation_to_cap_reporter_standard_idx; Type: INDEX; Schema: legalhist; Owner: lmullen
+-- Name: reporters_citation_to_cap_reporter_standard_idx; Type: INDEX; Schema: legalhist; Owner: law_admin
 --
 
 CREATE INDEX reporters_citation_to_cap_reporter_standard_idx ON legalhist.reporters_citation_to_cap USING btree (reporter_standard);
 
 
 --
--- Name: textbooks_bibliographicid2_idx; Type: INDEX; Schema: legalhist; Owner: lmullen
+-- Name: textbooks_bibliographicid2_idx; Type: INDEX; Schema: legalhist; Owner: law_admin
 --
 
 CREATE INDEX textbooks_bibliographicid2_idx ON legalhist.textbooks_vols USING btree (bibliographicid);
 
 
 --
--- Name: textbooks_bibliographicid_idx; Type: INDEX; Schema: legalhist; Owner: lmullen
+-- Name: textbooks_bibliographicid_idx; Type: INDEX; Schema: legalhist; Owner: law_admin
 --
 
 CREATE INDEX textbooks_bibliographicid_idx ON legalhist.textbooks_vols USING btree (bibliographicid);
 
 
 --
--- Name: textbooks_psmid2_idx; Type: INDEX; Schema: legalhist; Owner: lmullen
+-- Name: textbooks_psmid2_idx; Type: INDEX; Schema: legalhist; Owner: law_admin
 --
 
 CREATE INDEX textbooks_psmid2_idx ON legalhist.textbooks_vols USING btree (psmid);
 
 
 --
--- Name: textbooks_psmid_idx; Type: INDEX; Schema: legalhist; Owner: lmullen
+-- Name: textbooks_psmid_idx; Type: INDEX; Schema: legalhist; Owner: law_admin
 --
 
 CREATE INDEX textbooks_psmid_idx ON legalhist.textbooks_vols USING btree (psmid);
@@ -1590,49 +1590,49 @@ CREATE INDEX top_reporters_reporter_abbr_idx ON legalhist.top_reporters USING bt
 
 
 --
--- Name: book_info_bibliographicid_idx; Type: INDEX; Schema: moml; Owner: lmullen
+-- Name: book_info_bibliographicid_idx; Type: INDEX; Schema: moml; Owner: law_admin
 --
 
 CREATE INDEX book_info_bibliographicid_idx ON moml.book_info USING btree (bibliographicid);
 
 
 --
--- Name: book_info_webid_idx; Type: INDEX; Schema: moml; Owner: lmullen
+-- Name: book_info_webid_idx; Type: INDEX; Schema: moml; Owner: law_admin
 --
 
 CREATE INDEX book_info_webid_idx ON moml.book_info USING btree (webid);
 
 
 --
--- Name: book_subject_subject_idx; Type: INDEX; Schema: moml; Owner: lmullen
+-- Name: book_subject_subject_idx; Type: INDEX; Schema: moml; Owner: law_admin
 --
 
 CREATE INDEX book_subject_subject_idx ON moml.book_subject USING btree (subject);
 
 
 --
--- Name: moml_page_to_cap_case_case_idx; Type: INDEX; Schema: moml_citations; Owner: lmullen
+-- Name: moml_page_to_cap_case_case_idx; Type: INDEX; Schema: moml_citations; Owner: law_admin
 --
 
 CREATE INDEX moml_page_to_cap_case_case_idx ON moml_citations.page_to_case USING btree ("case");
 
 
 --
--- Name: moml_page_to_cap_case_moml_page_idx; Type: INDEX; Schema: moml_citations; Owner: lmullen
+-- Name: moml_page_to_cap_case_moml_page_idx; Type: INDEX; Schema: moml_citations; Owner: law_admin
 --
 
 CREATE INDEX moml_page_to_cap_case_moml_page_idx ON moml_citations.page_to_case USING btree (moml_page);
 
 
 --
--- Name: moml_page_to_cap_case_moml_treatise_idx; Type: INDEX; Schema: moml_citations; Owner: lmullen
+-- Name: moml_page_to_cap_case_moml_treatise_idx; Type: INDEX; Schema: moml_citations; Owner: law_admin
 --
 
 CREATE INDEX moml_page_to_cap_case_moml_treatise_idx ON moml_citations.page_to_case USING btree (moml_treatise);
 
 
 --
--- Name: cases cap_cases_court_fk; Type: FK CONSTRAINT; Schema: cap; Owner: lmullen
+-- Name: cases cap_cases_court_fk; Type: FK CONSTRAINT; Schema: cap; Owner: law_admin
 --
 
 ALTER TABLE ONLY cap.cases
@@ -1640,7 +1640,7 @@ ALTER TABLE ONLY cap.cases
 
 
 --
--- Name: cases cap_cases_jurisdiction_fk; Type: FK CONSTRAINT; Schema: cap; Owner: lmullen
+-- Name: cases cap_cases_jurisdiction_fk; Type: FK CONSTRAINT; Schema: cap; Owner: law_admin
 --
 
 ALTER TABLE ONLY cap.cases
@@ -1648,7 +1648,7 @@ ALTER TABLE ONLY cap.cases
 
 
 --
--- Name: cases cap_cases_reporter_fk; Type: FK CONSTRAINT; Schema: cap; Owner: lmullen
+-- Name: cases cap_cases_reporter_fk; Type: FK CONSTRAINT; Schema: cap; Owner: law_admin
 --
 
 ALTER TABLE ONLY cap.cases
@@ -1656,7 +1656,7 @@ ALTER TABLE ONLY cap.cases
 
 
 --
--- Name: cases cap_cases_volume_fk; Type: FK CONSTRAINT; Schema: cap; Owner: lmullen
+-- Name: cases cap_cases_volume_fk; Type: FK CONSTRAINT; Schema: cap; Owner: law_admin
 --
 
 ALTER TABLE ONLY cap.cases
@@ -1664,7 +1664,7 @@ ALTER TABLE ONLY cap.cases
 
 
 --
--- Name: citations cap_citations_case_fk; Type: FK CONSTRAINT; Schema: cap; Owner: lmullen
+-- Name: citations cap_citations_case_fk; Type: FK CONSTRAINT; Schema: cap; Owner: law_admin
 --
 
 ALTER TABLE ONLY cap.citations
@@ -1672,7 +1672,7 @@ ALTER TABLE ONLY cap.citations
 
 
 --
--- Name: opinions cap_opinions_case_fk; Type: FK CONSTRAINT; Schema: cap; Owner: lmullen
+-- Name: opinions cap_opinions_case_fk; Type: FK CONSTRAINT; Schema: cap; Owner: law_admin
 --
 
 ALTER TABLE ONLY cap.opinions
@@ -1680,7 +1680,7 @@ ALTER TABLE ONLY cap.opinions
 
 
 --
--- Name: reporters_to_jurisdictions reporters_to_jurisdictions_reporter_fkey; Type: FK CONSTRAINT; Schema: cap; Owner: lmullen
+-- Name: reporters_to_jurisdictions reporters_to_jurisdictions_reporter_fkey; Type: FK CONSTRAINT; Schema: cap; Owner: law_admin
 --
 
 ALTER TABLE ONLY cap.reporters_to_jurisdictions
@@ -1688,7 +1688,7 @@ ALTER TABLE ONLY cap.reporters_to_jurisdictions
 
 
 --
--- Name: volumes_to_jurisdictions volumes_to_jurisdictions_barcode_fkey; Type: FK CONSTRAINT; Schema: cap; Owner: lmullen
+-- Name: volumes_to_jurisdictions volumes_to_jurisdictions_barcode_fkey; Type: FK CONSTRAINT; Schema: cap; Owner: law_admin
 --
 
 ALTER TABLE ONLY cap.volumes_to_jurisdictions
@@ -1696,7 +1696,7 @@ ALTER TABLE ONLY cap.volumes_to_jurisdictions
 
 
 --
--- Name: citations citations_cites_from_fkey; Type: FK CONSTRAINT; Schema: cap_citations; Owner: lmullen
+-- Name: citations citations_cites_from_fkey; Type: FK CONSTRAINT; Schema: cap_citations; Owner: law_admin
 --
 
 ALTER TABLE ONLY cap_citations.citations
@@ -1704,7 +1704,7 @@ ALTER TABLE ONLY cap_citations.citations
 
 
 --
--- Name: citations citations_cites_to_fkey; Type: FK CONSTRAINT; Schema: cap_citations; Owner: lmullen
+-- Name: citations citations_cites_to_fkey; Type: FK CONSTRAINT; Schema: cap_citations; Owner: law_admin
 --
 
 ALTER TABLE ONLY cap_citations.citations
@@ -1712,7 +1712,7 @@ ALTER TABLE ONLY cap_citations.citations
 
 
 --
--- Name: pagerank pagerank_id_fkey; Type: FK CONSTRAINT; Schema: cap_citations; Owner: lmullen
+-- Name: pagerank pagerank_id_fkey; Type: FK CONSTRAINT; Schema: cap_citations; Owner: law_admin
 --
 
 ALTER TABLE ONLY cap_citations.pagerank
@@ -1720,7 +1720,7 @@ ALTER TABLE ONLY cap_citations.pagerank
 
 
 --
--- Name: reporters_alt_diffvols_abbreviations reporters_alt_diffvols_abbreviations_reporter_title_fkey; Type: FK CONSTRAINT; Schema: legalhist; Owner: lmullen
+-- Name: reporters_alt_diffvols_abbreviations reporters_alt_diffvols_abbreviations_reporter_title_fkey; Type: FK CONSTRAINT; Schema: legalhist; Owner: law_admin
 --
 
 ALTER TABLE ONLY legalhist.reporters_alt_diffvols_abbreviations
@@ -1728,7 +1728,7 @@ ALTER TABLE ONLY legalhist.reporters_alt_diffvols_abbreviations
 
 
 --
--- Name: reporters_alt_diffvols_volumes reporters_alt_diffvols_volumes_reporter_title_fkey; Type: FK CONSTRAINT; Schema: legalhist; Owner: lmullen
+-- Name: reporters_alt_diffvols_volumes reporters_alt_diffvols_volumes_reporter_title_fkey; Type: FK CONSTRAINT; Schema: legalhist; Owner: law_admin
 --
 
 ALTER TABLE ONLY legalhist.reporters_alt_diffvols_volumes
@@ -1736,7 +1736,7 @@ ALTER TABLE ONLY legalhist.reporters_alt_diffvols_volumes
 
 
 --
--- Name: textbooks_vols textbooks_psmid_fkey; Type: FK CONSTRAINT; Schema: legalhist; Owner: lmullen
+-- Name: textbooks_vols textbooks_psmid_fkey; Type: FK CONSTRAINT; Schema: legalhist; Owner: law_admin
 --
 
 ALTER TABLE ONLY legalhist.textbooks_vols
@@ -1744,7 +1744,7 @@ ALTER TABLE ONLY legalhist.textbooks_vols
 
 
 --
--- Name: book_citation book_citation_psmid_fkey; Type: FK CONSTRAINT; Schema: moml; Owner: lmullen
+-- Name: book_citation book_citation_psmid_fkey; Type: FK CONSTRAINT; Schema: moml; Owner: law_admin
 --
 
 ALTER TABLE ONLY moml.book_citation
@@ -1752,7 +1752,7 @@ ALTER TABLE ONLY moml.book_citation
 
 
 --
--- Name: book_locsubjecthead book_locsubjecthead_psmid_fkey; Type: FK CONSTRAINT; Schema: moml; Owner: lmullen
+-- Name: book_locsubjecthead book_locsubjecthead_psmid_fkey; Type: FK CONSTRAINT; Schema: moml; Owner: law_admin
 --
 
 ALTER TABLE ONLY moml.book_locsubjecthead
@@ -1760,7 +1760,7 @@ ALTER TABLE ONLY moml.book_locsubjecthead
 
 
 --
--- Name: book_subject book_subject_psmid_fkey; Type: FK CONSTRAINT; Schema: moml; Owner: lmullen
+-- Name: book_subject book_subject_psmid_fkey; Type: FK CONSTRAINT; Schema: moml; Owner: law_admin
 --
 
 ALTER TABLE ONLY moml.book_subject
@@ -1768,7 +1768,7 @@ ALTER TABLE ONLY moml.book_subject
 
 
 --
--- Name: book_volumeset book_volumeset_psmid_fkey; Type: FK CONSTRAINT; Schema: moml; Owner: lmullen
+-- Name: book_volumeset book_volumeset_psmid_fkey; Type: FK CONSTRAINT; Schema: moml; Owner: law_admin
 --
 
 ALTER TABLE ONLY moml.book_volumeset
@@ -1776,7 +1776,7 @@ ALTER TABLE ONLY moml.book_volumeset
 
 
 --
--- Name: page_content page_content_pageid_fkey; Type: FK CONSTRAINT; Schema: moml; Owner: lmullen
+-- Name: page_content page_content_pageid_fkey; Type: FK CONSTRAINT; Schema: moml; Owner: law_admin
 --
 
 ALTER TABLE ONLY moml.page_content
@@ -1784,7 +1784,7 @@ ALTER TABLE ONLY moml.page_content
 
 
 --
--- Name: page_ocrtext page_ocrtext_pageid_fkey; Type: FK CONSTRAINT; Schema: moml; Owner: lmullen
+-- Name: page_ocrtext page_ocrtext_pageid_fkey; Type: FK CONSTRAINT; Schema: moml; Owner: law_admin
 --
 
 ALTER TABLE ONLY moml.page_ocrtext
@@ -1792,7 +1792,7 @@ ALTER TABLE ONLY moml.page_ocrtext
 
 
 --
--- Name: page_ocrtext page_ocrtext_psmid_fkey; Type: FK CONSTRAINT; Schema: moml; Owner: lmullen
+-- Name: page_ocrtext page_ocrtext_psmid_fkey; Type: FK CONSTRAINT; Schema: moml; Owner: law_admin
 --
 
 ALTER TABLE ONLY moml.page_ocrtext
@@ -1800,7 +1800,7 @@ ALTER TABLE ONLY moml.page_ocrtext
 
 
 --
--- Name: page page_psmid_fkey; Type: FK CONSTRAINT; Schema: moml; Owner: lmullen
+-- Name: page page_psmid_fkey; Type: FK CONSTRAINT; Schema: moml; Owner: law_admin
 --
 
 ALTER TABLE ONLY moml.page
@@ -1808,47 +1808,42 @@ ALTER TABLE ONLY moml.page
 
 
 --
--- Name: SCHEMA cap; Type: ACL; Schema: -; Owner: lmullen
+-- Name: SCHEMA cap; Type: ACL; Schema: -; Owner: law_admin
 --
 
 GRANT USAGE ON SCHEMA cap TO law_service;
-GRANT ALL ON SCHEMA cap TO law_admin;
 
 
 --
--- Name: SCHEMA cap_citations; Type: ACL; Schema: -; Owner: lmullen
+-- Name: SCHEMA cap_citations; Type: ACL; Schema: -; Owner: law_admin
 --
 
 GRANT USAGE ON SCHEMA cap_citations TO law_service;
-GRANT ALL ON SCHEMA cap_citations TO law_admin;
 
 
 --
--- Name: SCHEMA legalhist; Type: ACL; Schema: -; Owner: lmullen
+-- Name: SCHEMA legalhist; Type: ACL; Schema: -; Owner: law_admin
 --
 
 GRANT USAGE ON SCHEMA legalhist TO law_service;
-GRANT ALL ON SCHEMA legalhist TO law_admin;
 
 
 --
--- Name: SCHEMA moml; Type: ACL; Schema: -; Owner: lmullen
+-- Name: SCHEMA moml; Type: ACL; Schema: -; Owner: law_admin
 --
 
 GRANT USAGE ON SCHEMA moml TO law_service;
-GRANT ALL ON SCHEMA moml TO law_admin;
 
 
 --
--- Name: SCHEMA moml_citations; Type: ACL; Schema: -; Owner: lmullen
+-- Name: SCHEMA moml_citations; Type: ACL; Schema: -; Owner: law_admin
 --
 
 GRANT USAGE ON SCHEMA moml_citations TO law_service;
-GRANT ALL ON SCHEMA moml_citations TO law_admin;
 
 
 --
--- Name: SCHEMA public; Type: ACL; Schema: -; Owner: postgres
+-- Name: SCHEMA public; Type: ACL; Schema: -; Owner: law_admin
 --
 
 REVOKE USAGE ON SCHEMA public FROM PUBLIC;
@@ -1857,115 +1852,101 @@ GRANT ALL ON SCHEMA public TO law_dev;
 
 
 --
--- Name: SCHEMA stats; Type: ACL; Schema: -; Owner: lmullen
+-- Name: SCHEMA stats; Type: ACL; Schema: -; Owner: law_admin
 --
 
 GRANT USAGE ON SCHEMA stats TO law_service;
-GRANT ALL ON SCHEMA stats TO law_admin;
 
 
 --
--- Name: TABLE cases; Type: ACL; Schema: cap; Owner: lmullen
+-- Name: TABLE cases; Type: ACL; Schema: cap; Owner: law_admin
 --
 
 GRANT SELECT ON TABLE cap.cases TO law_service;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE cap.cases TO law_admin;
 
 
 --
--- Name: TABLE citations; Type: ACL; Schema: cap; Owner: lmullen
+-- Name: TABLE citations; Type: ACL; Schema: cap; Owner: law_admin
 --
 
 GRANT SELECT ON TABLE cap.citations TO law_service;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE cap.citations TO law_admin;
 
 
 --
--- Name: TABLE courts; Type: ACL; Schema: cap; Owner: lmullen
+-- Name: TABLE courts; Type: ACL; Schema: cap; Owner: law_admin
 --
 
 GRANT SELECT ON TABLE cap.courts TO law_service;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE cap.courts TO law_admin;
 
 
 --
--- Name: TABLE jurisdictions; Type: ACL; Schema: cap; Owner: lmullen
+-- Name: TABLE jurisdictions; Type: ACL; Schema: cap; Owner: law_admin
 --
 
 GRANT SELECT ON TABLE cap.jurisdictions TO law_service;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE cap.jurisdictions TO law_admin;
 
 
 --
--- Name: TABLE opinions; Type: ACL; Schema: cap; Owner: lmullen
+-- Name: TABLE opinions; Type: ACL; Schema: cap; Owner: law_admin
 --
 
 GRANT SELECT ON TABLE cap.opinions TO law_service;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE cap.opinions TO law_admin;
 
 
 --
--- Name: TABLE reporters; Type: ACL; Schema: cap; Owner: lmullen
+-- Name: TABLE reporters; Type: ACL; Schema: cap; Owner: law_admin
 --
 
 GRANT SELECT ON TABLE cap.reporters TO law_service;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE cap.reporters TO law_admin;
 
 
 --
--- Name: TABLE reporters_to_jurisdictions; Type: ACL; Schema: cap; Owner: lmullen
+-- Name: TABLE reporters_to_jurisdictions; Type: ACL; Schema: cap; Owner: law_admin
 --
 
 GRANT SELECT ON TABLE cap.reporters_to_jurisdictions TO law_service;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE cap.reporters_to_jurisdictions TO law_admin;
 
 
 --
--- Name: TABLE volumes; Type: ACL; Schema: cap; Owner: lmullen
+-- Name: TABLE volumes; Type: ACL; Schema: cap; Owner: law_admin
 --
 
 GRANT SELECT ON TABLE cap.volumes TO law_service;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE cap.volumes TO law_admin;
 
 
 --
--- Name: TABLE volumes_to_jurisdictions; Type: ACL; Schema: cap; Owner: lmullen
+-- Name: TABLE volumes_to_jurisdictions; Type: ACL; Schema: cap; Owner: law_admin
 --
 
 GRANT SELECT ON TABLE cap.volumes_to_jurisdictions TO law_service;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE cap.volumes_to_jurisdictions TO law_admin;
 
 
 --
--- Name: TABLE citations; Type: ACL; Schema: cap_citations; Owner: lmullen
+-- Name: TABLE citations; Type: ACL; Schema: cap_citations; Owner: law_admin
 --
 
 GRANT SELECT ON TABLE cap_citations.citations TO law_service;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE cap_citations.citations TO law_admin;
 
 
 --
--- Name: TABLE metadata; Type: ACL; Schema: cap_citations; Owner: lmullen
+-- Name: TABLE metadata; Type: ACL; Schema: cap_citations; Owner: law_admin
 --
 
 GRANT SELECT ON TABLE cap_citations.metadata TO law_service;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE cap_citations.metadata TO law_admin;
 
 
 --
--- Name: TABLE pagerank; Type: ACL; Schema: cap_citations; Owner: lmullen
+-- Name: TABLE pagerank; Type: ACL; Schema: cap_citations; Owner: law_admin
 --
 
 GRANT SELECT ON TABLE cap_citations.pagerank TO law_service;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE cap_citations.pagerank TO law_admin;
 
 
 --
--- Name: TABLE page_ocrtext; Type: ACL; Schema: moml; Owner: lmullen
+-- Name: TABLE page_ocrtext; Type: ACL; Schema: moml; Owner: law_admin
 --
 
 GRANT SELECT ON TABLE moml.page_ocrtext TO law_service;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE moml.page_ocrtext TO law_admin;
 
 
 --
@@ -1978,90 +1959,81 @@ GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE legalhist
 
 
 --
--- Name: TABLE ocr_corrections; Type: ACL; Schema: legalhist; Owner: lmullen
+-- Name: TABLE ocr_corrections; Type: ACL; Schema: legalhist; Owner: law_admin
 --
 
 GRANT SELECT ON TABLE legalhist.ocr_corrections TO law_service;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE legalhist.ocr_corrections TO law_admin;
 GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE legalhist.ocr_corrections TO kfunk;
 
 
 --
--- Name: TABLE reporters_alt_diffvols_abbreviations; Type: ACL; Schema: legalhist; Owner: lmullen
+-- Name: TABLE reporters_alt_diffvols_abbreviations; Type: ACL; Schema: legalhist; Owner: law_admin
 --
 
 GRANT SELECT ON TABLE legalhist.reporters_alt_diffvols_abbreviations TO law_service;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE legalhist.reporters_alt_diffvols_abbreviations TO law_admin;
 GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE legalhist.reporters_alt_diffvols_abbreviations TO kfunk;
 
 
 --
--- Name: TABLE reporters_alt_diffvols_reporters; Type: ACL; Schema: legalhist; Owner: lmullen
+-- Name: TABLE reporters_alt_diffvols_reporters; Type: ACL; Schema: legalhist; Owner: law_admin
 --
 
 GRANT SELECT ON TABLE legalhist.reporters_alt_diffvols_reporters TO law_service;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE legalhist.reporters_alt_diffvols_reporters TO law_admin;
 GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE legalhist.reporters_alt_diffvols_reporters TO kfunk;
 
 
 --
--- Name: TABLE reporters_alt_diffvols_volumes; Type: ACL; Schema: legalhist; Owner: lmullen
+-- Name: TABLE reporters_alt_diffvols_volumes; Type: ACL; Schema: legalhist; Owner: law_admin
 --
 
 GRANT SELECT ON TABLE legalhist.reporters_alt_diffvols_volumes TO law_service;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE legalhist.reporters_alt_diffvols_volumes TO law_admin;
 GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE legalhist.reporters_alt_diffvols_volumes TO kfunk;
 
 
 --
--- Name: TABLE reporters_alt_samevols_abbreviations; Type: ACL; Schema: legalhist; Owner: lmullen
+-- Name: TABLE reporters_alt_samevols_abbreviations; Type: ACL; Schema: legalhist; Owner: law_admin
 --
 
 GRANT SELECT ON TABLE legalhist.reporters_alt_samevols_abbreviations TO law_service;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE legalhist.reporters_alt_samevols_abbreviations TO law_admin;
 GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE legalhist.reporters_alt_samevols_abbreviations TO kfunk;
 
 
 --
--- Name: TABLE reporters_citation_to_cap; Type: ACL; Schema: legalhist; Owner: lmullen
+-- Name: TABLE reporters_citation_to_cap; Type: ACL; Schema: legalhist; Owner: law_admin
 --
 
 GRANT SELECT ON TABLE legalhist.reporters_citation_to_cap TO law_service;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE legalhist.reporters_citation_to_cap TO law_admin;
 GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE legalhist.reporters_citation_to_cap TO kfunk;
 
 
 --
--- Name: TABLE reporters_single_volume_abbr; Type: ACL; Schema: legalhist; Owner: lmullen
+-- Name: TABLE reporters_single_volume_abbr; Type: ACL; Schema: legalhist; Owner: law_admin
 --
 
 GRANT SELECT ON TABLE legalhist.reporters_single_volume_abbr TO law_service;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE legalhist.reporters_single_volume_abbr TO law_admin;
 GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE legalhist.reporters_single_volume_abbr TO kfunk;
 
 
 --
--- Name: TABLE textbooks_vols; Type: ACL; Schema: legalhist; Owner: lmullen
+-- Name: TABLE textbooks_vols; Type: ACL; Schema: legalhist; Owner: law_admin
 --
 
 GRANT SELECT ON TABLE legalhist.textbooks_vols TO law_service;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE legalhist.textbooks_vols TO law_admin;
 GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE legalhist.textbooks_vols TO kfunk;
 
 
 --
--- Name: TABLE textbooks_works; Type: ACL; Schema: legalhist; Owner: lmullen
+-- Name: TABLE textbooks_works; Type: ACL; Schema: legalhist; Owner: law_admin
 --
 
 GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE legalhist.textbooks_works TO kfunk;
 
 
 --
--- Name: TABLE citations_unlinked; Type: ACL; Schema: moml_citations; Owner: lmullen
+-- Name: TABLE citations_unlinked; Type: ACL; Schema: moml_citations; Owner: law_admin
 --
 
 GRANT SELECT ON TABLE moml_citations.citations_unlinked TO law_service;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE moml_citations.citations_unlinked TO law_admin;
 GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE moml_citations.citations_unlinked TO kfunk;
 
 
@@ -2075,103 +2047,92 @@ GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE legalhist
 
 
 --
--- Name: TABLE top_reporters_not_whitelisted; Type: ACL; Schema: legalhist; Owner: lmullen
+-- Name: TABLE top_reporters_not_whitelisted; Type: ACL; Schema: legalhist; Owner: law_admin
 --
 
 GRANT SELECT ON TABLE legalhist.top_reporters_not_whitelisted TO law_service;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE legalhist.top_reporters_not_whitelisted TO law_admin;
 GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE legalhist.top_reporters_not_whitelisted TO kfunk;
 
 
 --
--- Name: TABLE book_citation; Type: ACL; Schema: moml; Owner: lmullen
+-- Name: TABLE book_citation; Type: ACL; Schema: moml; Owner: law_admin
 --
 
 GRANT SELECT ON TABLE moml.book_citation TO law_service;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE moml.book_citation TO law_admin;
 
 
 --
--- Name: TABLE book_info; Type: ACL; Schema: moml; Owner: lmullen
+-- Name: TABLE book_info; Type: ACL; Schema: moml; Owner: law_admin
 --
 
 GRANT SELECT ON TABLE moml.book_info TO law_service;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE moml.book_info TO law_admin;
 
 
 --
--- Name: TABLE book_locsubjecthead; Type: ACL; Schema: moml; Owner: lmullen
+-- Name: TABLE book_locsubjecthead; Type: ACL; Schema: moml; Owner: law_admin
 --
 
 GRANT SELECT ON TABLE moml.book_locsubjecthead TO law_service;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE moml.book_locsubjecthead TO law_admin;
 
 
 --
--- Name: TABLE book_subject; Type: ACL; Schema: moml; Owner: lmullen
+-- Name: TABLE book_subject; Type: ACL; Schema: moml; Owner: law_admin
 --
 
 GRANT SELECT ON TABLE moml.book_subject TO law_service;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE moml.book_subject TO law_admin;
 
 
 --
--- Name: TABLE book_volumeset; Type: ACL; Schema: moml; Owner: lmullen
+-- Name: TABLE book_volumeset; Type: ACL; Schema: moml; Owner: law_admin
 --
 
 GRANT SELECT ON TABLE moml.book_volumeset TO law_service;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE moml.book_volumeset TO law_admin;
 
 
 --
--- Name: TABLE legal_treatises_metadata; Type: ACL; Schema: moml; Owner: lmullen
+-- Name: TABLE legal_treatises_metadata; Type: ACL; Schema: moml; Owner: law_admin
 --
 
 GRANT SELECT ON TABLE moml.legal_treatises_metadata TO law_service;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE moml.legal_treatises_metadata TO law_admin;
 
 
 --
--- Name: TABLE page; Type: ACL; Schema: moml; Owner: lmullen
+-- Name: TABLE page; Type: ACL; Schema: moml; Owner: law_admin
 --
 
 GRANT SELECT ON TABLE moml.page TO law_service;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE moml.page TO law_admin;
 
 
 --
--- Name: TABLE page_content; Type: ACL; Schema: moml; Owner: lmullen
+-- Name: TABLE page_content; Type: ACL; Schema: moml; Owner: law_admin
 --
 
 GRANT SELECT ON TABLE moml.page_content TO law_service;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE moml.page_content TO law_admin;
 
 
 --
--- Name: TABLE treatises; Type: ACL; Schema: moml; Owner: lmullen
+-- Name: TABLE treatises; Type: ACL; Schema: moml; Owner: law_admin
 --
 
 GRANT SELECT ON TABLE moml.treatises TO law_service;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE moml.treatises TO law_admin;
 
 
 --
--- Name: TABLE us_treatises; Type: ACL; Schema: moml; Owner: lmullen
+-- Name: TABLE us_treatises; Type: ACL; Schema: moml; Owner: law_admin
 --
 
 GRANT SELECT ON TABLE moml.us_treatises TO law_service;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE moml.us_treatises TO law_admin;
 
 
 --
--- Name: TABLE page_to_case; Type: ACL; Schema: moml_citations; Owner: lmullen
+-- Name: TABLE page_to_case; Type: ACL; Schema: moml_citations; Owner: law_admin
 --
 
 GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE moml_citations.page_to_case TO kfunk;
 
 
 --
--- Name: TABLE volume_to_case; Type: ACL; Schema: moml_citations; Owner: lmullen
+-- Name: TABLE volume_to_case; Type: ACL; Schema: moml_citations; Owner: law_admin
 --
 
 GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE moml_citations.volume_to_case TO kfunk;
@@ -2185,19 +2146,17 @@ GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE moml_cita
 
 
 --
--- Name: TABLE database_size; Type: ACL; Schema: stats; Owner: lmullen
+-- Name: TABLE database_size; Type: ACL; Schema: stats; Owner: law_admin
 --
 
 GRANT SELECT ON TABLE stats.database_size TO law_service;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE stats.database_size TO law_admin;
 
 
 --
--- Name: TABLE table_sizes; Type: ACL; Schema: stats; Owner: lmullen
+-- Name: TABLE table_sizes; Type: ACL; Schema: stats; Owner: law_admin
 --
 
 GRANT SELECT ON TABLE stats.table_sizes TO law_service;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE stats.table_sizes TO law_admin;
 
 
 --
@@ -2208,7 +2167,7 @@ GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE textbooks
 
 
 --
--- Name: TABLE schools_to_textbooks; Type: ACL; Schema: textbooks; Owner: lmullen
+-- Name: TABLE schools_to_textbooks; Type: ACL; Schema: textbooks; Owner: law_admin
 --
 
 GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE textbooks.schools_to_textbooks TO kfunk;
