@@ -21,14 +21,7 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	// Create the app first
-	slog.Info("setting up resources")
-	app, err := NewApp(ctx)
-	if err != nil {
-		slog.Error("error creating the app", "error", err)
-		cancel()
-		os.Exit(1)
-	}
+	var app *App
 
 	// Set up signal handling after app creation
 	quit := make(chan os.Signal, 1)
@@ -53,7 +46,6 @@ func main() {
 
 			select {
 			case <-done:
-				slog.Info("shutdown completed cleanly")
 			case <-shutdownCtx.Done():
 				slog.Error("shutdown timed out, forcing exit")
 				os.Exit(1)
@@ -65,6 +57,16 @@ func main() {
 		}
 	}()
 
+	// Create the app first
+	slog.Info("setting up resources")
+	app, err := NewApp(ctx)
+	if err != nil {
+		slog.Error("error setting up resources", "error", err)
+		cancel()
+		os.Exit(1)
+	}
+	defer app.Shutdown()
+
 	slog.Info("running the app")
 	err = app.Run(ctx)
 	if err != nil {
@@ -73,9 +75,4 @@ func main() {
 		os.Exit(1)
 	}
 
-	// // Run the application
-	// if err := app.Run(); err != nil {
-	// 	slog.Error("error running the application", "error", err)
-	// 	panic(err)
-	// }
 }
