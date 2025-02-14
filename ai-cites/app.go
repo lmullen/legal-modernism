@@ -2,9 +2,7 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log/slog"
-	"time"
 
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/lmullen/legal-modernism/go/db"
@@ -40,19 +38,6 @@ func NewApp(ctx context.Context) (*App, error) {
 }
 
 func (a *App) Run(ctx context.Context) error {
-	length := 4
-
-	for i := 0; i < length; i++ {
-		select {
-		case <-ctx.Done():
-			return nil
-		default:
-			fmt.Println(i)
-			time.Sleep(1 * time.Second)
-		}
-
-	}
-
 	return nil
 }
 
