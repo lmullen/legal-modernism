@@ -53,7 +53,6 @@ func main() {
 
 			cancel()
 		case <-ctx.Done():
-			slog.Debug("main context cancelled, shutting down signal handler")
 		}
 	}()
 
@@ -65,7 +64,6 @@ func main() {
 		cancel()
 		os.Exit(1)
 	}
-	defer app.Shutdown()
 
 	slog.Info("running the app")
 	err = app.Run(ctx)
@@ -73,6 +71,14 @@ func main() {
 		slog.Error("error running app", "error", err)
 		cancel()
 		os.Exit(1)
+	}
+
+	// Check whether we need to close resources. We don't need to if we trapped a
+	// signal. We only need to if `app.Run()` exits cleanly.
+	select {
+	case <-ctx.Done():
+	default:
+		app.Shutdown()
 	}
 
 }
