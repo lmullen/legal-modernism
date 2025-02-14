@@ -45,10 +45,6 @@ func NewApp(ctx context.Context) (*App, error) {
 	return &a, nil
 }
 
-func (a *App) Run(ctx context.Context) error {
-	return nil
-}
-
 // Shutdown closes shared resources.
 func (a *App) Shutdown() {
 	slog.Info("closing connection to the database")
