@@ -987,11 +987,18 @@ CREATE MATERIALIZED VIEW moml_citations.bibliocouple_treatises AS
 
 
 --
--- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -
+-- Name: requests; Type: TABLE; Schema: predictor; Owner: -
 --
 
-CREATE TABLE public.schema_migrations (
-    version character varying(128) NOT NULL
+CREATE TABLE predictor.requests (
+    id uuid NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    psmid text,
+    pageid text,
+    purpose text,
+    parent uuid,
+    status text,
+    last_checked timestamp with time zone
 );
 
 
@@ -1246,11 +1253,11 @@ ALTER TABLE ONLY moml_citations.page_to_case
 
 
 --
--- Name: schema_migrations schema_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: requests requests_pkey; Type: CONSTRAINT; Schema: predictor; Owner: -
 --
 
-ALTER TABLE ONLY public.schema_migrations
-    ADD CONSTRAINT schema_migrations_pkey PRIMARY KEY (version);
+ALTER TABLE ONLY predictor.requests
+    ADD CONSTRAINT requests_pkey PRIMARY KEY (id);
 
 
 --
@@ -1718,6 +1725,22 @@ ALTER TABLE ONLY moml.page
 
 
 --
+-- Name: requests fk_moml_ocrtext; Type: FK CONSTRAINT; Schema: predictor; Owner: -
+--
+
+ALTER TABLE ONLY predictor.requests
+    ADD CONSTRAINT fk_moml_ocrtext FOREIGN KEY (psmid, pageid) REFERENCES moml.page_ocrtext(psmid, pageid);
+
+
+--
+-- Name: requests requests_parent_fkey; Type: FK CONSTRAINT; Schema: predictor; Owner: -
+--
+
+ALTER TABLE ONLY predictor.requests
+    ADD CONSTRAINT requests_parent_fkey FOREIGN KEY (parent) REFERENCES predictor.requests(id);
+
+
+--
 -- PostgreSQL database dump complete
 --
 
@@ -1732,4 +1755,5 @@ INSERT INTO sys_admin.migrations_dbmate (version) VALUES
     ('0007'),
     ('0015'),
     ('0051'),
-    ('20250214191156');
+    ('20250214191156'),
+    ('20250214191825');
