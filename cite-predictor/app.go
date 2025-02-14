@@ -10,6 +10,7 @@ import (
 
 // The Config type stores configuration which is read from environment variables.
 type Config struct {
+	BatchSize int
 }
 
 // The App type shares access to resources.
@@ -22,7 +23,9 @@ func NewApp(ctx context.Context) (*App, error) {
 	a := App{}
 
 	// Set up configuration
-	config := Config{}
+	config := Config{
+		BatchSize: 10,
+	}
 	a.Config = config
 
 	// Connect to the database
