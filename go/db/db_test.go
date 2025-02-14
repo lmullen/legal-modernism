@@ -6,7 +6,7 @@ import (
 )
 
 func Test_EmptyConnString(t *testing.T) {
-	os.Unsetenv("MOML_DBSTR")
+	os.Unsetenv("LAW_DBSTR")
 	_, err := getConnString()
 	if err == nil {
 		t.Error("Did not get an error when DB connection string was not set")
@@ -15,7 +15,7 @@ func Test_EmptyConnString(t *testing.T) {
 
 func Test_SetConnString(t *testing.T) {
 	connstr := "postgres://user:pass@localhost:5432/cchc"
-	envvar := "MOML_DBSTR"
+	envvar := "LAW_DBSTR"
 	os.Setenv(envvar, connstr)
 	got, err := getConnString()
 	if err != nil {

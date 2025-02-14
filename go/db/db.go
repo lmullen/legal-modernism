@@ -32,9 +32,9 @@ func Connect(ctx context.Context) (*pgxpool.Pool, error) {
 
 // getConnString returns the DB connection string set as an environment variable
 func getConnString() (string, error) {
-	connstr, exists := os.LookupEnv("MOML_DBSTR")
+	connstr, exists := os.LookupEnv("LAW_DBSTR")
 	if !exists {
-		return "", errors.New("Database connection string not set; use the MOML_DBSTR environment variable")
+		return "", errors.New("Database connection string not set; use the LAW_DBSTR environment variable")
 	}
 	return connstr, nil
 }
