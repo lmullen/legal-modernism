@@ -1521,6 +1521,20 @@ CREATE INDEX book_subject_subject_idx ON moml.book_subject USING btree (subject)
 
 
 --
+-- Name: idx_book_info_psmid; Type: INDEX; Schema: moml; Owner: -
+--
+
+CREATE INDEX idx_book_info_psmid ON moml.book_info USING btree (psmid);
+
+
+--
+-- Name: idx_book_subject_psmid_subject; Type: INDEX; Schema: moml; Owner: -
+--
+
+CREATE INDEX idx_book_subject_psmid_subject ON moml.book_subject USING btree (psmid, subject);
+
+
+--
 -- Name: page_bodytype_idx; Type: INDEX; Schema: moml; Owner: -
 --
 
@@ -1756,4 +1770,5 @@ INSERT INTO sys_admin.migrations_dbmate (version) VALUES
     ('0015'),
     ('0051'),
     ('20250214191156'),
-    ('20250214191825');
+    ('20250214191825'),
+    ('20250214195229');
