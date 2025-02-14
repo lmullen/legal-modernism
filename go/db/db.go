@@ -38,7 +38,7 @@ func Connect(ctx context.Context) (*pgxpool.Pool, error) {
 func getConnString() (string, error) {
 	connstr, exists := os.LookupEnv("LAW_DBSTR")
 	if !exists {
-		return "", errors.New("database connection string not set; use the LAW_DBSTR environment variable")
+		return "", errors.New("database connection string not set")
 	}
 	return connstr, nil
 }

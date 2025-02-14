@@ -43,7 +43,7 @@ func (a *App) Run(ctx context.Context) error {
 
 // Shutdown closes shared resources.
 func (a *App) Shutdown() {
-	slog.Info("shutting down the app")
 	slog.Info("closing connection to the database")
 	a.DB.Close()
+	slog.Info("database connection closed")
 }
