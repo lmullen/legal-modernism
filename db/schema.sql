@@ -1726,5 +1726,10 @@ ALTER TABLE ONLY moml.page
 -- Dbmate schema migrations
 --
 
-INSERT INTO public.schema_migrations (version) VALUES
+INSERT INTO sys_admin.migrations_dbmate (version) VALUES
+    ('0005'),
+    ('0006'),
+    ('0007'),
+    ('0015'),
+    ('0051'),
     ('20250214191156');
