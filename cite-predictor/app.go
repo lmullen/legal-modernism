@@ -6,6 +6,7 @@ import (
 
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/lmullen/legal-modernism/go/db"
+	"github.com/lmullen/legal-modernism/go/predictor"
 	"github.com/lmullen/legal-modernism/go/sources"
 )
 
@@ -16,9 +17,10 @@ type Config struct {
 
 // The App type shares access to resources.
 type App struct {
-	Config  Config
-	DB      *pgxpool.Pool
-	Sources *sources.PgxStore
+	Config         Config
+	DB             *pgxpool.Pool
+	SourcesStore   *sources.PgxStore
+	PredictorStore *predictor.PgxStore
 }
 
 func NewApp(ctx context.Context) (*App, error) {
@@ -40,7 +42,8 @@ func NewApp(ctx context.Context) (*App, error) {
 	slog.Info("connected succesfully to the database")
 
 	// Initialize the interfaces to the database
-	a.Sources = sources.NewPgxStore(a.DB)
+	a.SourcesStore = sources.NewPgxStore(a.DB)
+	a.PredictorStore = predictor.NewPgxStore(a.DB)
 
 	return &a, nil
 }

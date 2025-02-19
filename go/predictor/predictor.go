@@ -21,6 +21,23 @@ type Batch struct {
 	Requests    []*Request
 }
 
+// String returns the BatchID
+func (b *Batch) String() string {
+	return b.ID.String()
+}
+
+func (b *Batch) Anthropic() string {
+	if b.AnthropicID.Valid {
+		return b.AnthropicID.String
+	}
+	return ""
+}
+
+// NumRequests returns the number of requests in a batch
+func (b *Batch) NumRequests() int {
+	return len(b.Requests)
+}
+
 // NewBatch creates a batch object with the data to be sent to the AI API
 func NewBatch(pages []*sources.TreatisePage, purpose string) *Batch {
 	b := Batch{}
@@ -31,7 +48,7 @@ func NewBatch(pages []*sources.TreatisePage, purpose string) *Batch {
 	b.Status = "recorded"
 
 	// Make a request for each page passed in
-	requests := make([]*Request, len(pages))
+	requests := make([]*Request, 0, len(pages))
 	var req *Request
 	for _, p := range pages {
 		req = NewRequest(p, b.ID, purpose)

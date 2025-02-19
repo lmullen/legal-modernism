@@ -995,7 +995,7 @@ CREATE TABLE predictor.batches (
     anthropic_id text,
     created_at timestamp with time zone NOT NULL,
     last_checked timestamp with time zone NOT NULL,
-    status text,
+    status text NOT NULL,
     result jsonb
 );
 
@@ -1006,12 +1006,11 @@ CREATE TABLE predictor.batches (
 
 CREATE TABLE predictor.requests (
     id uuid NOT NULL,
-    batch_id uuid,
-    psmid text,
-    pageid text,
-    purpose text,
-    parent uuid,
-    status text,
+    batch_id uuid NOT NULL,
+    psmid text NOT NULL,
+    pageid text NOT NULL,
+    purpose text NOT NULL,
+    status text NOT NULL,
     result jsonb
 );
 
@@ -1782,14 +1781,6 @@ ALTER TABLE ONLY predictor.requests
 
 ALTER TABLE ONLY predictor.requests
     ADD CONSTRAINT fk_predictor_batches FOREIGN KEY (batch_id) REFERENCES predictor.batches(id);
-
-
---
--- Name: requests requests_parent_fkey; Type: FK CONSTRAINT; Schema: predictor; Owner: -
---
-
-ALTER TABLE ONLY predictor.requests
-    ADD CONSTRAINT requests_parent_fkey FOREIGN KEY (parent) REFERENCES predictor.requests(id);
 
 
 --

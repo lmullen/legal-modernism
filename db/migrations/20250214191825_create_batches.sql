@@ -17,7 +17,6 @@ CREATE TABLE IF NOT EXISTS predictor.requests (
   "psmid" text NOT NULL,
   "pageid" text NOT NULL,
 	"purpose" text NOT NULL,
-	"parent" uuid REFERENCES predictor.requests(id),
 	"status" text NOT NULL,
   "result" jsonb,
   PRIMARY KEY ("id"),
