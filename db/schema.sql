@@ -987,18 +987,32 @@ CREATE MATERIALIZED VIEW moml_citations.bibliocouple_treatises AS
 
 
 --
+-- Name: batches; Type: TABLE; Schema: predictor; Owner: -
+--
+
+CREATE TABLE predictor.batches (
+    id uuid NOT NULL,
+    anthropic_id text,
+    created_at timestamp with time zone NOT NULL,
+    last_checked timestamp with time zone NOT NULL,
+    status text,
+    result jsonb
+);
+
+
+--
 -- Name: requests; Type: TABLE; Schema: predictor; Owner: -
 --
 
 CREATE TABLE predictor.requests (
     id uuid NOT NULL,
-    created_at timestamp with time zone NOT NULL,
+    batch_id uuid,
     psmid text,
     pageid text,
     purpose text,
     parent uuid,
     status text,
-    last_checked timestamp with time zone
+    result jsonb
 );
 
 
@@ -1250,6 +1264,22 @@ ALTER TABLE ONLY moml_citations.citations_unlinked
 
 ALTER TABLE ONLY moml_citations.page_to_case
     ADD CONSTRAINT moml_page_to_cap_case_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: batches batches_anthropic_id_key; Type: CONSTRAINT; Schema: predictor; Owner: -
+--
+
+ALTER TABLE ONLY predictor.batches
+    ADD CONSTRAINT batches_anthropic_id_key UNIQUE (anthropic_id);
+
+
+--
+-- Name: batches batches_pkey; Type: CONSTRAINT; Schema: predictor; Owner: -
+--
+
+ALTER TABLE ONLY predictor.batches
+    ADD CONSTRAINT batches_pkey PRIMARY KEY (id);
 
 
 --
@@ -1744,6 +1774,14 @@ ALTER TABLE ONLY moml.page
 
 ALTER TABLE ONLY predictor.requests
     ADD CONSTRAINT fk_moml_ocrtext FOREIGN KEY (psmid, pageid) REFERENCES moml.page_ocrtext(psmid, pageid);
+
+
+--
+-- Name: requests fk_predictor_batches; Type: FK CONSTRAINT; Schema: predictor; Owner: -
+--
+
+ALTER TABLE ONLY predictor.requests
+    ADD CONSTRAINT fk_predictor_batches FOREIGN KEY (batch_id) REFERENCES predictor.batches(id);
 
 
 --
