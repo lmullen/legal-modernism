@@ -6,19 +6,19 @@ CREATE TABLE IF NOT EXISTS predictor.batches (
   "anthropic_id" text UNIQUE,
   "created_at" timestamp with time zone NOT NULL,
   "last_checked" timestamp with time zone NOT NULL,
-  "status" text,
+  "status" text NOT NULL,
   "result" jsonb,
   PRIMARY KEY ("id")
 );
 
 CREATE TABLE IF NOT EXISTS predictor.requests (
   "id" uuid,
-  "batch_id" uuid,
-  "psmid" text,
-  "pageid" text,
-	"purpose" text,
+  "batch_id" uuid NOT NULL,
+  "psmid" text NOT NULL,
+  "pageid" text NOT NULL,
+	"purpose" text NOT NULL,
 	"parent" uuid REFERENCES predictor.requests(id),
-	"status" text,
+	"status" text NOT NULL,
   "result" jsonb,
   PRIMARY KEY ("id"),
   CONSTRAINT fk_moml_ocrtext FOREIGN KEY (psmid, pageid) REFERENCES moml.page_ocrtext (psmid, pageid),
