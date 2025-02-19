@@ -24,6 +24,8 @@ CREATE TABLE IF NOT EXISTS predictor.requests (
   CONSTRAINT fk_predictor_batches FOREIGN KEY (batch_id) REFERENCES predictor.batches (id)
 );
 
+CREATE INDEX "requests_batch_id_idx" ON predictor.requests("batch_id");
+
 -- migrate:down
 SET ROLE = law_admin;
 DROP TABLE IF EXISTS predictor.requests;

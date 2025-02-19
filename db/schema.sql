@@ -1592,6 +1592,13 @@ CREATE INDEX moml_page_to_cap_case_moml_treatise_idx ON moml_citations.page_to_c
 
 
 --
+-- Name: requests_batch_id_idx; Type: INDEX; Schema: predictor; Owner: -
+--
+
+CREATE INDEX requests_batch_id_idx ON predictor.requests USING btree (batch_id);
+
+
+--
 -- Name: cases cap_cases_court_fk; Type: FK CONSTRAINT; Schema: cap; Owner: -
 --
 
