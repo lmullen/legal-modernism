@@ -25,6 +25,13 @@ CREATE SCHEMA cap_citations;
 
 
 --
+-- Name: english_reports; Type: SCHEMA; Schema: -; Owner: -
+--
+
+CREATE SCHEMA english_reports;
+
+
+--
 -- Name: legalhist; Type: SCHEMA; Schema: -; Owner: -
 --
 
@@ -518,6 +525,28 @@ CREATE TABLE cap_citations.pagerank (
 
 
 --
+-- Name: cases; Type: TABLE; Schema: english_reports; Owner: -
+--
+
+CREATE TABLE english_reports.cases (
+    id text NOT NULL,
+    er_name text NOT NULL,
+    er_year integer NOT NULL,
+    er_date date NOT NULL,
+    er_cite text NOT NULL,
+    er_cite_disambiguated text NOT NULL,
+    er_parallel_cite text,
+    murrell_uid text,
+    murrell_year integer,
+    murrell_title text,
+    er_filename text NOT NULL,
+    er_url text,
+    court text,
+    word_count integer
+);
+
+
+--
 -- Name: page_ocrtext; Type: TABLE; Schema: moml; Owner: -
 --
 
@@ -635,7 +664,8 @@ CREATE TABLE legalhist.reporters_citation_to_cap (
     statute boolean NOT NULL,
     uk boolean NOT NULL,
     junk boolean NOT NULL,
-    cap_different boolean
+    cap_different boolean,
+    claude boolean DEFAULT false NOT NULL
 );
 
 
@@ -1162,6 +1192,30 @@ ALTER TABLE ONLY cap_citations.metadata
 
 
 --
+-- Name: cases cases_er_cite_disambiguated_key; Type: CONSTRAINT; Schema: english_reports; Owner: -
+--
+
+ALTER TABLE ONLY english_reports.cases
+    ADD CONSTRAINT cases_er_cite_disambiguated_key UNIQUE (er_cite_disambiguated);
+
+
+--
+-- Name: cases cases_murrell_uid_key; Type: CONSTRAINT; Schema: english_reports; Owner: -
+--
+
+ALTER TABLE ONLY english_reports.cases
+    ADD CONSTRAINT cases_murrell_uid_key UNIQUE (murrell_uid);
+
+
+--
+-- Name: cases cases_pkey; Type: CONSTRAINT; Schema: english_reports; Owner: -
+--
+
+ALTER TABLE ONLY english_reports.cases
+    ADD CONSTRAINT cases_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: ocr_corrections ocr_corrections_unique; Type: CONSTRAINT; Schema: legalhist; Owner: -
 --
 
@@ -1421,6 +1475,20 @@ CREATE INDEX metadata_decision_year_idx ON cap_citations.metadata USING btree (d
 --
 
 CREATE INDEX metadata_jurisdiction__name_idx ON cap_citations.metadata USING btree (jurisdiction_name);
+
+
+--
+-- Name: er_cases_er_cite_idx; Type: INDEX; Schema: english_reports; Owner: -
+--
+
+CREATE INDEX er_cases_er_cite_idx ON english_reports.cases USING btree (er_cite);
+
+
+--
+-- Name: er_cases_er_year_idx; Type: INDEX; Schema: english_reports; Owner: -
+--
+
+CREATE INDEX er_cases_er_year_idx ON english_reports.cases USING btree (er_year);
 
 
 --
@@ -1807,4 +1875,5 @@ INSERT INTO sys_admin.migrations_dbmate (version) VALUES
     ('0051'),
     ('20250214191156'),
     ('20250214191825'),
-    ('20250214195229');
+    ('20250214195229'),
+    ('20250227185605');
