@@ -23,15 +23,14 @@ raw <- read_csv(
   )
 )
 
-
 raw |>
   rename(er_date_raw = er_date) |>
   mutate(er_date = dmy(er_date_raw)) |>
+  mutate(er_name = if_else(er_name == "", NA_character_, er_name)) |>
   select(-er_date_raw) |>
   select(
     id = er_id,
     er_name,
-    er_title,
     er_year,
     er_date,
     er_cite,
@@ -42,6 +41,5 @@ raw |>
     murrell_title,
     everything()
   ) |>
-  filter(er_name=="") |> View()
-
+  select(-er_title) |>
   write_csv("temp/english-reports-cleaned.csv")

@@ -5,7 +5,7 @@ CREATE SCHEMA IF NOT EXISTS english_reports;
 
 CREATE TABLE IF NOT EXISTS english_reports.cases (
     "id" text,
-    "er_name" text NOT NULL,
+    "er_name" text,
     "er_year" int NOT NULL,
     "er_date" date NOT NULL,
     "er_cite" text NOT NULL,
