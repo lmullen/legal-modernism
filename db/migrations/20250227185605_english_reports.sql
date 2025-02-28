@@ -18,13 +18,12 @@ CREATE TABLE IF NOT EXISTS english_reports.cases (
     "er_url" text,
     "court" text,
     "word_count" int,
-    PRIMARY KEY ("id"),
-    UNIQUE ("er_cite_disambiguated"),
-    UNIQUE ("murrell_uid")
+    PRIMARY KEY ("id")
 );
 
 CREATE INDEX "er_cases_er_year_idx" ON "english_reports"."cases"("er_year");
 CREATE INDEX "er_cases_er_cite_idx" ON "english_reports"."cases"("er_cite");
+CREATE INDEX "er_cases_er_parallel_cite_idx" ON "english_reports"."cases"("er_parallel_cite");
 
 -- migrate:down
 SET ROLE = law_admin;

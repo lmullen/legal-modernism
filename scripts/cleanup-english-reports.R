@@ -42,4 +42,5 @@ raw |>
     everything()
   ) |>
   select(-er_title) |>
-  write_csv("temp/english-reports-cleaned.csv")
+  filter(!is.na(er_date)) |>
+  write_csv("temp/english-reports-cleaned.csv", na = "")

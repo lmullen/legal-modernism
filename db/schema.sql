@@ -530,7 +530,7 @@ CREATE TABLE cap_citations.pagerank (
 
 CREATE TABLE english_reports.cases (
     id text NOT NULL,
-    er_name text NOT NULL,
+    er_name text,
     er_year integer NOT NULL,
     er_date date NOT NULL,
     er_cite text NOT NULL,
@@ -1192,22 +1192,6 @@ ALTER TABLE ONLY cap_citations.metadata
 
 
 --
--- Name: cases cases_er_cite_disambiguated_key; Type: CONSTRAINT; Schema: english_reports; Owner: -
---
-
-ALTER TABLE ONLY english_reports.cases
-    ADD CONSTRAINT cases_er_cite_disambiguated_key UNIQUE (er_cite_disambiguated);
-
-
---
--- Name: cases cases_murrell_uid_key; Type: CONSTRAINT; Schema: english_reports; Owner: -
---
-
-ALTER TABLE ONLY english_reports.cases
-    ADD CONSTRAINT cases_murrell_uid_key UNIQUE (murrell_uid);
-
-
---
 -- Name: cases cases_pkey; Type: CONSTRAINT; Schema: english_reports; Owner: -
 --
 
@@ -1482,6 +1466,13 @@ CREATE INDEX metadata_jurisdiction__name_idx ON cap_citations.metadata USING btr
 --
 
 CREATE INDEX er_cases_er_cite_idx ON english_reports.cases USING btree (er_cite);
+
+
+--
+-- Name: er_cases_er_parallel_cite_idx; Type: INDEX; Schema: english_reports; Owner: -
+--
+
+CREATE INDEX er_cases_er_parallel_cite_idx ON english_reports.cases USING btree (er_parallel_cite);
 
 
 --
