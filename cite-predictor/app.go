@@ -2,8 +2,12 @@ package main
 
 import (
 	"context"
+	"errors"
 	"log/slog"
+	"os"
 
+	"github.com/anthropics/anthropic-sdk-go"
+	"github.com/anthropics/anthropic-sdk-go/option"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/lmullen/legal-modernism/go/db"
 	"github.com/lmullen/legal-modernism/go/predictor"
@@ -12,23 +16,33 @@ import (
 
 // The Config type stores configuration which is read from environment variables.
 type Config struct {
-	BatchSize int
+	BatchSize    int
+	MaxBatches   int
+	AnthropicKey string
 }
 
 // The App type shares access to resources.
 type App struct {
-	Config         Config
-	DB             *pgxpool.Pool
-	SourcesStore   *sources.PgxStore
-	PredictorStore *predictor.PgxStore
+	Config          Config
+	DB              *pgxpool.Pool
+	SourcesStore    *sources.PgxStore
+	PredictorStore  *predictor.PgxStore
+	AnthropicClient *anthropic.Client
 }
 
 func NewApp(ctx context.Context) (*App, error) {
 	a := App{}
 
+	akey := os.Getenv("ANTHROPIC_DEV_KEY")
+	if akey == "" {
+		return nil, errors.New("key for Anthropic API not set or empty")
+	}
+
 	// Set up configuration
 	config := Config{
-		BatchSize: 10,
+		BatchSize:    5,
+		MaxBatches:   3,
+		AnthropicKey: akey,
 	}
 	a.Config = config
 
@@ -44,6 +58,10 @@ func NewApp(ctx context.Context) (*App, error) {
 	// Initialize the interfaces to the database
 	a.SourcesStore = sources.NewPgxStore(a.DB)
 	a.PredictorStore = predictor.NewPgxStore(a.DB)
+
+	a.AnthropicClient = anthropic.NewClient(
+		option.WithAPIKey(a.Config.AnthropicKey),
+	)
 
 	return &a, nil
 }

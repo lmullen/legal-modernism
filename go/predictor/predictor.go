@@ -6,19 +6,21 @@ import (
 	"encoding/json"
 	"time"
 
+	"github.com/anthropics/anthropic-sdk-go"
 	"github.com/google/uuid"
 	"github.com/lmullen/legal-modernism/go/sources"
 )
 
 // A Batch is a set of requests to the API.
 type Batch struct {
-	ID          uuid.UUID
-	AnthropicID sql.NullString
-	CreatedAt   time.Time
-	LastChecked time.Time
-	Status      string
-	Result      json.RawMessage
-	Requests    []*Request
+	ID             uuid.UUID
+	AnthropicID    sql.NullString
+	CreatedAt      time.Time
+	LastChecked    time.Time
+	Status         string
+	Result         json.RawMessage
+	Requests       []*Request
+	AnthropicBatch *anthropic.BetaMessageBatch
 }
 
 // String returns the BatchID
