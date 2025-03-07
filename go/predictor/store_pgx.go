@@ -71,3 +71,53 @@ func (s *PgxStore) RecordBatch(ctx context.Context, b *Batch) error {
 
 	return nil
 }
+
+func (s *PgxStore) SentBatch(ctx context.Context, b *Batch) error {
+	batchQuery := `
+	UPDATE predictor.batches
+	SET anthropic_id = $1, status = $2
+	WHERE id = $3;
+	`
+
+	requestQuery := `
+	UPDATE predictor.requests 
+	SET status = $1
+	WHERE id = $2;
+	`
+
+	tx, err := s.DB.Begin(ctx)
+	if err != nil {
+		return fmt.Errorf("error creating transaction updating sent batch in database: %w", err)
+	}
+	defer tx.Rollback(ctx)
+
+	// Update the batch itself in the database
+	_, err = tx.Exec(ctx, batchQuery, b.AnthropicID, b.Status, b.ID)
+	if err != nil {
+		tx.Rollback(ctx)
+		return fmt.Errorf("error updating batch in database: %w", err)
+	}
+
+	// Record each request to the database
+	for _, r := range b.Requests {
+		select {
+		case <-ctx.Done():
+			tx.Rollback(context.TODO())
+			return errors.New("transaction rolledback because context canceled")
+		default:
+			_, err := tx.Exec(ctx, requestQuery, r.Status, r.ID)
+			if err != nil {
+				tx.Rollback(ctx)
+				return fmt.Errorf("error updating request in database: %w", err)
+			}
+		}
+	}
+
+	err = tx.Commit(ctx)
+	if err != nil {
+		tx.Rollback(ctx)
+		return fmt.Errorf("error comitting transaction updating batch: %w", err)
+	}
+
+	return nil
+}

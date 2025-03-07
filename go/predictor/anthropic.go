@@ -23,10 +23,17 @@ func (b *Batch) SendAnthropicBatch(ctx context.Context, client anthropic.Client)
 		return err
 	}
 
+	// Now we know the Anthropic batch ID
 	b.AnthropicID.String = msgBatch.ID
 	b.AnthropicID.Valid = true
 
 	b.AnthropicBatch = msgBatch
+
+	// Update batch status
+	b.Status = "sent"
+	for _, r := range b.Requests {
+		r.Status = "sent"
+	}
 
 	return nil
 }
