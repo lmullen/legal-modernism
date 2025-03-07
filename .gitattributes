@@ -1,4 +1,5 @@
 text=auto
 *.html linguist-detectable=false
 *.ipynb linguist-detectable=false
+*.sql linguist-language=sql
 db/schema.sql linguist-generated
