@@ -35,12 +35,15 @@ func main() {
 	// Listen for shutdown signals in a go routine and cancel context then
 	go func() {
 		select {
-		case sig := <-quit:
-			slog.Info("shutdown signal received", "signal", sig.String())
+		case sig := <-quit: // first signal, cancel context
+			slog.Info("shutdown signal received, shutting down cleanly", "signal", sig.String())
 			cancel()
 		case <-ctx.Done():
 			slog.Debug("main context done")
 		}
+		sig := <-quit // second signal, hard exit
+		slog.Warn("second shutdown signal received, shutting down immediately", "signal", sig.String())
+		os.Exit(2)
 	}()
 
 	// Create the app first
