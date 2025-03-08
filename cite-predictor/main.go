@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"os"
 	"os/signal"
+	"sync"
 	"syscall"
 )
 
@@ -55,10 +56,19 @@ func main() {
 	}
 
 	slog.Info("running the app")
-	err = app.Run(ctx)
-	if err != nil {
-		slog.Error("error running app", "error", err)
-		os.Exit(2)
-	}
+
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		err := app.SendBatches(ctx)
+		if err != nil {
+			slog.Error("error in sending subprocess", "error", err)
+			cancel()
+			os.Exit(2)
+		}
+		wg.Done()
+	}()
+
+	wg.Wait()
 
 }

@@ -28,11 +28,18 @@ func (b *Batch) String() string {
 	return b.ID.String()
 }
 
-func (b *Batch) Anthropic() string {
+func (b *Batch) Anthropic() *string {
 	if b.AnthropicID.Valid {
-		return b.AnthropicID.String
+		return &b.AnthropicID.String
 	}
-	return ""
+	return nil
+}
+
+// LogID returns a slice of keys and values to be used in structured logging.
+//
+// For example: slog.Info("logging batch", b.LogID()...)
+func (b *Batch) LogID() []any {
+	return []any{"batch_id", b.ID, "anthropic_id", b.Anthropic()}
 }
 
 // NumRequests returns the number of requests in a batch

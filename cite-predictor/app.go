@@ -40,7 +40,7 @@ func NewApp(ctx context.Context) (*App, error) {
 
 	// Set up configuration
 	config := Config{
-		BatchSize:    5,
+		BatchSize:    3,
 		MaxBatches:   3,
 		AnthropicKey: akey,
 	}
