@@ -37,6 +37,13 @@ func (a *App) SendBatches(ctx context.Context) error {
 			batch := predictor.NewBatch(pages, "testing")
 			slog.Debug("got new batch from database", batch.LogID()...)
 
+			// If there are zero items in the batch, then there must not be any work
+			// left in the database, and so we can exit this function
+			if len(batch.Requests) == 0 {
+				slog.Info("batch has zero items: no work left to do", batch.LogID()...)
+				return nil
+			}
+
 			// Record the batch in the database so it will be tracked
 			slog.Debug("recording batch to database", batch.LogID()...)
 			err = a.PredictorStore.RecordBatch(ctx, batch)
