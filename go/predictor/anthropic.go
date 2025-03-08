@@ -6,8 +6,8 @@ import (
 	"github.com/anthropics/anthropic-sdk-go"
 )
 
-// SendAnthropicBatch creates and submits a batch of requests, one for each page in the batch
-func (b *Batch) SendAnthropicBatch(ctx context.Context, client anthropic.Client) error {
+// SendBatchToAnthropic creates and submits a batch of requests, one for each page in the batch
+func (b *Batch) SendBatchToAnthropic(ctx context.Context, client anthropic.Client) error {
 	// Create a request for each item in the batch
 	reqs := make([]anthropic.BetaMessageBatchNewParamsRequest, b.NumRequests())
 	for i := range b.NumRequests() {

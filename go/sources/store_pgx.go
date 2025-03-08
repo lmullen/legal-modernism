@@ -99,9 +99,9 @@ func (p *PgxStore) GetOCRSubstitutions(ctx context.Context) ([]*OCRSubstitution,
 	return subs, nil
 }
 
-// GetBatchOfUnprocessedPages get a set number of OCR pages from the database.
+// GetBatch get a set number of OCR pages from the database.
 // Note that this is limited to the body pages of U.S. treatises.
-func (p *PgxStore) GetBatchOfUnprocessedPages(ctx context.Context, batchSize int) ([]*TreatisePage, error) {
+func (p *PgxStore) GetBatch(ctx context.Context, batchSize int) ([]*TreatisePage, error) {
 
 	if batchSize < 0 {
 		return nil, ErrBatchSize

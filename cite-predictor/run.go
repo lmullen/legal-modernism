@@ -29,7 +29,7 @@ func (a *App) SendBatches(ctx context.Context) error {
 
 			// Get a batch of pages from the database
 			slog.Debug("getting new batch from database")
-			pages, err := a.SourcesStore.GetBatchOfUnprocessedPages(ctx, a.Config.BatchSize)
+			pages, err := a.SourcesStore.GetBatch(ctx, a.Config.BatchSize)
 			if err != nil {
 				slog.Error("error getting batch from database", "error", err)
 				return err
@@ -47,7 +47,7 @@ func (a *App) SendBatches(ctx context.Context) error {
 			slog.Debug("recorded batch in database", batch.LogID()...)
 
 			slog.Debug("sending batch to Anthropic", batch.LogID()...)
-			err = batch.SendAnthropicBatch(ctx, *a.AnthropicClient)
+			err = batch.SendBatchToAnthropic(ctx, *a.AnthropicClient)
 			if err != nil {
 				slog.Error("error sending batch to Anthropic", append(batch.LogID(), "error", err)...)
 				return err
