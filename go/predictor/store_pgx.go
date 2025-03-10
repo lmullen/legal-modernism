@@ -152,3 +152,31 @@ func (s *PgxStore) BatchToCheck(ctx context.Context, delay time.Duration) (*Batc
 
 	return &b, nil
 }
+
+func (s *PgxStore) UpdateCheckedBatch(ctx context.Context, b *Batch) error {
+	query := `UPDATE predictor.batches
+	SET last_checked = $1,
+			status = $2,
+			result = $3
+	WHERE id = $4;`
+
+	tx, err := s.DB.Begin(ctx)
+	if err != nil {
+		return fmt.Errorf("error creating transaction to update batch in database: %w", err)
+	}
+
+	_, err = tx.Exec(ctx, query, b.LastChecked, b.Status, b.Result, b.ID)
+	if err != nil {
+		tx.Rollback(ctx)
+		return fmt.Errorf("error updating batch in database: %w", err)
+	}
+
+	err = tx.Commit(ctx)
+	if err != nil {
+		tx.Rollback(ctx)
+		return fmt.Errorf("error comitting transaction updating batch: %w", err)
+	}
+
+	return nil
+
+}

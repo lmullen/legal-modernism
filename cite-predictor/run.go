@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"log/slog"
 	"time"
 
@@ -115,6 +116,36 @@ func (a *App) GetBatches(ctx context.Context) error {
 				return err
 			}
 			slog.Debug("got a batch to retrieve from the database", b.LogID()...)
+
+			slog.Debug("checking batch status at Anthropic", b.LogID()...)
+			out, err := a.AnthropicClient.Messages.Batches.Get(ctx, *b.Anthropic())
+			if err != nil {
+				slog.Error("error getting batch status from Anthropic", append(b.LogID(), "error", err)...)
+				return err
+			}
+			slog.Debug("got batch status at Anthropic", b.LogID()...)
+
+			// Update the details about the batch, which need to be recorded to the
+			// database no matter what
+			b.LastChecked = time.Now()
+			b.Status = string(out.ProcessingStatus)
+			bytes, err := json.Marshal(out)
+			if err != nil {
+				slog.Error("error unmarshalling batch result JSON", append(b.LogID(), "error", err)...)
+				return err
+			}
+			b.Result = bytes
+
+			// TODO: Actually get the batch results
+
+			slog.Debug("updating batch status in database", b.LogID()...)
+			err = a.PredictorStore.UpdateCheckedBatch(ctx, b)
+			if err != nil {
+				slog.Error("error updating batch in database", append(b.LogID(), "error", err)...)
+				return err
+			}
+
+			return nil
 
 		}
 

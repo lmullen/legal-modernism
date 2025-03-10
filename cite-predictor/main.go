@@ -75,7 +75,7 @@ func main() {
 	go func() {
 		err := app.GetBatches(ctx)
 		if err != nil {
-			slog.Error("error in sending subprocess", "error", err)
+			slog.Error("error in retrieving subprocess", "error", err)
 			cancel()
 			os.Exit(2)
 		}
