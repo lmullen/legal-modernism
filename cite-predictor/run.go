@@ -11,8 +11,10 @@ import (
 // Anthropic one at at time.
 func (a *App) SendBatches(ctx context.Context) error {
 
+	var batchesSent int64
+
 	slog.Info("started sending batches to Anthropic",
-		"max_batches", a.Config.MaxBatches)
+		"batches_sent", batchesSent, "max_batches", a.Config.MaxBatches)
 
 	for i := range a.Config.MaxBatches {
 		// Check whether the app has been canceled before sending each batch
@@ -71,10 +73,13 @@ func (a *App) SendBatches(ctx context.Context) error {
 
 			// Single log value when things are working
 			slog.Info("successfully sent batch to Anthropic", batch.LogID()...)
+			batchesSent++
 		}
 
 	}
 
-	slog.Info("finished sending batches to Anthropic")
+	slog.Info("finished sending batches to Anthropic",
+		"batches_sent", batchesSent, "max_batches", a.Config.MaxBatches)
+
 	return nil
 }

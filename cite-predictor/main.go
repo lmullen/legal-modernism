@@ -48,14 +48,14 @@ func main() {
 	}()
 
 	// Create the app first
-	slog.Info("setting up resources")
+	slog.Debug("setting up resources")
 	app, err := NewApp(ctx)
 	if err != nil {
 		slog.Error("error setting up resources", "error", err)
 		os.Exit(1)
 	}
 
-	slog.Info("running the app")
+	slog.Debug("running the app")
 
 	var wg sync.WaitGroup
 	wg.Add(1)
