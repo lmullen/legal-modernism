@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"log/slog"
+	"time"
 
 	"github.com/lmullen/legal-modernism/go/predictor"
 )
@@ -82,4 +84,40 @@ func (a *App) SendBatches(ctx context.Context) error {
 		"batches_sent", batchesSent, "max_batches", a.Config.MaxBatches)
 
 	return nil
+}
+
+// GetBatches checks for batches that have been sent to Anthropic and retrives
+// them.
+func (a *App) GetBatches(ctx context.Context) error {
+
+	slog.Info("started retrieving batches from Anthropic")
+
+	// Keep checking for batches until told to stop via context cancellation
+	for {
+		select {
+		case <-ctx.Done():
+			slog.Info("canceled retrieving batches from Anthropic")
+			return nil
+
+		default:
+
+			slog.Debug("getting a batch to retrieve from the database")
+			b, err := a.PredictorStore.BatchToCheck(ctx, a.Config.PollDelay)
+			// If there are no batches in the database, wait at least as long as the poll
+			// delay before, then check again.
+			if err == sql.ErrNoRows {
+				time.Sleep(a.Config.PollDelay)
+				continue
+			}
+			// This is an actual error, so quit this subprocess
+			if err != nil {
+				slog.Error("error getting batch to check from database", "error", err)
+				return err
+			}
+			slog.Debug("got a batch to retrieve from the database", b.LogID()...)
+
+		}
+
+	}
+
 }

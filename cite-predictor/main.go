@@ -58,9 +58,22 @@ func main() {
 	slog.Debug("running the app")
 
 	var wg sync.WaitGroup
+
+	// Send batches to Claude
+	// wg.Add(1)
+	// go func() {
+	// 	err := app.SendBatches(ctx)
+	// 	if err != nil {
+	// 		slog.Error("error in sending subprocess", "error", err)
+	// 		cancel()
+	// 		os.Exit(2)
+	// 	}
+	// 	wg.Done()
+	// }()
+
 	wg.Add(1)
 	go func() {
-		err := app.SendBatches(ctx)
+		err := app.GetBatches(ctx)
 		if err != nil {
 			slog.Error("error in sending subprocess", "error", err)
 			cancel()

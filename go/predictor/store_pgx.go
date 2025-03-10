@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/jackc/pgx/v4/pgxpool"
 )
@@ -55,7 +56,8 @@ func (s *PgxStore) RecordBatch(ctx context.Context, b *Batch) error {
 			tx.Rollback(context.TODO())
 			return errors.New("transaction rolledback because context canceled")
 		default:
-			_, err := tx.Exec(ctx, requestQuery, r.ID, r.BatchID, r.PsmID(), r.PageID(), r.Purpose, r.Status, nil)
+			_, err := tx.Exec(ctx, requestQuery,
+				r.ID, r.BatchID, r.PsmID(), r.PageID(), r.Purpose, r.Status, nil)
 			if err != nil {
 				tx.Rollback(ctx)
 				return fmt.Errorf("error recording request in database: %w", err)
@@ -120,4 +122,33 @@ func (s *PgxStore) SentBatch(ctx context.Context, b *Batch) error {
 	}
 
 	return nil
+}
+
+// BatchToCheck gets a single batch that was last checked longer ago than the
+// delay. It will return the batch that was checked longest ago, which is likely
+// the oldest batch created unless a batch has been checked before.
+//
+// An error value of sql.ErrNoRows will be returned if no such batch is available.
+//
+// The individual requests associated with the batch will not be returned.
+func (s *PgxStore) BatchToCheck(ctx context.Context, delay time.Duration) (*Batch, error) {
+	query := `SELECT id, anthropic_id, created_at, last_checked, status, result
+	FROM predictor.batches
+	WHERE last_checked < $1 AND status = 'sent'
+	ORDER BY last_checked
+	LIMIT 1;`
+
+	var b Batch
+
+	now := time.Now()
+	checkBefore := now.Add(-delay)
+
+	err := s.DB.QueryRow(ctx, query, checkBefore).Scan(
+		&b.ID, &b.AnthropicID, &b.CreatedAt, &b.LastChecked, &b.Status, &b.Result,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &b, nil
 }

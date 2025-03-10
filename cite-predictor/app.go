@@ -5,6 +5,7 @@ import (
 	"errors"
 	"log/slog"
 	"os"
+	"time"
 
 	"github.com/anthropics/anthropic-sdk-go"
 	"github.com/anthropics/anthropic-sdk-go/option"
@@ -15,10 +16,12 @@ import (
 )
 
 // The Config type stores configuration which is read from environment variables.
+// - Batch
 type Config struct {
 	BatchSize    int
 	MaxBatches   int
 	AnthropicKey string
+	PollDelay    time.Duration
 }
 
 // The App type shares access to resources.
@@ -41,8 +44,9 @@ func NewApp(ctx context.Context) (*App, error) {
 	// Set up configuration
 	config := Config{
 		BatchSize:    3,
-		MaxBatches:   3,
+		MaxBatches:   0,
 		AnthropicKey: akey,
+		PollDelay:    15 * time.Second,
 	}
 	a.Config = config
 
