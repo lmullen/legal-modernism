@@ -53,7 +53,7 @@ func (a *App) SendBatches(ctx context.Context) error {
 			slog.Debug("recording batch to database", batch.LogID()...)
 			err = a.PredictorStore.RecordBatch(ctx, batch)
 			if err != nil {
-				slog.Error("error recording batch in database", append(batch.LogID(), "error", err)...)
+				slog.Error("error recording batch in database", batch.LogID("error", err)...)
 				return err
 			}
 			slog.Debug("recorded batch in database", batch.LogID()...)
@@ -61,7 +61,7 @@ func (a *App) SendBatches(ctx context.Context) error {
 			slog.Debug("sending batch to Anthropic", batch.LogID()...)
 			err = batch.SendBatchToAnthropic(ctx, *a.AnthropicClient)
 			if err != nil {
-				slog.Error("error sending batch to Anthropic", append(batch.LogID(), "error", err)...)
+				slog.Error("error sending batch to Anthropic", batch.LogID("error", err)...)
 				return err
 			}
 			slog.Debug("sent batch to Anthropic", batch.LogID()...)
@@ -69,7 +69,7 @@ func (a *App) SendBatches(ctx context.Context) error {
 			slog.Debug("updating batch in database", batch.LogID()...)
 			err = a.PredictorStore.SentBatch(ctx, batch)
 			if err != nil {
-				slog.Error("error recording sent batch", append(batch.LogID(), "error", err)...)
+				slog.Error("error recording sent batch", batch.LogID("error", err)...)
 				return err
 			}
 			slog.Debug("updated batch in database", batch.LogID()...)
@@ -120,7 +120,7 @@ func (a *App) GetBatches(ctx context.Context) error {
 			slog.Debug("checking batch status at Anthropic", b.LogID()...)
 			out, err := a.AnthropicClient.Messages.Batches.Get(ctx, *b.Anthropic())
 			if err != nil {
-				slog.Error("error getting batch status from Anthropic", append(b.LogID(), "error", err)...)
+				slog.Error("error getting batch status from Anthropic", b.LogID("error", err)...)
 				return err
 			}
 			slog.Debug("got batch status at Anthropic", b.LogID()...)
@@ -131,7 +131,7 @@ func (a *App) GetBatches(ctx context.Context) error {
 			b.Status = string(out.ProcessingStatus)
 			bytes, err := json.Marshal(out)
 			if err != nil {
-				slog.Error("error unmarshalling batch result JSON", append(b.LogID(), "error", err)...)
+				slog.Error("error unmarshalling batch result JSON", b.LogID("error", err)...)
 				return err
 			}
 			b.Result = bytes
@@ -141,7 +141,7 @@ func (a *App) GetBatches(ctx context.Context) error {
 			slog.Debug("updating batch status in database", b.LogID()...)
 			err = a.PredictorStore.UpdateCheckedBatch(ctx, b)
 			if err != nil {
-				slog.Error("error updating batch in database", append(b.LogID(), "error", err)...)
+				slog.Error("error updating batch in database", b.LogID("error", err)...)
 				return err
 			}
 

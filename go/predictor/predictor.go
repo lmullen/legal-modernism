@@ -38,8 +38,12 @@ func (b *Batch) Anthropic() *string {
 // LogID returns a slice of keys and values to be used in structured logging.
 //
 // For example: slog.Info("logging batch", b.LogID()...)
-func (b *Batch) LogID() []any {
-	return []any{"batch_id", b.ID, "anthropic_id", b.Anthropic()}
+//
+// Pass in additional keys and values to also log them.
+//
+// For example: slog.Info("error in batch", b.LogID("error", err)...)
+func (b *Batch) LogID(args ...any) []any {
+	return append([]any{"batch_id", b.ID, "anthropic_id", b.Anthropic()}, args...)
 }
 
 // NumRequests returns the number of requests in a batch
