@@ -9,12 +9,9 @@ import (
 // otherwise use INFO. Emit logs as JSON to stderr.
 func initLogger() {
 	env := os.Getenv("LAW_DEBUG")
-	var level slog.Level
+	level := slog.LevelInfo
 	if env == "debug" || env == "true" {
 		level = slog.LevelDebug
-	} else {
-		level = slog.LevelInfo
-
 	}
 	opts := &slog.HandlerOptions{Level: level}
 	handler := slog.NewJSONHandler(os.Stderr, opts)
