@@ -9,15 +9,14 @@ import (
 // SendBatchToAnthropic creates and submits a batch of requests, one for each page in the batch
 func (b *Batch) SendBatchToAnthropic(ctx context.Context, client anthropic.Client) error {
 	// Create a request for each item in the batch
-	reqs := make([]anthropic.BetaMessageBatchNewParamsRequest, b.NumRequests())
+	reqs := make([]anthropic.MessageBatchNewParamsRequest, b.NumRequests())
 	for i := range b.NumRequests() {
 		reqs[i] = b.Requests[i].CreateAnthropicMessage()
 	}
 
 	// Put the requests in the batch and send it
-	msgBatch, err := client.Beta.Messages.Batches.New(ctx, anthropic.BetaMessageBatchNewParams{
+	msgBatch, err := client.Messages.Batches.New(ctx, anthropic.MessageBatchNewParams{
 		Requests: anthropic.F(reqs),
-		Betas:    anthropic.F([]anthropic.AnthropicBeta{anthropic.AnthropicBetaMessageBatches2024_09_24}),
 	})
 	if err != nil {
 		return err
@@ -40,21 +39,21 @@ func (b *Batch) SendBatchToAnthropic(ctx context.Context, client anthropic.Clien
 
 // CreateAnthropicRequest creates a message tied to a specific treatise page.
 // This is intended to be used in a batch.
-func (r *Request) CreateAnthropicMessage() anthropic.BetaMessageBatchNewParamsRequest {
+func (r *Request) CreateAnthropicMessage() anthropic.MessageBatchNewParamsRequest {
 
 	// TODO: Replace with a prompt that does real work.
 	prompt := "Write a limerick on a subject of your choice."
 
-	msg := anthropic.BetaMessageBatchNewParamsRequest{
+	msg := anthropic.MessageBatchNewParamsRequest{
 		CustomID: anthropic.F(r.ID.String()),
-		Params: anthropic.F(anthropic.BetaMessageBatchNewParamsRequestsParams{
+		Params: anthropic.F(anthropic.MessageNewParams{
 			MaxTokens: anthropic.F(int64(1024)),
-			Messages: anthropic.F([]anthropic.BetaMessageParam{
+			Messages: anthropic.F([]anthropic.MessageParam{
 				{
-					Content: anthropic.F([]anthropic.BetaContentBlockParamUnion{
-						anthropic.BetaTextBlockParam{
+					Content: anthropic.F([]anthropic.ContentBlockParamUnion{
+						anthropic.TextBlockParam{
 							Text: anthropic.F(prompt),
-							Type: anthropic.F(anthropic.BetaTextBlockParamTypeText),
+							Type: anthropic.F(anthropic.TextBlockParamTypeText),
 							// CacheControl: anthropic.F(anthropic.BetaCacheControlEphemeralParam{
 							// 	Type: anthropic.F(anthropic.BetaCacheControlEphemeralTypeEphemeral),
 							// }),
@@ -70,7 +69,7 @@ func (r *Request) CreateAnthropicMessage() anthropic.BetaMessageBatchNewParamsRe
 							// }),
 						},
 					}),
-					Role: anthropic.F(anthropic.BetaMessageParamRoleUser),
+					Role: anthropic.F(anthropic.MessageParamRoleUser),
 				},
 			}),
 			Model: anthropic.F(anthropic.ModelClaude3_7SonnetLatest),

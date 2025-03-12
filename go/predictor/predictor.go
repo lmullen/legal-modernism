@@ -20,7 +20,8 @@ type Batch struct {
 	Status         string
 	Result         json.RawMessage
 	Requests       []*Request
-	AnthropicBatch *anthropic.BetaMessageBatch
+	AnthropicBatch *anthropic.MessageBatch
+	ItemResults    []*ItemResult
 }
 
 // String returns the BatchID
@@ -100,4 +101,10 @@ func NewRequest(page *sources.TreatisePage, batch uuid.UUID, purpose string) *Re
 	r.Status = "recorded"
 	r.Page = page
 	return &r
+}
+
+type ItemResult struct {
+	ID     uuid.UUID
+	Status string
+	Result json.RawMessage
 }

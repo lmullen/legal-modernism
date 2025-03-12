@@ -7,7 +7,10 @@ import (
 	"log/slog"
 	"time"
 
+	"github.com/anthropics/anthropic-sdk-go"
+	"github.com/google/uuid"
 	"github.com/lmullen/legal-modernism/go/predictor"
+	"github.com/tidwall/gjson"
 )
 
 // SendBatches identifies work to be done from the database and sends batches to
@@ -136,7 +139,35 @@ func (a *App) GetBatches(ctx context.Context) error {
 			}
 			b.Result = bytes
 
-			// TODO: Actually get the batch results
+			// If the batch is actually ended, then get the results
+			var ir []*predictor.ItemResult
+			if out.ProcessingStatus == anthropic.MessageBatchProcessingStatusEnded {
+				slog.Debug("getting item results for batch", b.LogID()...)
+				results := a.AnthropicClient.Messages.Batches.ResultsStreaming(ctx, out.ID)
+				// The results are streaming so check them one by one
+				for {
+					if !results.Next() {
+						// There are no more results, so quit this loop
+						break
+					}
+					// There is a new result
+					id, err := uuid.Parse(results.Current().CustomID)
+					if err != nil {
+						slog.Error("unable to parse result UUID", "error", err)
+						continue
+					}
+					status := gjson.Get(results.Current().JSON.RawJSON(), "result.type")
+					r := predictor.ItemResult{
+						ID:     id,
+						Status: status.String(),
+						Result: json.RawMessage(results.Current().JSON.RawJSON()),
+					}
+					ir = append(ir, &r)
+				}
+				slog.Debug("got item results for batch", b.LogID("num_results", len(ir))...)
+			}
+
+			b.ItemResults = ir
 
 			slog.Debug("updating batch status in database", b.LogID()...)
 			err = a.PredictorStore.UpdateCheckedBatch(ctx, b)
@@ -144,6 +175,7 @@ func (a *App) GetBatches(ctx context.Context) error {
 				slog.Error("error updating batch in database", b.LogID("error", err)...)
 				return err
 			}
+			slog.Debug("updated batch status in database", b.LogID()...)
 
 			return nil
 
