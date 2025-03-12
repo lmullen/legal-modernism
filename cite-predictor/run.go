@@ -120,7 +120,7 @@ func (a *App) GetBatches(ctx context.Context) error {
 						continue
 					}
 					if !any {
-						slog.Info("no in-progress batches at Anthropic to check")
+						slog.Info("no in-progress batches to retrieve, not checking for more")
 						return nil
 					}
 					continue
