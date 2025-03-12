@@ -111,7 +111,13 @@ func (a *App) GetBatches(ctx context.Context) error {
 			// delay before, then check again.
 			if err == pgx.ErrNoRows {
 				slog.Debug("no batches to retrieve, waiting to check again", "delay", a.Config.PollDelay.String())
-				time.Sleep(a.Config.PollDelay)
+				select {
+				case <-time.After(a.Config.PollDelay):
+					// Continue normally after delay
+				case <-ctx.Done():
+					slog.Info("canceled retrieving batches from Anthropic")
+					return nil
+				}
 				continue
 			}
 			// This is an actual error, so quit this subprocess
@@ -177,6 +183,11 @@ func (a *App) GetBatches(ctx context.Context) error {
 				return err
 			}
 			slog.Debug("updated batch status in database", b.LogID()...)
+
+			// If processing isn't ended, then we will have to check again
+			if out.ProcessingStatus == anthropic.MessageBatchProcessingStatusEnded {
+				slog.Info("retrieved batch and results", b.LogID()...)
+			}
 
 		}
 
