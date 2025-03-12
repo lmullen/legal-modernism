@@ -2,13 +2,13 @@ package main
 
 import (
 	"context"
-	"database/sql"
 	"encoding/json"
 	"log/slog"
 	"time"
 
 	"github.com/anthropics/anthropic-sdk-go"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v4"
 	"github.com/lmullen/legal-modernism/go/predictor"
 	"github.com/tidwall/gjson"
 )
@@ -109,7 +109,8 @@ func (a *App) GetBatches(ctx context.Context) error {
 			b, err := a.PredictorStore.BatchToCheck(ctx, a.Config.PollDelay)
 			// If there are no batches in the database, wait at least as long as the poll
 			// delay before, then check again.
-			if err == sql.ErrNoRows {
+			if err == pgx.ErrNoRows {
+				slog.Debug("no batches to retrieve, waiting to check again", "delay", a.Config.PollDelay.String())
 				time.Sleep(a.Config.PollDelay)
 				continue
 			}
@@ -176,8 +177,6 @@ func (a *App) GetBatches(ctx context.Context) error {
 				return err
 			}
 			slog.Debug("updated batch status in database", b.LogID()...)
-
-			return nil
 
 		}
 

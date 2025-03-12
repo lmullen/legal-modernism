@@ -134,7 +134,7 @@ func (s *PgxStore) SentBatch(ctx context.Context, b *Batch) error {
 func (s *PgxStore) BatchToCheck(ctx context.Context, delay time.Duration) (*Batch, error) {
 	query := `SELECT id, anthropic_id, created_at, last_checked, status, result
 	FROM predictor.batches
-	WHERE last_checked < $1 AND status = 'sent'
+	WHERE last_checked < $1 AND (status = 'sent' OR status = 'in_progress')
 	ORDER BY last_checked
 	LIMIT 1;`
 
