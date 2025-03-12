@@ -1651,6 +1651,20 @@ CREATE INDEX moml_page_to_cap_case_moml_treatise_idx ON moml_citations.page_to_c
 
 
 --
+-- Name: batches_last_checked_idx; Type: INDEX; Schema: predictor; Owner: -
+--
+
+CREATE INDEX batches_last_checked_idx ON predictor.batches USING btree (last_checked);
+
+
+--
+-- Name: batches_status_idx; Type: INDEX; Schema: predictor; Owner: -
+--
+
+CREATE INDEX batches_status_idx ON predictor.batches USING btree (status);
+
+
+--
 -- Name: requests_batch_id_idx; Type: INDEX; Schema: predictor; Owner: -
 --
 
@@ -1867,4 +1881,5 @@ INSERT INTO sys_admin.migrations_dbmate (version) VALUES
     ('20250214191156'),
     ('20250214191825'),
     ('20250214195229'),
-    ('20250227185605');
+    ('20250227185605'),
+    ('20250312194506');

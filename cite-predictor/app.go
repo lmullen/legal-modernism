@@ -44,7 +44,7 @@ func NewApp(ctx context.Context) (*App, error) {
 	// Set up configuration
 	config := Config{
 		BatchSize:    3,
-		MaxBatches:   1,
+		MaxBatches:   3,
 		AnthropicKey: akey,
 		PollDelay:    15 * time.Second,
 	}

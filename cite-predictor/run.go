@@ -105,20 +105,30 @@ func (a *App) GetBatches(ctx context.Context) error {
 
 		default:
 
-			slog.Debug("getting a batch to retrieve from the database")
+			slog.Debug("looking for a batch ready to be checked at Anthropic")
 			b, err := a.PredictorStore.BatchToCheck(ctx, a.Config.PollDelay)
 			// If there are no batches in the database, wait at least as long as the poll
 			// delay before, then check again.
 			if err == pgx.ErrNoRows {
-				slog.Debug("no batches to retrieve, waiting to check again", "delay", a.Config.PollDelay.String())
+				slog.Debug("no batch is ready to check at Anthropic, waiting...", "delay", a.Config.PollDelay.String())
 				select {
 				case <-time.After(a.Config.PollDelay):
-					// Continue normally after delay
+					// Check whether there are any in progress batches. If not, we can quit
+					any, err := a.PredictorStore.AnyBatches(ctx)
+					if err != nil {
+						slog.Error("error checking if there are any in-progress batches", "error", err)
+						continue
+					}
+					if !any {
+						slog.Info("no in-progress batches at Anthropic to check")
+						return nil
+					}
+					continue
+
 				case <-ctx.Done():
 					slog.Info("canceled retrieving batches from Anthropic")
 					return nil
 				}
-				continue
 			}
 			// This is an actual error, so quit this subprocess
 			if err != nil {

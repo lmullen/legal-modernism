@@ -193,3 +193,19 @@ func (s *PgxStore) UpdateCheckedBatch(ctx context.Context, b *Batch) error {
 	return nil
 
 }
+
+// AnyBatches checkes whether there are any in progress batches, not just ones
+// that haven't been checked recently.
+func (s *PgxStore) AnyBatches(ctx context.Context) (bool, error) {
+	query := `SELECT EXISTS (SELECT 1 FROM predictor.batches 
+						WHERE status = 'sent' OR status = 'in_progress');`
+
+	var any bool
+
+	err := s.DB.QueryRow(ctx, query).Scan(&any)
+	if err != nil {
+		return false, err
+	}
+
+	return any, nil
+}
