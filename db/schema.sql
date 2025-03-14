@@ -1017,6 +1017,32 @@ CREATE MATERIALIZED VIEW moml_citations.bibliocouple_treatises AS
 
 
 --
+-- Name: citations_known; Type: TABLE; Schema: moml_citations; Owner: -
+--
+
+CREATE TABLE moml_citations.citations_known (
+    id uuid,
+    moml_treatise text,
+    moml_page text,
+    cite_found text,
+    cite_found_volume integer,
+    cite_found_reporter text,
+    cite_found_page integer,
+    cite_standard text,
+    cite_standard_volume integer,
+    cite_standard_reporter text,
+    cite_standard_page integer,
+    cite_alternative text,
+    cite_alternative_volume integer,
+    cite_alternative_reporter text,
+    cite_alternative_page integer,
+    uk boolean,
+    case_id_er text,
+    case_id_cap bigint
+);
+
+
+--
 -- Name: batches; Type: TABLE; Schema: predictor; Owner: -
 --
 
@@ -1897,4 +1923,5 @@ INSERT INTO sys_admin.migrations_dbmate (version) VALUES
     ('20250214195229'),
     ('20250227185605'),
     ('20250312194506'),
-    ('20250313174831');
+    ('20250313174831'),
+    ('20250314023722');
