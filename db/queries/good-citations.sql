@@ -36,11 +36,7 @@ WITH
 			vols.cap_vol AS cite_alternative_volume,
 			abbr.cap_abbr AS cite_alternative_reporter,
 			cc.cite_found_page AS cite_alternative_page,
-			CASE
-				WHEN vols.cap_vol IS NOT NULL
-				AND abbr.cap_abbr IS NOT NULL THEN vols.cap_vol || ' ' || abbr.cap_abbr || ' ' || cc.cite_found_page
-				ELSE NULL
-			END AS cite_alternative
+			vols.cap_vol || ' ' || abbr.cap_abbr || ' ' || cc.cite_found_page AS cite_alternative
 		FROM
 			clean_citations cc
 			LEFT JOIN legalhist.reporters_alt_diffvols_abbreviations abbr ON cc.cite_standard_reporter = abbr.alt_abbr
@@ -62,10 +58,13 @@ SELECT
 	cite_alternative,
 	cite_alternative_volume,
 	cite_alternative_reporter,
-	cite_alternative_page,
+	CASE
+		WHEN cite_alternative_reporter IS NULL THEN NULL
+		ELSE cite_found_page
+	END AS cite_alternative_page,
 	uk,
-	NULL AS case_id_er,
-	NULL AS case_id_cap
+	NULL::TEXT AS case_id_er,
+	NULL::BIGINT AS case_id_cap
 FROM
 	alternative_vols
 WHERE
