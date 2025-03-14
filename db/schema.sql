@@ -1483,6 +1483,13 @@ CREATE INDEX er_cases_er_year_idx ON english_reports.cases USING btree (er_year)
 
 
 --
+-- Name: idx_alt_diffvols_volumes_composite; Type: INDEX; Schema: legalhist; Owner: -
+--
+
+CREATE INDEX idx_alt_diffvols_volumes_composite ON legalhist.reporters_alt_diffvols_volumes USING btree (reporter_title, vol);
+
+
+--
 -- Name: reporter_alt_same_vols_alt_abbr_idx; Type: INDEX; Schema: legalhist; Owner: -
 --
 
@@ -1630,6 +1637,13 @@ CREATE INDEX page_bodytype_idx ON moml.page USING btree (type) WHERE ((type)::te
 
 
 --
+-- Name: idx_citations_unlinked_reporter_abbr; Type: INDEX; Schema: moml_citations; Owner: -
+--
+
+CREATE INDEX idx_citations_unlinked_reporter_abbr ON moml_citations.citations_unlinked USING btree (reporter_abbr);
+
+
+--
 -- Name: moml_page_to_cap_case_case_idx; Type: INDEX; Schema: moml_citations; Owner: -
 --
 
@@ -1648,6 +1662,20 @@ CREATE INDEX moml_page_to_cap_case_moml_page_idx ON moml_citations.page_to_case 
 --
 
 CREATE INDEX moml_page_to_cap_case_moml_treatise_idx ON moml_citations.page_to_case USING btree (moml_treatise);
+
+
+--
+-- Name: batches_last_checked_idx; Type: INDEX; Schema: predictor; Owner: -
+--
+
+CREATE INDEX batches_last_checked_idx ON predictor.batches USING btree (last_checked);
+
+
+--
+-- Name: batches_status_idx; Type: INDEX; Schema: predictor; Owner: -
+--
+
+CREATE INDEX batches_status_idx ON predictor.batches USING btree (status);
 
 
 --
@@ -1867,4 +1895,6 @@ INSERT INTO sys_admin.migrations_dbmate (version) VALUES
     ('20250214191156'),
     ('20250214191825'),
     ('20250214195229'),
-    ('20250227185605');
+    ('20250227185605'),
+    ('20250312194506'),
+    ('20250313174831');
