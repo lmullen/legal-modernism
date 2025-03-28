@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"log/slog"
 	"os"
 	"os/signal"
 	"runtime"
@@ -12,11 +13,10 @@ import (
 	"github.com/lmullen/legal-modernism/go/db"
 	"github.com/lmullen/legal-modernism/go/sources"
 	"github.com/schollz/progressbar/v3"
-	log "github.com/sirupsen/logrus"
 )
 
 func main() {
-	log.Info("Starting the citation detector")
+	slog.Info("Starting the citation detector")
 
 	// Create the worker pool
 	cpuMax := runtime.NumCPU()
@@ -24,7 +24,7 @@ func main() {
 	if cpu < 1 {
 		cpu = 1
 	}
-	log.Infof("Found %v CPUs available, using %v", cpuMax, cpu)
+	slog.Info("CPUs", "available", cpuMax, "using", cpu)
 	wp := workerpool.New(cpu)
 
 	// Create a context and listen for signals to gracefully shutdown the application
@@ -40,20 +40,21 @@ func main() {
 	go func() {
 		select {
 		case <-quit:
-			log.Info("Quitting because shutdown signal received")
+			slog.Info("Quitting because shutdown signal received")
 			cancel()
 			// wp.Stop()
 		case <-ctx.Done():
 		}
 	}()
 
-	log.Info("Connecting to database")
+	slog.Info("Connecting to database")
 	db, err := db.Connect(ctx)
 	if err != nil {
-		log.WithError(err).Fatal("Error connecting to database")
+		slog.Error("could not connect to database", "error", err)
+		os.Exit(1)
 	}
 	defer db.Close()
-	log.Info("Connected to the database")
+	slog.Info("connected to the database")
 
 	// Create the repositories
 	sourcesDB := sources.NewPgxStore(db)
@@ -64,30 +65,31 @@ func main() {
 	detectors = append(detectors, citations.GenericDetector)
 	abbreviations, err := citationsDB.GetSingleVolReporters(ctx)
 	if err != nil {
-		log.WithError(err).Fatal("Error getting single volume reporters from database")
+		slog.Error("could not get single volume reporters from database", "error", err)
+		os.Exit(1)
 	}
 	for _, abbr := range abbreviations {
 		d := citations.NewSingleVolDetector(abbr, abbr)
 		detectors = append(detectors, d)
 	}
-	log.Infof("Prepared generic detector plus %v single-volume detectors", len(detectors)-1)
+	slog.Info("prepared generic detector and single volume detector", "num_detectors", len(detectors))
 
-	log.Info("Getting OCR corrections")
+	slog.Info("Getting OCR corrections")
 	ocrSubs, err := sourcesDB.GetOCRSubstitutions(ctx)
 	if err != nil {
-		log.WithError(err).Fatal("Error getting OCR substitutions")
+		slog.Error("error getting OCR substitutions", "error", err)
 	}
 
-	log.Info("Getting all treatise/page IDs")
+	slog.Info("getting all treatise/page IDs")
 	pageIDs, err := sourcesDB.GetAllTreatisePageIDs(ctx)
 	if err != nil {
-		log.WithError(err).Fatal("Error getting treatise/page IDs")
+		slog.Error("error getting treatise/page IDs", "error", err)
 	}
-	log.Infof("Found %v total pages", len(pageIDs))
+	slog.Info("found pages", "num_pages", len(pageIDs))
 
 	pb := progressbar.Default(int64(len(pageIDs)))
 
-	log.Info("Detecting citations on the treatise pages")
+	slog.Info("detecting citations on the treatise pages")
 
 	for _, pageID := range pageIDs {
 		select {
@@ -103,11 +105,7 @@ func main() {
 					// Do the actual work for each treatise page
 					page, err := sourcesDB.GetTreatisePage(ctx, id.TreatiseID, id.PageID)
 					if err != nil {
-						log.
-							WithError(err).
-							WithField("treatise id", id.TreatiseID).
-							WithField("page id", id.PageID).
-							Error("Error fetching page from database")
+						slog.Error("could not fetch page from database", "treatise_id", id.TreatiseID, "page_id", id.PageID, "error", err)
 					}
 					page.CorrectOCR(ocrSubs)
 					for _, detector := range detectors {
@@ -115,7 +113,7 @@ func main() {
 						for _, cite := range citations {
 							err = citationsDB.SaveCitation(ctx, cite)
 							if err != nil {
-								log.WithError(err).WithField("citation", cite).Error("Error saving citation")
+								slog.Error("could not save citation", "citation", cite, "error", err)
 							}
 						}
 					}
@@ -126,6 +124,6 @@ func main() {
 	}
 
 	wp.StopWait()
-	log.Info("Done detecting citations")
+	slog.Info("done detecting citations")
 
 }
