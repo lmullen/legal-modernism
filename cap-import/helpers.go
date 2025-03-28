@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	"strconv"
 	"time"
 )
@@ -27,14 +26,4 @@ func parseInt(raw string) sql.NullInt32 {
 	}
 	out.Scan(parsed)
 	return out
-}
-
-// consoleTimeFormat sets a simple format for the pretty logs without colors
-func consoleTimeFormat(i interface{}) string {
-	ts := i.(string)
-	t, err := time.Parse(time.RFC3339, ts)
-	if err != nil {
-		return fmt.Sprint(i)
-	}
-	return t.Format(time.Kitchen)
 }

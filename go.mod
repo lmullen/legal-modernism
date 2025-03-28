@@ -8,9 +8,7 @@ require (
 	github.com/gammazero/workerpool v1.1.3
 	github.com/google/uuid v1.6.0
 	github.com/jackc/pgx/v4 v4.18.3
-	github.com/rs/zerolog v1.33.0
 	github.com/schollz/progressbar/v3 v3.18.0
-	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.10.0
 	github.com/ulikunitz/xz v0.5.12
 )
@@ -26,9 +24,8 @@ require (
 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
 	github.com/jackc/pgtype v1.14.4 // indirect
 	github.com/jackc/puddle v1.3.0 // indirect
-	github.com/mattn/go-colorable v0.1.14 // indirect
-	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mitchellh/colorstring v0.0.0-20190213212951-d06e56a500db // indirect
+	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	golang.org/x/crypto v0.33.0 // indirect
