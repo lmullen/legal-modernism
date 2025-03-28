@@ -1,8 +1,6 @@
 module github.com/lmullen/legal-modernism
 
-go 1.23
-
-toolchain go1.23.6
+go 1.24
 
 require (
 	github.com/gammazero/workerpool v1.1.3
