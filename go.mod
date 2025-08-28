@@ -8,7 +8,7 @@ require (
 	github.com/jackc/pgx/v4 v4.18.3
 	github.com/schollz/progressbar/v3 v3.18.0
 	github.com/stretchr/testify v1.10.0
-	github.com/ulikunitz/xz v0.5.12
+	github.com/ulikunitz/xz v0.5.14
 )
 
 require (
