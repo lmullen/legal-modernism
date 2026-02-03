@@ -662,8 +662,7 @@ CREATE TABLE legalhist.reporters_citation_to_cap (
     statute boolean NOT NULL,
     uk boolean NOT NULL,
     junk boolean NOT NULL,
-    cap_different boolean,
-    claude boolean DEFAULT false NOT NULL
+    cap_different boolean
 );
 
 
