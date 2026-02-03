@@ -422,25 +422,6 @@ CREATE TABLE cap.reporters_to_jurisdictions (
 
 
 --
--- Name: unique_citations; Type: MATERIALIZED VIEW; Schema: cap; Owner: -
---
-
-CREATE MATERIALIZED VIEW cap.unique_citations AS
- WITH citation_case_counts AS (
-         SELECT citations.cite,
-            count(DISTINCT citations."case") AS case_count
-           FROM cap.citations
-          GROUP BY citations.cite
-        )
- SELECT DISTINCT c.cite,
-    c."case"
-   FROM (cap.citations c
-     JOIN citation_case_counts cc ON ((c.cite = cc.cite)))
-  WHERE (cc.case_count = 1)
-  WITH NO DATA;
-
-
---
 -- Name: volumes; Type: TABLE; Schema: cap; Owner: -
 --
 
@@ -1388,27 +1369,6 @@ CREATE INDEX reporters_to_jurisdictions_jurisdiction_idx ON cap.reporters_to_jur
 --
 
 CREATE INDEX reporters_to_jurisdictions_reporter_idx ON cap.reporters_to_jurisdictions USING btree (reporter);
-
-
---
--- Name: unique_citations_case_idx; Type: INDEX; Schema: cap; Owner: -
---
-
-CREATE INDEX unique_citations_case_idx ON cap.unique_citations USING btree ("case");
-
-
---
--- Name: unique_citations_cite_case_idx; Type: INDEX; Schema: cap; Owner: -
---
-
-CREATE UNIQUE INDEX unique_citations_cite_case_idx ON cap.unique_citations USING btree (cite, "case");
-
-
---
--- Name: unique_citations_cite_idx; Type: INDEX; Schema: cap; Owner: -
---
-
-CREATE UNIQUE INDEX unique_citations_cite_idx ON cap.unique_citations USING btree (cite);
 
 
 --
