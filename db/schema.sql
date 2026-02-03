@@ -1,3 +1,8 @@
+\restrict dbmate
+
+-- Dumped from database version 17.2 (Debian 17.2-1.pgdg120+1)
+-- Dumped by pg_dump version 17.7 (Homebrew)
+
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
@@ -50,13 +55,6 @@ CREATE SCHEMA moml;
 --
 
 CREATE SCHEMA moml_citations;
-
-
---
--- Name: predictor; Type: SCHEMA; Schema: -; Owner: -
---
-
-CREATE SCHEMA predictor;
 
 
 --
@@ -421,6 +419,25 @@ CREATE TABLE cap.reporters_to_jurisdictions (
     reporter integer,
     jurisdiction integer
 );
+
+
+--
+-- Name: unique_citations; Type: MATERIALIZED VIEW; Schema: cap; Owner: -
+--
+
+CREATE MATERIALIZED VIEW cap.unique_citations AS
+ WITH citation_case_counts AS (
+         SELECT citations.cite,
+            count(DISTINCT citations."case") AS case_count
+           FROM cap.citations
+          GROUP BY citations.cite
+        )
+ SELECT DISTINCT c.cite,
+    c."case"
+   FROM (cap.citations c
+     JOIN citation_case_counts cc ON ((c.cite = cc.cite)))
+  WHERE (cc.case_count = 1)
+  WITH NO DATA;
 
 
 --
@@ -1017,35 +1034,6 @@ CREATE MATERIALIZED VIEW moml_citations.bibliocouple_treatises AS
 
 
 --
--- Name: batches; Type: TABLE; Schema: predictor; Owner: -
---
-
-CREATE TABLE predictor.batches (
-    id uuid NOT NULL,
-    anthropic_id text,
-    created_at timestamp with time zone NOT NULL,
-    last_checked timestamp with time zone NOT NULL,
-    status text NOT NULL,
-    result jsonb
-);
-
-
---
--- Name: requests; Type: TABLE; Schema: predictor; Owner: -
---
-
-CREATE TABLE predictor.requests (
-    id uuid NOT NULL,
-    batch_id uuid NOT NULL,
-    psmid text NOT NULL,
-    pageid text NOT NULL,
-    purpose text NOT NULL,
-    status text NOT NULL,
-    result jsonb
-);
-
-
---
 -- Name: database_size; Type: VIEW; Schema: stats; Owner: -
 --
 
@@ -1304,30 +1292,6 @@ ALTER TABLE ONLY moml_citations.page_to_case
 
 
 --
--- Name: batches batches_anthropic_id_key; Type: CONSTRAINT; Schema: predictor; Owner: -
---
-
-ALTER TABLE ONLY predictor.batches
-    ADD CONSTRAINT batches_anthropic_id_key UNIQUE (anthropic_id);
-
-
---
--- Name: batches batches_pkey; Type: CONSTRAINT; Schema: predictor; Owner: -
---
-
-ALTER TABLE ONLY predictor.batches
-    ADD CONSTRAINT batches_pkey PRIMARY KEY (id);
-
-
---
--- Name: requests requests_pkey; Type: CONSTRAINT; Schema: predictor; Owner: -
---
-
-ALTER TABLE ONLY predictor.requests
-    ADD CONSTRAINT requests_pkey PRIMARY KEY (id);
-
-
---
 -- Name: migrations_dbmate migrations_dbmate_pkey; Type: CONSTRAINT; Schema: sys_admin; Owner: -
 --
 
@@ -1424,6 +1388,27 @@ CREATE INDEX reporters_to_jurisdictions_jurisdiction_idx ON cap.reporters_to_jur
 --
 
 CREATE INDEX reporters_to_jurisdictions_reporter_idx ON cap.reporters_to_jurisdictions USING btree (reporter);
+
+
+--
+-- Name: unique_citations_case_idx; Type: INDEX; Schema: cap; Owner: -
+--
+
+CREATE INDEX unique_citations_case_idx ON cap.unique_citations USING btree ("case");
+
+
+--
+-- Name: unique_citations_cite_case_idx; Type: INDEX; Schema: cap; Owner: -
+--
+
+CREATE UNIQUE INDEX unique_citations_cite_case_idx ON cap.unique_citations USING btree (cite, "case");
+
+
+--
+-- Name: unique_citations_cite_idx; Type: INDEX; Schema: cap; Owner: -
+--
+
+CREATE UNIQUE INDEX unique_citations_cite_idx ON cap.unique_citations USING btree (cite);
 
 
 --
@@ -1609,20 +1594,6 @@ CREATE INDEX book_subject_subject_idx ON moml.book_subject USING btree (subject)
 
 
 --
--- Name: idx_book_info_psmid; Type: INDEX; Schema: moml; Owner: -
---
-
-CREATE INDEX idx_book_info_psmid ON moml.book_info USING btree (psmid);
-
-
---
--- Name: idx_book_subject_psmid_subject; Type: INDEX; Schema: moml; Owner: -
---
-
-CREATE INDEX idx_book_subject_psmid_subject ON moml.book_subject USING btree (psmid, subject);
-
-
---
 -- Name: page_bodytype_idx; Type: INDEX; Schema: moml; Owner: -
 --
 
@@ -1648,13 +1619,6 @@ CREATE INDEX moml_page_to_cap_case_moml_page_idx ON moml_citations.page_to_case 
 --
 
 CREATE INDEX moml_page_to_cap_case_moml_treatise_idx ON moml_citations.page_to_case USING btree (moml_treatise);
-
-
---
--- Name: requests_batch_id_idx; Type: INDEX; Schema: predictor; Owner: -
---
-
-CREATE INDEX requests_batch_id_idx ON predictor.requests USING btree (batch_id);
 
 
 --
@@ -1834,24 +1798,10 @@ ALTER TABLE ONLY moml.page
 
 
 --
--- Name: requests fk_moml_ocrtext; Type: FK CONSTRAINT; Schema: predictor; Owner: -
---
-
-ALTER TABLE ONLY predictor.requests
-    ADD CONSTRAINT fk_moml_ocrtext FOREIGN KEY (psmid, pageid) REFERENCES moml.page_ocrtext(psmid, pageid);
-
-
---
--- Name: requests fk_predictor_batches; Type: FK CONSTRAINT; Schema: predictor; Owner: -
---
-
-ALTER TABLE ONLY predictor.requests
-    ADD CONSTRAINT fk_predictor_batches FOREIGN KEY (batch_id) REFERENCES predictor.batches(id);
-
-
---
 -- PostgreSQL database dump complete
 --
+
+\unrestrict dbmate
 
 
 --
@@ -1864,7 +1814,4 @@ INSERT INTO sys_admin.migrations_dbmate (version) VALUES
     ('0007'),
     ('0015'),
     ('0051'),
-    ('20250214191156'),
-    ('20250214191825'),
-    ('20250214195229'),
     ('20250227185605');
