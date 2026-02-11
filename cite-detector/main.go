@@ -13,9 +13,13 @@ import (
 	"github.com/lmullen/legal-modernism/go/db"
 	"github.com/lmullen/legal-modernism/go/sources"
 	"github.com/schollz/progressbar/v3"
+	flag "github.com/spf13/pflag"
 )
 
 func main() {
+	showProgress := flag.Bool("progress", false, "show a progress bar")
+	flag.Parse()
+
 	slog.Info("starting the citation detector")
 
 	// Create the worker pool
@@ -87,7 +91,10 @@ func main() {
 	}
 	slog.Info("found pages", "num_pages", len(pageIDs))
 
-	pb := progressbar.Default(int64(len(pageIDs)))
+	var pb *progressbar.ProgressBar
+	if *showProgress {
+		pb = progressbar.Default(int64(len(pageIDs)))
+	}
 
 	slog.Info("detecting citations on the treatise pages")
 
@@ -118,7 +125,9 @@ func main() {
 						}
 					}
 				}
-				pb.Add(1)
+				if pb != nil {
+					pb.Add(1)
+				}
 			})
 		}
 	}
