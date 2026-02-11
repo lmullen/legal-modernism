@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"os"
 	"runtime"
+	"time"
 
 	"github.com/lmullen/legal-modernism/go/db"
 )
@@ -29,7 +30,8 @@ func main() {
 	slog.Info("available CPUs", "cpu_cores", cpus)
 
 	// Test database connectivity
-	ctx := context.Background()
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
 	pool, err := db.Connect(ctx)
 	if err != nil {
 		slog.Error("error connecting to database", "error", err)
