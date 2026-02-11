@@ -16,7 +16,7 @@ import (
 )
 
 func main() {
-	slog.Info("Starting the citation detector")
+	slog.Info("starting the citation detector")
 
 	// Create the worker pool
 	cpuMax := runtime.NumCPU()
@@ -40,14 +40,14 @@ func main() {
 	go func() {
 		select {
 		case <-quit:
-			slog.Info("Quitting because shutdown signal received")
+			slog.Info("quitting because shutdown signal received")
 			cancel()
 			// wp.Stop()
 		case <-ctx.Done():
 		}
 	}()
 
-	slog.Info("Connecting to database")
+	slog.Info("connecting to database")
 	db, err := db.Connect(ctx)
 	if err != nil {
 		slog.Error("could not connect to database", "error", err)
@@ -74,7 +74,7 @@ func main() {
 	}
 	slog.Info("prepared generic detector and single volume detector", "num_detectors", len(detectors))
 
-	slog.Info("Getting OCR corrections")
+	slog.Info("getting OCR corrections")
 	ocrSubs, err := sourcesDB.GetOCRSubstitutions(ctx)
 	if err != nil {
 		slog.Error("error getting OCR substitutions", "error", err)
