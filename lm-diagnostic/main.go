@@ -15,7 +15,10 @@ func init() {
 }
 
 func main() {
-	slog.Info("starting diagnostics")
+	slog.Debug("starting diagnostics")
+
+	// Report OS, architecture, and Go version
+	slog.Info("runtime", "os", runtime.GOOS, "arch", runtime.GOARCH, "go_version", runtime.Version())
 
 	// Report the hostname
 	host, err := os.Hostname()
@@ -25,9 +28,16 @@ func main() {
 	}
 	slog.Info("hostname", "host", host)
 
-	// Report CPU cores
-	cpus := runtime.NumCPU()
-	slog.Info("available CPUs", "cpu_cores", cpus)
+	// Report CPU cores and GOMAXPROCS
+	slog.Info("available CPUs", "cpu_cores", runtime.NumCPU(), "gomaxprocs", runtime.GOMAXPROCS(0))
+
+	// Check environment variables
+	_, debugSet := os.LookupEnv("LAW_DEBUG")
+	if _, ok := os.LookupEnv("LAW_DBSTR"); !ok {
+		slog.Error("required environment variable not set", "variable", "LAW_DBSTR")
+		os.Exit(1)
+	}
+	slog.Info("environment variables set", "LAW_DBSTR", true, "LAW_DEBUG", debugSet)
 
 	// Test database connectivity
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
@@ -40,5 +50,5 @@ func main() {
 	defer pool.Close()
 	slog.Info("successfully connected to database")
 
-	slog.Info("diagnostics complete")
+	slog.Debug("diagnostics complete")
 }
