@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/csv"
-	"flag"
+	flag "github.com/spf13/pflag"
 	"fmt"
 	"io"
 	"log/slog"
