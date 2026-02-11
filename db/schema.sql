@@ -1,6 +1,6 @@
 \restrict dbmate
 
--- Dumped from database version 17.2 (Debian 17.2-1.pgdg120+1)
+-- Dumped from database version 17.7 (Debian 17.7-0+deb13u1)
 -- Dumped by pg_dump version 17.7 (Homebrew)
 
 SET statement_timeout = 0;
@@ -567,6 +567,44 @@ CREATE MATERIALIZED VIEW legalhist.all_page_id AS
 
 
 --
+-- Name: code_reporter; Type: TABLE; Schema: legalhist; Owner: -
+--
+
+CREATE TABLE legalhist.code_reporter (
+    id bigint NOT NULL,
+    name text NOT NULL,
+    name_abbreviation text NOT NULL,
+    decision_year integer NOT NULL,
+    first_page integer NOT NULL,
+    last_page integer NOT NULL,
+    volume_number integer NOT NULL,
+    official_citation text NOT NULL,
+    parallel_citation text,
+    reporter text,
+    court_name text,
+    court_cap_id bigint,
+    jurisdiction text,
+    jurisdiction_slug text,
+    author text,
+    text text
+);
+
+
+--
+-- Name: code_reporter_id_seq; Type: SEQUENCE; Schema: legalhist; Owner: -
+--
+
+ALTER TABLE legalhist.code_reporter ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME legalhist.code_reporter_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
 -- Name: ocr_corrections; Type: TABLE; Schema: legalhist; Owner: -
 --
 
@@ -672,18 +710,10 @@ CREATE TABLE legalhist.reporters_citation_to_cap (
 
 CREATE VIEW legalhist.reporters_single_volume_abbr AS
  SELECT a.alt_abbr,
-    a.cap_abbr,
     r.reporter_title
    FROM (legalhist.reporters_alt_diffvols_reporters r
      LEFT JOIN legalhist.reporters_alt_diffvols_abbreviations a ON ((r.reporter_title = a.reporter_title)))
   WHERE (r.single_vol = true);
-
-
---
--- Name: VIEW reporters_single_volume_abbr; Type: COMMENT; Schema: legalhist; Owner: -
---
-
-COMMENT ON VIEW legalhist.reporters_single_volume_abbr IS 'Abbreviations for single volume reporters';
 
 
 --
@@ -1168,6 +1198,14 @@ ALTER TABLE ONLY english_reports.cases
 
 
 --
+-- Name: code_reporter code_reporter_pkey; Type: CONSTRAINT; Schema: legalhist; Owner: -
+--
+
+ALTER TABLE ONLY legalhist.code_reporter
+    ADD CONSTRAINT code_reporter_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: ocr_corrections ocr_corrections_unique; Type: CONSTRAINT; Schema: legalhist; Owner: -
 --
 
@@ -1427,6 +1465,34 @@ CREATE INDEX er_cases_er_year_idx ON english_reports.cases USING btree (er_year)
 
 
 --
+-- Name: code_reporter_court_cap_id_idx; Type: INDEX; Schema: legalhist; Owner: -
+--
+
+CREATE INDEX code_reporter_court_cap_id_idx ON legalhist.code_reporter USING btree (court_cap_id);
+
+
+--
+-- Name: code_reporter_decision_year_idx; Type: INDEX; Schema: legalhist; Owner: -
+--
+
+CREATE INDEX code_reporter_decision_year_idx ON legalhist.code_reporter USING btree (decision_year);
+
+
+--
+-- Name: code_reporter_official_citation_idx; Type: INDEX; Schema: legalhist; Owner: -
+--
+
+CREATE INDEX code_reporter_official_citation_idx ON legalhist.code_reporter USING btree (official_citation);
+
+
+--
+-- Name: code_reporter_volume_number_idx; Type: INDEX; Schema: legalhist; Owner: -
+--
+
+CREATE INDEX code_reporter_volume_number_idx ON legalhist.code_reporter USING btree (volume_number);
+
+
+--
 -- Name: reporter_alt_same_vols_alt_abbr_idx; Type: INDEX; Schema: legalhist; Owner: -
 --
 
@@ -1669,6 +1735,14 @@ ALTER TABLE ONLY cap_citations.pagerank
 
 
 --
+-- Name: code_reporter code_reporter_court_cap_id_fk; Type: FK CONSTRAINT; Schema: legalhist; Owner: -
+--
+
+ALTER TABLE ONLY legalhist.code_reporter
+    ADD CONSTRAINT code_reporter_court_cap_id_fk FOREIGN KEY (court_cap_id) REFERENCES cap.courts(id);
+
+
+--
 -- Name: reporters_alt_diffvols_abbreviations reporters_alt_diffvols_abbreviations_reporter_title_fkey; Type: FK CONSTRAINT; Schema: legalhist; Owner: -
 --
 
@@ -1773,4 +1847,5 @@ INSERT INTO sys_admin.migrations_dbmate (version) VALUES
     ('0007'),
     ('0015'),
     ('0051'),
-    ('20250227185605');
+    ('20250227185605'),
+    ('20260211115029');
