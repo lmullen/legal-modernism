@@ -23,7 +23,7 @@ func NewDBStore(db *pgxpool.Pool) *DBStore {
 func (r *DBStore) SaveCitation(ctx context.Context, c *Citation) error {
 	query := `
 	INSERT INTO
-	output.moml_citations (id, moml_treatise, moml_page, raw, volume, reporter_abbr, page, created_at)
+	moml_citations.citations_unlinked (id, moml_treatise, moml_page, raw, volume, reporter_abbr, page, created_at)
 	VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 	ON CONFLICT DO NOTHING;
 	`
