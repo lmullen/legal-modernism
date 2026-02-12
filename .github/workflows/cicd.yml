@@ -1,0 +1,34 @@
+name: "[legal-modernism] Build, Release, Deploy"
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "main"
+      - "preview"
+      - "migrate-to-rrchnm"
+
+jobs:
+  build-release:
+    uses: chnm/.github/.github/workflows/hugo--build-release.yml@main
+    secrets: inherit
+    with:
+      container-registry: "ghcr.io"
+      container-image-name: "legalmodernism-website"
+      hugo-context-root: "website"
+      hugo-devl-url: "https://legalmodernism.rrchnm.site"
+      hugo-prod-url: "https://legalmodernism.rrchnm.site"
+
+      build-artifact-name: "legalmodernism-website"
+      release-tag-name-type: "iso"
+
+      website-devl-fqdn: "legalmodernism.rrchnm.site"
+      website-prod-fqdn: "legalmodernism.rrchnm.site"
+
+  deploy:
+    uses: chnm/.github/.github/workflows/docker--deploy.yml@main
+    needs: [build-release]
+    secrets: inherit
+    with:
+      website-devl-fqdn: "legalmodernism.rrchnm.site"
+      website-prod-fqdn: "legalmodernism.rrchnm.site"
