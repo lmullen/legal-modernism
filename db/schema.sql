@@ -2341,6 +2341,31 @@ COMMENT ON MATERIALIZED VIEW moml_citations.work_citation_counts IS 'One row per
 
 
 --
+-- Name: cap_graph_scope; Type: MATERIALIZED VIEW; Schema: opinion_citations; Owner: -
+--
+
+CREATE MATERIALIZED VIEW opinion_citations.cap_graph_scope AS
+ SELECT id,
+    decision_year,
+    jurisdiction,
+    court
+   FROM cap.cases c
+  WHERE ((decision_year <= 1920) AND (EXISTS ( SELECT 1
+           FROM cap_citations.metadata m
+          WHERE (m.id = c.id))) AND (EXISTS ( SELECT 1
+           FROM cap.opinions o
+          WHERE (o."case" = c.id))))
+  WITH NO DATA;
+
+
+--
+-- Name: MATERIALIZED VIEW cap_graph_scope; Type: COMMENT; Schema: opinion_citations; Owner: -
+--
+
+COMMENT ON MATERIALIZED VIEW opinion_citations.cap_graph_scope IS 'The citing CAP cases the comparison with CAP''s citation graph covers: decided by 1920, with an opinion, and in cap_citations.metadata (issue #349). Refreshed by make db-maintenance.';
+
+
+--
 -- Name: citation_links; Type: TABLE; Schema: opinion_citations; Owner: -
 --
 
@@ -2465,6 +2490,248 @@ COMMENT ON COLUMN opinion_citations.case_case_citations.pincite_only IS 'True wh
 --
 
 COMMENT ON COLUMN opinion_citations.case_case_citations.self_cite IS 'True when the cited CAP case is the citing case: an opinion citing its own case. Kept by the linker, left out of the comparison with CAP''s graph.';
+
+
+--
+-- Name: cap_graph_edges; Type: MATERIALIZED VIEW; Schema: opinion_citations; Owner: -
+--
+
+CREATE MATERIALIZED VIEW opinion_citations.cap_graph_edges AS
+ WITH ours AS (
+         SELECT ccc.citing_case_id AS citing,
+            ccc.cap_case_id AS cited,
+            ccc.cite_count,
+            ccc.pincite_only
+           FROM (opinion_citations.case_case_citations ccc
+             JOIN opinion_citations.cap_graph_scope s_1 ON ((s_1.id = ccc.citing_case_id)))
+          WHERE ((ccc.source = 'cap'::text) AND (NOT ccc.self_cite))
+        ), theirs AS (
+         SELECT DISTINCT (cc.cites_from)::bigint AS citing,
+            (cc.cites_to)::bigint AS cited
+           FROM (cap_citations.citations cc
+             JOIN opinion_citations.cap_graph_scope s_1 ON ((s_1.id = cc.cites_from)))
+          WHERE (cc.cites_from <> cc.cites_to)
+        )
+ SELECT COALESCE(o.citing, t.citing) AS citing_case_id,
+    COALESCE(o.cited, t.cited) AS cited_case_id,
+    (o.citing IS NOT NULL) AS in_ours,
+    (t.citing IS NOT NULL) AS in_theirs,
+    o.cite_count,
+    o.pincite_only,
+    s.decision_year AS citing_year,
+    s.jurisdiction AS citing_jurisdiction,
+    k.decision_year AS cited_year,
+    k.jurisdiction AS cited_jurisdiction,
+    k.reporter AS cited_reporter
+   FROM (((ours o
+     FULL JOIN theirs t ON (((t.citing = o.citing) AND (t.cited = o.cited))))
+     JOIN opinion_citations.cap_graph_scope s ON ((s.id = COALESCE(o.citing, t.citing))))
+     JOIN cap.cases k ON ((k.id = COALESCE(o.cited, t.cited))))
+  WITH NO DATA;
+
+
+--
+-- Name: MATERIALIZED VIEW cap_graph_edges; Type: COMMENT; Schema: opinion_citations; Owner: -
+--
+
+COMMENT ON MATERIALIZED VIEW opinion_citations.cap_graph_edges IS 'One row per edge from a citing case in cap_graph_scope to a CAP case, in our links (case_case_citations, self-cites left out), in CAP''s graph (cap_citations.citations), or both (issue #349). cite_count and pincite_only are NULL on an edge we lack. Refreshed by make db-maintenance.';
+
+
+--
+-- Name: COLUMN cap_graph_edges.in_ours; Type: COMMENT; Schema: opinion_citations; Owner: -
+--
+
+COMMENT ON COLUMN opinion_citations.cap_graph_edges.in_ours IS 'True when our links have the edge.';
+
+
+--
+-- Name: COLUMN cap_graph_edges.in_theirs; Type: COMMENT; Schema: opinion_citations; Owner: -
+--
+
+COMMENT ON COLUMN opinion_citations.cap_graph_edges.in_theirs IS 'True when CAP''s graph has the edge.';
+
+
+--
+-- Name: COLUMN cap_graph_edges.pincite_only; Type: COMMENT; Schema: opinion_citations; Owner: -
+--
+
+COMMENT ON COLUMN opinion_citations.cap_graph_edges.pincite_only IS 'True when every one of our citations behind the edge linked through an interior page; NULL when we lack the edge.';
+
+
+--
+-- Name: COLUMN cap_graph_edges.cited_reporter; Type: COMMENT; Schema: opinion_citations; Owner: -
+--
+
+COMMENT ON COLUMN opinion_citations.cap_graph_edges.cited_reporter IS 'The cited case''s reporter, cap.reporters.id.';
+
+
+--
+-- Name: cap_graph_agreement; Type: MATERIALIZED VIEW; Schema: opinion_citations; Owner: -
+--
+
+CREATE MATERIALIZED VIEW opinion_citations.cap_graph_agreement AS
+ SELECT citing_year,
+    citing_jurisdiction,
+    cited_jurisdiction,
+    cited_reporter,
+    count(*) FILTER (WHERE (in_ours AND in_theirs)) AS in_both,
+    count(*) FILTER (WHERE (in_ours AND (NOT in_theirs))) AS ours_only,
+    count(*) FILTER (WHERE (in_theirs AND (NOT in_ours))) AS theirs_only,
+    count(*) FILTER (WHERE (in_ours AND (NOT in_theirs) AND pincite_only)) AS ours_only_pincite
+   FROM opinion_citations.cap_graph_edges
+  GROUP BY citing_year, citing_jurisdiction, cited_jurisdiction, cited_reporter
+  WITH NO DATA;
+
+
+--
+-- Name: MATERIALIZED VIEW cap_graph_agreement; Type: COMMENT; Schema: opinion_citations; Owner: -
+--
+
+COMMENT ON MATERIALIZED VIEW opinion_citations.cap_graph_agreement IS 'Edges in both graphs, ours only and theirs only, by the citing case''s year and jurisdiction and the cited case''s jurisdiction and reporter (issue #349). Refreshed by make db-maintenance.';
+
+
+--
+-- Name: cap_graph_case_agreement; Type: MATERIALIZED VIEW; Schema: opinion_citations; Owner: -
+--
+
+CREATE MATERIALIZED VIEW opinion_citations.cap_graph_case_agreement AS
+ SELECT s.id AS citing_case_id,
+    s.decision_year AS citing_year,
+    s.jurisdiction AS citing_jurisdiction,
+    count(e.citing_case_id) FILTER (WHERE (e.in_ours AND e.in_theirs)) AS in_both,
+    count(e.citing_case_id) FILTER (WHERE (e.in_ours AND (NOT e.in_theirs))) AS ours_only,
+    count(e.citing_case_id) FILTER (WHERE (e.in_theirs AND (NOT e.in_ours))) AS theirs_only,
+    count(e.citing_case_id) FILTER (WHERE (e.in_ours AND (NOT e.in_theirs) AND e.pincite_only)) AS ours_only_pincite
+   FROM (opinion_citations.cap_graph_scope s
+     LEFT JOIN opinion_citations.cap_graph_edges e ON ((e.citing_case_id = s.id)))
+  GROUP BY s.id, s.decision_year, s.jurisdiction
+  WITH NO DATA;
+
+
+--
+-- Name: MATERIALIZED VIEW cap_graph_case_agreement; Type: COMMENT; Schema: opinion_citations; Owner: -
+--
+
+COMMENT ON MATERIALIZED VIEW opinion_citations.cap_graph_case_agreement IS 'Edges in both graphs, ours only and theirs only, for each citing case in cap_graph_scope, zeros included (issue #349). Refreshed by make db-maintenance.';
+
+
+--
+-- Name: linking_dashboard_reporters; Type: MATERIALIZED VIEW; Schema: opinion_citations; Owner: -
+--
+
+CREATE MATERIALIZED VIEW opinion_citations.linking_dashboard_reporters AS
+ SELECT wl.reporter_standard,
+    count(*) FILTER (WHERE (cl.status ~~ 'linked%'::text)) AS linked,
+    count(*) FILTER (WHERE (cl.status = 'no_match'::text)) AS no_match,
+    count(*) FILTER (WHERE (cl.status IS NULL)) AS unprocessed,
+    COALESCE(bool_or((r.jurisdiction ~~ 'uk:%'::text)), false) AS uk
+   FROM (((opinion_citations.citations_unlinked cu
+     JOIN legalhist.whitelist wl ON ((cu.reporter_abbr = wl.reporter_found)))
+     JOIN legalhist.reporters r ON ((r.reporter_standard = wl.reporter_standard)))
+     LEFT JOIN opinion_citations.citation_links cl ON ((cl.citation_id = cu.id)))
+  WHERE ((wl.reporter_standard IS NOT NULL) AND (wl.junk = false) AND (COALESCE(r.type, ''::text) <> 'statute'::text))
+  GROUP BY wl.reporter_standard
+  WITH NO DATA;
+
+
+--
+-- Name: MATERIALIZED VIEW linking_dashboard_reporters; Type: COMMENT; Schema: opinion_citations; Owner: -
+--
+
+COMMENT ON MATERIALIZED VIEW opinion_citations.linking_dashboard_reporters IS 'Linked, no_match and unprocessed citations per reporter standard for the CAP corpus; the twin of moml_citations.linking_dashboard_reporters (issue #347). Refreshed by make db-maintenance.';
+
+
+--
+-- Name: linking_dashboard_summary; Type: MATERIALIZED VIEW; Schema: opinion_citations; Owner: -
+--
+
+CREATE MATERIALIZED VIEW opinion_citations.linking_dashboard_summary AS
+ SELECT 'total_raw_cites'::text AS metric,
+    count(*) AS n
+   FROM opinion_citations.citations_unlinked
+UNION ALL
+ SELECT citation_links.status AS metric,
+    count(*) AS n
+   FROM opinion_citations.citation_links
+  GROUP BY citation_links.status
+UNION ALL
+ SELECT 'unprocessed'::text AS metric,
+    (( SELECT count(*) AS count
+           FROM opinion_citations.citations_unlinked) - ( SELECT count(*) AS count
+           FROM opinion_citations.citation_links)) AS n
+  WITH NO DATA;
+
+
+--
+-- Name: MATERIALIZED VIEW linking_dashboard_summary; Type: COMMENT; Schema: opinion_citations; Owner: -
+--
+
+COMMENT ON MATERIALIZED VIEW opinion_citations.linking_dashboard_summary IS 'Citation counts by linking status for the CAP corpus, with total_raw_cites and unprocessed; the twin of moml_citations.linking_dashboard_summary (issue #347). Refreshed by make db-maintenance.';
+
+
+--
+-- Name: linking_dashboard_tiers; Type: MATERIALIZED VIEW; Schema: opinion_citations; Owner: -
+--
+
+CREATE MATERIALIZED VIEW opinion_citations.linking_dashboard_tiers AS
+ SELECT wl.reporter_standard,
+    cl.status,
+    cl.match_tier,
+    count(*) AS n
+   FROM ((opinion_citations.citations_unlinked cu
+     JOIN legalhist.whitelist wl ON ((cu.reporter_abbr = wl.reporter_found)))
+     LEFT JOIN opinion_citations.citation_links cl ON ((cl.citation_id = cu.id)))
+  WHERE ((wl.reporter_standard IS NOT NULL) AND (wl.junk = false))
+  GROUP BY wl.reporter_standard, cl.status, cl.match_tier
+  WITH NO DATA;
+
+
+--
+-- Name: MATERIALIZED VIEW linking_dashboard_tiers; Type: COMMENT; Schema: opinion_citations; Owner: -
+--
+
+COMMENT ON MATERIALIZED VIEW opinion_citations.linking_dashboard_tiers IS 'Whitelisted, non-junk citations per reporter standard, status and match tier for the CAP corpus; the twin of moml_citations.linking_dashboard_tiers (issue #347). Refreshed by make db-maintenance.';
+
+
+--
+-- Name: linking_tier_summary; Type: VIEW; Schema: opinion_citations; Owner: -
+--
+
+CREATE VIEW opinion_citations.linking_tier_summary AS
+ SELECT COALESCE(status, 'unprocessed'::text) AS status,
+    match_tier,
+    sum(n) AS n,
+    round(((100.0 * sum(n)) / sum(sum(n)) OVER (PARTITION BY linking_dashboard_tiers.status)), 2) AS pct_of_status
+   FROM opinion_citations.linking_dashboard_tiers
+  GROUP BY status, match_tier
+  ORDER BY (sum(n)) DESC;
+
+
+--
+-- Name: VIEW linking_tier_summary; Type: COMMENT; Schema: opinion_citations; Owner: -
+--
+
+COMMENT ON VIEW opinion_citations.linking_tier_summary IS 'Citations per status and match tier over the CAP corpus, with each tier''s share of its status; the twin of moml_citations.linking_tier_summary (issue #347).';
+
+
+--
+-- Name: top_reporters; Type: MATERIALIZED VIEW; Schema: opinion_citations; Owner: -
+--
+
+CREATE MATERIALIZED VIEW opinion_citations.top_reporters AS
+ SELECT reporter_abbr,
+    count(*) AS n,
+    count(DISTINCT cap_case) AS citing_cases
+   FROM opinion_citations.citations_unlinked
+  GROUP BY reporter_abbr
+  WITH NO DATA;
+
+
+--
+-- Name: MATERIALIZED VIEW top_reporters; Type: COMMENT; Schema: opinion_citations; Owner: -
+--
+
+COMMENT ON MATERIALIZED VIEW opinion_citations.top_reporters IS 'Each reporter spelling detected in the CAP opinions, with its citations and citing cases; the twin of legalhist.top_reporters (issue #347). Refreshed by make db-maintenance.';
 
 
 --
@@ -3572,6 +3839,62 @@ CREATE UNIQUE INDEX work_citation_counts_uq ON moml_citations.work_citation_coun
 
 
 --
+-- Name: cap_graph_agreement_reporter_idx; Type: INDEX; Schema: opinion_citations; Owner: -
+--
+
+CREATE INDEX cap_graph_agreement_reporter_idx ON opinion_citations.cap_graph_agreement USING btree (cited_reporter);
+
+
+--
+-- Name: cap_graph_agreement_uq; Type: INDEX; Schema: opinion_citations; Owner: -
+--
+
+CREATE UNIQUE INDEX cap_graph_agreement_uq ON opinion_citations.cap_graph_agreement USING btree (citing_year, citing_jurisdiction, cited_jurisdiction, cited_reporter);
+
+
+--
+-- Name: cap_graph_case_agreement_ours_idx; Type: INDEX; Schema: opinion_citations; Owner: -
+--
+
+CREATE INDEX cap_graph_case_agreement_ours_idx ON opinion_citations.cap_graph_case_agreement USING btree (ours_only DESC);
+
+
+--
+-- Name: cap_graph_case_agreement_pkey; Type: INDEX; Schema: opinion_citations; Owner: -
+--
+
+CREATE UNIQUE INDEX cap_graph_case_agreement_pkey ON opinion_citations.cap_graph_case_agreement USING btree (citing_case_id);
+
+
+--
+-- Name: cap_graph_case_agreement_theirs_idx; Type: INDEX; Schema: opinion_citations; Owner: -
+--
+
+CREATE INDEX cap_graph_case_agreement_theirs_idx ON opinion_citations.cap_graph_case_agreement USING btree (theirs_only DESC);
+
+
+--
+-- Name: cap_graph_edges_disagree_idx; Type: INDEX; Schema: opinion_citations; Owner: -
+--
+
+CREATE INDEX cap_graph_edges_disagree_idx ON opinion_citations.cap_graph_edges USING btree (cited_reporter, in_ours, cited_case_id, citing_case_id) WHERE (in_ours <> in_theirs);
+
+
+--
+-- Name: cap_graph_edges_uq; Type: INDEX; Schema: opinion_citations; Owner: -
+--
+
+CREATE UNIQUE INDEX cap_graph_edges_uq ON opinion_citations.cap_graph_edges USING btree (citing_case_id, cited_case_id);
+
+
+--
+-- Name: cap_graph_scope_pkey; Type: INDEX; Schema: opinion_citations; Owner: -
+--
+
+CREATE UNIQUE INDEX cap_graph_scope_pkey ON opinion_citations.cap_graph_scope USING btree (id);
+
+
+--
 -- Name: case_case_citations_cap_idx; Type: INDEX; Schema: opinion_citations; Owner: -
 --
 
@@ -3667,6 +3990,41 @@ CREATE INDEX idx_citation_links_status ON opinion_citations.citation_links USING
 --
 
 CREATE INDEX idx_citation_links_stub ON opinion_citations.citation_links USING btree (stub_cite) WHERE (stub_cite IS NOT NULL);
+
+
+--
+-- Name: linking_dashboard_reporters_uq; Type: INDEX; Schema: opinion_citations; Owner: -
+--
+
+CREATE UNIQUE INDEX linking_dashboard_reporters_uq ON opinion_citations.linking_dashboard_reporters USING btree (reporter_standard);
+
+
+--
+-- Name: linking_dashboard_summary_uq; Type: INDEX; Schema: opinion_citations; Owner: -
+--
+
+CREATE UNIQUE INDEX linking_dashboard_summary_uq ON opinion_citations.linking_dashboard_summary USING btree (metric);
+
+
+--
+-- Name: linking_dashboard_tiers_uq; Type: INDEX; Schema: opinion_citations; Owner: -
+--
+
+CREATE UNIQUE INDEX linking_dashboard_tiers_uq ON opinion_citations.linking_dashboard_tiers USING btree (reporter_standard, status, match_tier) NULLS NOT DISTINCT;
+
+
+--
+-- Name: top_reporters_n_idx; Type: INDEX; Schema: opinion_citations; Owner: -
+--
+
+CREATE INDEX top_reporters_n_idx ON opinion_citations.top_reporters USING btree (n DESC);
+
+
+--
+-- Name: top_reporters_reporter_abbr_uq; Type: INDEX; Schema: opinion_citations; Owner: -
+--
+
+CREATE UNIQUE INDEX top_reporters_reporter_abbr_uq ON opinion_citations.top_reporters USING btree (reporter_abbr);
 
 
 --
@@ -4146,4 +4504,6 @@ INSERT INTO sys_admin.migrations_dbmate (version) VALUES
     ('20260926120000'),
     ('20260926130000'),
     ('20260926130100'),
-    ('20260926130200');
+    ('20260926130200'),
+    ('20261020120000'),
+    ('20261020120100');
