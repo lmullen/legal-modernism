@@ -11,13 +11,13 @@
 {{end}}
 
 {{define "content"}}
-    <h1 class="h4 mb-1">Match tiers</h1>
+    <h1 class="h4 mb-1">{{.Page.Title}}</h1>
     <p class="small text-secondary mb-3">
         How far the linker got with each citation. The status says whether a citation linked;
         the match tier says which probe produced the link, or which step of the cascade ran out
         of things to match against. Citations turned away before any probe
         (<code>skipped_junk</code>, <code>skipped_not_whitelisted</code>) carry no tier and are
-        not counted here. The <a href="/linking">linking dashboard</a> has the same
+        not counted here. The <a href="{{.Corpus.Base}}">linking dashboard</a> has the same
         figures as tables. Every figure is as of the last <code>make db-maintenance</code>, not the
         last linker run.
     </p>
@@ -39,7 +39,7 @@
     <p class="small text-secondary mb-2">
         One bar per <code>reporter_standard</code>, heaviest first. Share puts every reporter
         on the same 100% so the shapes compare; count shows how much each tier weighs.
-        Hover a segment for its count. Click a reporter for its page.
+        Hover a segment for its count.{{if .Corpus.ReporterPages}} Click a reporter for its page.{{end}}
     </p>
     <div class="controls">
         <div class="btn-group btn-group-sm" role="group" aria-label="Measure">
@@ -61,6 +61,10 @@
 
     <script type="module">
         import * as Plot from "https://esm.sh/@observablehq/plot@0.6?bundle-deps";
+
+        // The reporter pages show the treatises' figures, so only the MOML
+        // charts link to them.
+        const REPORTER_PAGES = {{.Corpus.ReporterPages}};
 
         function fmt(n) {
             if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + "M";
@@ -261,7 +265,7 @@
             container.append(chart);
 
             // Make y-axis reporter labels clickable.
-            chart.querySelectorAll("text").forEach(text => {
+            if (REPORTER_PAGES) chart.querySelectorAll("text").forEach(text => {
                 const name = text.textContent.trim();
                 if (!shownSet.has(name)) return;
                 text.style.cursor = "pointer";
@@ -277,8 +281,8 @@
         }
 
         try {
-            const resp = await fetch("/api/tiers");
-            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+            const resp = await fetch({{.Corpus.TiersAPI}});
+            if (!resp.ok) throw new Error(resp.status === 503 ? await resp.text() : `HTTP ${resp.status}`);
             const d = await resp.json();
             const tiers = d.tiers || [];
             const reporters = d.reporters || [];
@@ -303,8 +307,10 @@
                 }
             }
         } catch (err) {
-            document.getElementById("corpus-chart").innerHTML =
-                '<div class="text-danger">Failed to load tier data: ' + err.message + '</div>';
+            const fail = document.createElement("div");
+            fail.className = "text-danger";
+            fail.textContent = "Failed to load tier data: " + err.message;
+            document.getElementById("corpus-chart").replaceChildren(fail);
         }
     </script>
 {{end}}

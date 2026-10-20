@@ -10,34 +10,151 @@ import (
 	"time"
 )
 
-// Detecting and linking: the dashboard of how the linker fared over the whole
+// Detecting and linking: the dashboard of how the linker fared over a whole
 // corpus, and the match tiers charted. Both pages fetch their data as JSON and
 // draw it with Observable Plot; the vocabulary of statuses and tiers is handed
-// to the page from vocabulary.go.
+// to the page from vocabulary.go. The same pages serve both corpora, the
+// treatises and the CAP opinions, which the linker treats alike.
 
-// linkingPage is the data of the two chart pages.
+// linkingCorpus is a citation ledger the linking pages report on: the
+// treatises' (moml_citations) or the CAP opinions' (opinion_citations, issue
+// #74). The two values below are the only ones. A page handler is bound to one
+// when its route is registered, and an API maps its corpus parameter onto one,
+// so the schema names spliced into the queries never come from a request.
+type linkingCorpus struct {
+	Key   string // "moml" or "cap", the value of the corpus parameter
+	Label string // the corpus in words, for headings and the switch
+	Base  string // the dashboard's URL; the tiers page is Base + "/tiers"
+	// Linker is the program that writes the corpus's links, named on the
+	// dashboard when it finds citations still unlinked.
+	Linker string
+	// ReporterPages is whether reporter names link to /reporters/{standard}.
+	// That page's figures are the treatises', so only the MOML pages link.
+	ReporterPages bool
+	// Graph is whether the dashboard carries the comparison with CAP's own
+	// citation graph (capgraph.go).
+	Graph bool
+
+	schema       string // the schema of the linking_dashboard_* views
+	topReporters string // the view of spelling counts the whitelist extender reads
+}
+
+var (
+	momlCorpus = linkingCorpus{
+		Key: "moml", Label: "MOML treatises", Base: "/linking", Linker: "cite-linker",
+		ReporterPages: true,
+		schema:        "moml_citations", topReporters: "legalhist.top_reporters",
+	}
+	capCorpus = linkingCorpus{
+		Key: "cap", Label: "CAP opinions", Base: "/linking/cap", Linker: "cite-linker-cap",
+		Graph:  true,
+		schema: "opinion_citations", topReporters: "opinion_citations.top_reporters",
+	}
+	corpora = []linkingCorpus{momlCorpus, capCorpus}
+)
+
+// rel qualifies a relation name with the corpus's schema.
+func (c linkingCorpus) rel(name string) string { return c.schema + "." + name }
+
+// corpusParam reads the corpus query parameter of an API or of the whitelist
+// extender: empty or "moml" is the treatises, "cap" the opinions, and anything
+// else is refused.
+func corpusParam(r *http.Request) (linkingCorpus, bool) {
+	switch r.URL.Query().Get("corpus") {
+	case "", momlCorpus.Key:
+		return momlCorpus, true
+	case capCorpus.Key:
+		return capCorpus, true
+	}
+	return linkingCorpus{}, false
+}
+
+// linkingPage is the data of the linking pages: the header, the corpus, which
+// sub-page is showing (for the section's navigation), and the vocabulary the
+// scripts label the statuses and tiers with. Graph is the comparison with
+// CAP's graph, filled only on the CAP dashboard.
 type linkingPage struct {
 	Page
+	Corpus       linkingCorpus
+	Nav          string // "dashboard", "tiers" or "whitelist"
 	Tiers        []TierInfo
 	StatusOrder  []string
 	StatusLabels map[string]string
+	Graph        *capGraph
 }
 
-func (s *server) linkingPage(title, subsection string) linkingPage {
+// newLinkingPage builds the data of one linking page. The crumbs run from the
+// section to the corpus's dashboard to the page.
+func newLinkingPage(c linkingCorpus, nav, title, crumb string) linkingPage {
+	crumbs := []Crumb{{Label: "Detecting & linking", URL: "/linking"}, {Label: c.Label, URL: c.Base}, {Label: crumb}}
+	if nav == "dashboard" {
+		crumbs = []Crumb{{Label: "Detecting & linking", URL: "/linking"}, {Label: c.Label}}
+	}
 	return linkingPage{
-		Page:         Page{Title: title, Section: "linking", Crumbs: []Crumb{{Label: "Detecting & linking", URL: "/linking"}, {Label: subsection}}},
+		Page:         Page{Title: title, Section: "linking", Crumbs: crumbs},
+		Corpus:       c,
+		Nav:          nav,
 		Tiers:        tierVocabulary,
 		StatusOrder:  statusOrder,
 		StatusLabels: statusLabels,
 	}
 }
 
-func (s *server) handleLinking(w http.ResponseWriter, r *http.Request) {
-	s.render(w, r, "linking.html", http.StatusOK, s.linkingPage("Linking dashboard", "Dashboard"))
+// navLink is one button of the corpus switch.
+type navLink struct {
+	Label  string
+	URL    string
+	Active bool
 }
 
-func (s *server) handleLinkingTiers(w http.ResponseWriter, r *http.Request) {
-	s.render(w, r, "linking_tiers.html", http.StatusOK, s.linkingPage("Match tiers", "Match tiers"))
+// CorpusLinks is the corpus switch: the page being shown, in each corpus.
+func (p linkingPage) CorpusLinks() []navLink {
+	links := make([]navLink, len(corpora))
+	for i, c := range corpora {
+		u := c.Base
+		switch p.Nav {
+		case "tiers":
+			u = c.TiersURL()
+		case "whitelist":
+			u = c.WhitelistURL()
+		}
+		links[i] = navLink{Label: c.Label, URL: u, Active: c.Key == p.Corpus.Key}
+	}
+	return links
+}
+
+// handleLinking renders a corpus's dashboard. The MOML page is a shell its
+// script fills from the API; the CAP page adds the comparison with CAP's
+// graph, read here so that a view not yet populated becomes a notice.
+func (s *server) handleLinking(c linkingCorpus) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		title := "Linking dashboard"
+		if c.Key != momlCorpus.Key {
+			title = "Linking dashboard: " + c.Label
+		}
+		data := newLinkingPage(c, "dashboard", title, "Dashboard")
+		if c.Graph {
+			ctx, cancel := s.ctx(r, 60*time.Second)
+			defer cancel()
+			g, err := s.getCAPGraph(ctx, &data.Page)
+			if err != nil {
+				s.serverError(w, r, err, "comparing the links with CAP's graph")
+				return
+			}
+			data.Graph = g
+		}
+		s.render(w, r, "linking.html", http.StatusOK, data)
+	}
+}
+
+func (s *server) handleLinkingTiers(c linkingCorpus) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		title := "Match tiers"
+		if c.Key != momlCorpus.Key {
+			title = "Match tiers: " + c.Label
+		}
+		s.render(w, r, "linking_tiers.html", http.StatusOK, newLinkingPage(c, "tiers", title, "Match tiers"))
+	}
 }
 
 // ReporterStats holds linked and no-match counts for a single reporter_standard.
@@ -80,10 +197,10 @@ func (d *DashboardData) TotalLinked() int {
 
 // loadReporterStats fills in d.Reporters from the per-reporter materialized
 // view, ordered by total citations descending (linked + no_match + unprocessed).
-func (s *server) loadReporterStats(ctx context.Context, d *DashboardData) error {
+func (s *server) loadReporterStats(ctx context.Context, c linkingCorpus, d *DashboardData) error {
 	rows, err := s.db.Query(ctx, `
 		SELECT reporter_standard, linked, no_match, unprocessed, uk
-		FROM moml_citations.linking_dashboard_reporters
+		FROM `+c.rel("linking_dashboard_reporters")+`
 		ORDER BY linked + no_match + unprocessed DESC
 	`)
 	if err != nil {
@@ -105,16 +222,17 @@ func (s *server) loadReporterStats(ctx context.Context, d *DashboardData) error 
 	return nil
 }
 
-func (s *server) getDashboardData(ctx context.Context) (*DashboardData, error) {
+func (s *server) getDashboardData(ctx context.Context, c linkingCorpus) (*DashboardData, error) {
 	d := &DashboardData{}
 
 	// Get summary metrics (total raw cites, per-status counts, and how many
 	// citations are not yet linked at all) from the precomputed materialized
 	// view. The view is refreshed by db/maintenance.sh, not by the linker;
-	// reading it here is a small indexed scan instead of aggregating the ~62M-row
-	// citations_unlinked and citation_links tables on every request.
-	slog.Debug("querying linking dashboard summary view")
-	rows, err := s.db.Query(ctx, `SELECT metric, n FROM moml_citations.linking_dashboard_summary`)
+	// reading it here is a small indexed scan instead of aggregating the
+	// tens-of-millions-row citations_unlinked and citation_links tables on
+	// every request.
+	slog.Debug("querying linking dashboard summary view", "corpus", c.Key)
+	rows, err := s.db.Query(ctx, `SELECT metric, n FROM `+c.rel("linking_dashboard_summary"))
 	if err != nil {
 		return nil, fmt.Errorf("querying dashboard summary: %w", err)
 	}
@@ -158,22 +276,22 @@ func (s *server) getDashboardData(ctx context.Context) (*DashboardData, error) {
 	// recreated stays unpopulated until the next make db-maintenance and errors
 	// when queried; the summary above is the substance of the page, so a section
 	// that cannot be read degrades to empty rather than taking the page down.
-	if err := s.loadReporterStats(ctx, d); err != nil {
+	if err := s.loadReporterStats(ctx, c, d); err != nil {
 		slog.Warn("reporter stats unavailable, rendering dashboard without them", "error", err)
 	}
-	if d.Tiers, err = s.getTierSummary(ctx); err != nil {
+	if d.Tiers, err = s.getTierSummary(ctx, c); err != nil {
 		slog.Warn("tier summary unavailable, rendering dashboard without it", "error", err)
 	}
-	if d.ReporterTiers, err = s.getReporterTiers(ctx); err != nil {
+	if d.ReporterTiers, err = s.getReporterTiers(ctx, c); err != nil {
 		slog.Warn("reporter tiers unavailable, rendering dashboard without them", "error", err)
 	}
 
-	slog.Debug("dashboard data complete", "total_raw_cites", d.TotalRawCites, "total_linked", d.TotalLinked(),
+	slog.Debug("dashboard data complete", "corpus", c.Key, "total_raw_cites", d.TotalRawCites, "total_linked", d.TotalLinked(),
 		"reporters", len(d.Reporters), "tiers", len(d.Tiers), "reporter_tiers", len(d.ReporterTiers))
 	return d, nil
 }
 
-// TierStat is one row of moml_citations.linking_tier_summary: a linking status
+// TierStat is one row of a corpus's linking_tier_summary: a linking status
 // paired with the match_tier that says how far the linker got, its count, and
 // its share of that status. Tier is empty for the statuses that never reach a
 // probe and so carry no tier.
@@ -185,15 +303,15 @@ type TierStat struct {
 }
 
 // getTierSummary reads the corpus-wide status × match_tier breakdown. The view
-// aggregates moml_citations.linking_dashboard_tiers, which joins the whitelist,
+// aggregates the corpus's linking_dashboard_tiers, which joins the whitelist,
 // so it covers exactly the citations the linker probes — linked, no_match,
 // skipped_statute, and unprocessed — and omits skipped_junk and
 // skipped_not_whitelisted, which are turned away before any target is consulted.
-func (s *server) getTierSummary(ctx context.Context) ([]TierStat, error) {
-	slog.Debug("querying linking tier summary view")
+func (s *server) getTierSummary(ctx context.Context, c linkingCorpus) ([]TierStat, error) {
+	slog.Debug("querying linking tier summary view", "corpus", c.Key)
 	rows, err := s.db.Query(ctx, `
 		SELECT status, match_tier, n, pct_of_status
-		FROM moml_citations.linking_tier_summary
+		FROM `+c.rel("linking_tier_summary")+`
 		ORDER BY n DESC
 	`)
 	if err != nil {
@@ -229,11 +347,11 @@ type ReporterTierStat struct {
 // pivots them into one row per reporter, so the page can compare the shape of a
 // reporter's failures — mostly volume_absent, mostly page_absent — rather than
 // only their total.
-func (s *server) getReporterTiers(ctx context.Context) ([]ReporterTierStat, error) {
-	slog.Debug("querying per-reporter failure tiers")
+func (s *server) getReporterTiers(ctx context.Context, c linkingCorpus) ([]ReporterTierStat, error) {
+	slog.Debug("querying per-reporter failure tiers", "corpus", c.Key)
 	rows, err := s.db.Query(ctx, `
 		SELECT reporter_standard, match_tier, n
-		FROM moml_citations.linking_dashboard_tiers
+		FROM `+c.rel("linking_dashboard_tiers")+`
 		WHERE status = 'no_match' AND match_tier IS NOT NULL
 	`)
 	if err != nil {
@@ -274,8 +392,8 @@ func (s *server) getReporterTiers(ctx context.Context) ([]ReporterTierStat, erro
 	return results, nil
 }
 
-// ReporterTierRow is one (reporter, status, tier) cell of
-// moml_citations.linking_dashboard_tiers in the tidy shape the tiers page
+// ReporterTierRow is one (reporter, status, tier) cell of a corpus's
+// linking_dashboard_tiers in the tidy shape the tiers page
 // stacks into a bar per reporter. Tier is empty for the statuses that never
 // reach a probe and so carry no tier.
 type ReporterTierRow struct {
@@ -298,11 +416,11 @@ type TiersData struct {
 // reporter's bar shows its links and its failures side by side. Rows come back
 // with the heaviest reporter first and each reporter's cells together, largest
 // first, which is the order the page draws them in.
-func (s *server) getReporterTierRows(ctx context.Context) ([]ReporterTierRow, error) {
-	slog.Debug("querying per-reporter tier rows")
+func (s *server) getReporterTierRows(ctx context.Context, c linkingCorpus) ([]ReporterTierRow, error) {
+	slog.Debug("querying per-reporter tier rows", "corpus", c.Key)
 	rows, err := s.db.Query(ctx, `
 		SELECT reporter_standard, COALESCE(status, 'unprocessed'), COALESCE(match_tier, ''), n
-		FROM moml_citations.linking_dashboard_tiers
+		FROM `+c.rel("linking_dashboard_tiers")+`
 		ORDER BY sum(n) OVER (PARTITION BY reporter_standard) DESC, reporter_standard, n DESC
 	`)
 	if err != nil {
@@ -329,12 +447,12 @@ func (s *server) getReporterTierRows(ctx context.Context) ([]ReporterTierRow, er
 // linking_dashboard_tiers. Both read the same materialized view, so unlike the
 // dashboard's optional sections there is no partial page worth rendering: if
 // the view is unpopulated, the page has nothing to show.
-func (s *server) getTiersData(ctx context.Context) (*TiersData, error) {
-	tiers, err := s.getTierSummary(ctx)
+func (s *server) getTiersData(ctx context.Context, c linkingCorpus) (*TiersData, error) {
+	tiers, err := s.getTierSummary(ctx, c)
 	if err != nil {
 		return nil, err
 	}
-	reporters, err := s.getReporterTierRows(ctx)
+	reporters, err := s.getReporterTierRows(ctx, c)
 	if err != nil {
 		return nil, err
 	}
@@ -351,27 +469,48 @@ func writeJSON(w http.ResponseWriter, v any) {
 	}
 }
 
+// apiError answers a failed API request. A view that is missing or not yet
+// populated is a 503 that says what to run, which the pages' scripts show;
+// anything else is a 500, with the error in the log.
+func apiError(w http.ResponseWriter, err error, msg string, c linkingCorpus) {
+	if isUnavailable(err) {
+		slog.Warn(msg, "corpus", c.Key, "error", err)
+		http.Error(w, "The views behind this page are not populated yet. Run make db-maintenance.", http.StatusServiceUnavailable)
+		return
+	}
+	slog.Error(msg, "corpus", c.Key, "error", err)
+	http.Error(w, "Internal server error", http.StatusInternalServerError)
+}
+
 func (s *server) handleLinkingAPI(w http.ResponseWriter, r *http.Request) {
+	c, ok := corpusParam(r)
+	if !ok {
+		http.Error(w, "corpus must be moml or cap", http.StatusBadRequest)
+		return
+	}
 	ctx, cancel := s.ctx(r, 30*time.Second)
 	defer cancel()
 
-	data, err := s.getDashboardData(ctx)
+	data, err := s.getDashboardData(ctx, c)
 	if err != nil {
-		slog.Error("error querying dashboard data", "error", err)
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		apiError(w, err, "error querying dashboard data", c)
 		return
 	}
 	writeJSON(w, data)
 }
 
 func (s *server) handleTiersAPI(w http.ResponseWriter, r *http.Request) {
+	c, ok := corpusParam(r)
+	if !ok {
+		http.Error(w, "corpus must be moml or cap", http.StatusBadRequest)
+		return
+	}
 	ctx, cancel := s.ctx(r, 30*time.Second)
 	defer cancel()
 
-	data, err := s.getTiersData(ctx)
+	data, err := s.getTiersData(ctx, c)
 	if err != nil {
-		slog.Error("error querying tiers data", "error", err)
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		apiError(w, err, "error querying tiers data", c)
 		return
 	}
 	writeJSON(w, data)

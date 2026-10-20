@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -205,6 +206,16 @@ func (d *CaseDetail) ReporterURL() string {
 		return ""
 	}
 	return reporterURL(*d.Reporter)
+}
+
+// CAPGraphURL is a CAP case's comparison of its opinions' citations with
+// CAP's graph, or "" for another source.
+func (d *CaseDetail) CAPGraphURL() string {
+	id, err := strconv.ParseInt(d.ID, 10, 64)
+	if d.Source != "cap" || err != nil {
+		return ""
+	}
+	return capGraphCaseURL(id)
 }
 
 func (d *CaseDetail) CitationsURL() string {

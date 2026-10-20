@@ -43,6 +43,41 @@ func citationsURL(v url.Values) string {
 	return "/citations?" + v.Encode()
 }
 
+// The linking pages of a corpus, and the APIs their scripts fetch. The MOML
+// URLs are the section's original ones; the CAP pages live under /linking/cap
+// and select their data with corpus=cap.
+
+// TiersURL is the corpus's match-tiers page.
+func (c linkingCorpus) TiersURL() string { return c.Base + "/tiers" }
+
+// WhitelistURL is the whitelist extender over the corpus's spellings.
+func (c linkingCorpus) WhitelistURL() string { return "/linking/whitelist" + c.query() }
+
+// DashboardAPI, TiersAPI and WhitelistAPI are the JSON behind the three pages.
+func (c linkingCorpus) DashboardAPI() string { return "/api/linking-dashboard" + c.query() }
+func (c linkingCorpus) TiersAPI() string     { return "/api/tiers" + c.query() }
+func (c linkingCorpus) WhitelistAPI() string { return "/api/whitelist-extender" + c.query() }
+
+// query is the corpus parameter, empty for the treatises, the default.
+func (c linkingCorpus) query() string {
+	if c.Key == momlCorpus.Key {
+		return ""
+	}
+	return "?corpus=" + url.QueryEscape(c.Key)
+}
+
+// capGraphCaseURL is the comparison of one citing CAP case's edges with CAP's
+// graph.
+func capGraphCaseURL(id int64) string {
+	return "/linking/cap/cases/" + strconv.FormatInt(id, 10)
+}
+
+// capGraphReporterURL is a sample of the edges to a cited CAP reporter that
+// one graph has and the other lacks; side is "ours" or "theirs".
+func capGraphReporterURL(id int64, side string) string {
+	return "/linking/cap/reporters/" + strconv.FormatInt(id, 10) + "?side=" + url.QueryEscape(side)
+}
+
 // GaleLinks are the URLs of a MOML volume or page on Gale, routed through the
 // two institutions whose proxies the project uses.
 type GaleLinks struct {

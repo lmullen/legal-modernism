@@ -21,6 +21,7 @@ func TestParseTemplates(t *testing.T) {
 		"home.html", "error.html", "works.html", "work.html", "edition.html", "edition_cases.html",
 		"page.html", "cases.html", "case.html", "reporters.html", "reporter.html",
 		"citations.html", "citation.html", "linking.html", "linking_tiers.html", "linking_whitelist.html",
+		"cap_graph_case.html", "cap_graph_reporter.html",
 	} {
 		require.Contains(t, tmpls, page)
 	}
@@ -57,6 +58,90 @@ func TestRenderPages(t *testing.T) {
 		out := render(t, "home.html", struct{ Page }{Page{Title: "Chambers", Section: "home"}})
 		require.Contains(t, out, `href="/works"`)
 		require.Contains(t, out, `href="/linking/whitelist"`)
+		require.Contains(t, out, `href="/linking/cap"`)
+	})
+
+	t.Run("linking dashboard, treatises", func(t *testing.T) {
+		out := render(t, "linking.html", newLinkingPage(momlCorpus, "dashboard", "Linking dashboard", "Dashboard"))
+		require.Contains(t, out, `fetch("/api/linking-dashboard")`)
+		require.Contains(t, out, "REPORTER_PAGES =  true")
+		require.Contains(t, out, "<code>cite-linker</code>")
+		require.Contains(t, out, `<a href="/linking" class="btn btn-primary">MOML treatises</a>`)
+		require.NotContains(t, out, `id="graph"`)
+	})
+
+	t.Run("linking dashboard, CAP opinions", func(t *testing.T) {
+		name, cite, jur := "State v. Buck", "186 Mo. 15", "Mo."
+		year := 1905
+		data := newLinkingPage(capCorpus, "dashboard", "Linking dashboard: CAP opinions", "Dashboard")
+		data.Graph = &capGraph{
+			Available:     true,
+			Total:         newGraphRow(0, "All years", "", agreement{InBoth: 3884023, OursOnly: 1153832, TheirsOnly: 2376036, OursOnlyPincite: 602759}),
+			Years:         []graphRow{newGraphRow(1905, "1905", "", agreement{InBoth: 10, OursOnly: 2, TheirsOnly: 5})},
+			Reporters:     []graphRow{{Key: 7, Label: "Mo.", OursURL: capGraphReporterURL(7, "ours"), TheirsURL: capGraphReporterURL(7, "theirs")}},
+			ReporterCount: 226,
+			Jurisdictions: []graphRow{newGraphRow(3, "Mo.", "Missouri", agreement{InBoth: 1})},
+			Cases:         &caseDistribution{Cases: 1058387, InBoth: [4]int{2, 9, 40, 300}},
+			TopTheirs:     []graphCase{{CaseRef: CaseRef{Source: "cap", ID: "1343497", Name: &name, Year: &year, Cite: &cite}, Jurisdiction: &jur, agreement: agreement{TheirsOnly: 9}}},
+			Spellings:     []UnwhitelistedReporter{{ReporterAbbr: "Mo. l. c.", Count: 14080, CitingCases: 9000}},
+			SpellingsURL:  capCorpus.WhitelistURL(),
+		}
+		out := render(t, "linking.html", data)
+		require.Contains(t, out, `fetch("/api/linking-dashboard?corpus=cap")`)
+		require.Contains(t, out, "REPORTER_PAGES =  false")
+		require.Contains(t, out, "<code>cite-linker-cap</code>")
+		require.Contains(t, out, `<a href="/linking/cap" class="btn btn-primary">CAP opinions</a>`)
+		require.Contains(t, out, `id="graph"`)
+		require.Contains(t, out, "3,884,023")
+		require.Contains(t, out, "1,058,387 cases")
+		require.Contains(t, out, "62%")
+		require.Contains(t, out, `href="/linking/cap/cases/1343497"`)
+		require.Contains(t, out, `href="/linking/cap/reporters/7?side=theirs"`)
+		require.Contains(t, out, "<code>Mo. l. c.</code>")
+		require.Contains(t, out, `href="/linking/whitelist?corpus=cap"`)
+		require.Contains(t, out, `"oursURL":"/linking/cap/reporters/7?side=ours"`)
+	})
+
+	t.Run("CAP case against CAP's graph", func(t *testing.T) {
+		name, cite, raw := "State v. Buck", "186 Mo. 15", "186 Mo. l. c. 118"
+		year, other := 1905, 1853
+		inScope := false
+		chunn := "State v. Chunn"
+		p := &capCasePage{
+			Page:       Page{Title: "State v. Buck: against CAP's graph", Section: "linking"},
+			Case:       &CaseDetail{CaseRef: CaseRef{Source: "cap", ID: "1343497", Name: &name, Year: &year, Cite: &cite}, Cites: []string{cite}},
+			InMetadata: true, OpinionsN: 1, InScope: &inScope,
+			Counts: agreement{TheirsOnly: 1},
+			TheirsOnly: []capEdge{{
+				Cited: CaseRef{Source: "cap", ID: "315565", Name: &chunn, Year: &other}, Cites: []string{"19 Mo. 233"}, InTheirs: true,
+				Explanation: explanation{Kind: explainProbable, Citations: []capCitation{{ID: "x", Opinion: "majority", Raw: raw, Chip: Chip{Status: "skipped_not_whitelisted"}}}},
+			}},
+			Unexplained: []capCitation{{ID: "y", Opinion: "majority", Raw: "2 Ed.), 805", Chip: Chip{Status: "skipped_not_whitelisted"}}},
+		}
+		out := render(t, "cap_graph_case.html", p)
+		require.Contains(t, out, "Outside the comparison")
+		require.Contains(t, out, `href="/cases/cap/315565"`)
+		require.Contains(t, out, "Probably detected under another spelling")
+		require.Contains(t, out, "<code>186 Mo. l. c. 118</code>")
+		require.Contains(t, out, "2 Ed.), 805")
+		require.Contains(t, out, `href="/cases/cap/1343497"`)
+	})
+
+	t.Run("CAP reporter against CAP's graph", func(t *testing.T) {
+		name := "State v. Buck"
+		p := &capReporterPage{
+			Page: Page{Title: "Mo.: edges only we have", Section: "linking"}, ID: 7, ShortName: "Mo.", Side: "ours",
+			Totals:   &agreement{InBoth: 4, OursOnly: 2, TheirsOnly: 1},
+			TopCases: []capReporterCase{{CaseRef: CaseRef{Source: "cap", ID: "1343458", Name: &name}, Edges: 12}},
+			Edges: []capReporterEdge{{Citing: CaseRef{Source: "cap", ID: "1343497", Name: &name}, Cited: CaseRef{Source: "cap", ID: "1343458"},
+				Raws: []string{"186 Mo. 25"}}},
+			OursURL: capGraphReporterURL(7, "ours"), TheirsURL: capGraphReporterURL(7, "theirs"),
+		}
+		out := render(t, "cap_graph_reporter.html", p)
+		require.Contains(t, out, "Edges only we have")
+		require.Contains(t, out, `href="/linking/cap/cases/1343497"`)
+		require.Contains(t, out, "<code class=\"me-2\">186 Mo. 25</code>")
+		require.Contains(t, out, `<a href="/linking/cap/reporters/7?side=ours" class="btn btn-primary">Only ours</a>`)
 	})
 
 	t.Run("error", func(t *testing.T) {

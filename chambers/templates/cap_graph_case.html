@@ -1,0 +1,155 @@
+{{define "styles"}}
+        .cites code { font-size: 0.8rem; }
+        .cites .cite { display: inline-block; margin-right: 0.6rem; white-space: nowrap; }
+        .edge-table td { vertical-align: top; }
+{{end}}
+
+{{define "content"}}
+    <h1 class="h4 mb-1">{{.Case.Display}}</h1>
+    <p class="small text-secondary mb-2">
+        This case's edges in our links and in CAP's own citation graph: the CAP cases its opinions cite,
+        by which graph has them, with the citations we detected behind each. Read live, as of the last
+        linker run. The <a href="/linking/cap#graph">dashboard</a> has the comparison over every case.
+    </p>
+
+    <div class="detail-grid small mb-3">
+        {{if .Case.FullName}}<span class="label">Name</span><span>{{deref .Case.FullName}}</span>{{end}}
+        <span class="label">Cites</span><span>{{if .Case.Cites}}{{join .Case.Cites "; "}}{{else}}&mdash;{{end}}</span>
+        <span class="label">Decided</span><span>{{if .Case.Year}}{{deref .Case.Year}}{{else}}&mdash;{{end}}</span>
+        <span class="label">Court</span><span>{{ptrOr .Case.Court "&mdash;"}}{{if .Case.Jurisdiction}} ({{deref .Case.Jurisdiction}}){{end}}</span>
+        <span class="label">Opinions</span><span>{{num .OpinionsN}}, with {{num .Detected}} citations detected in them</span>
+        <span class="label">Elsewhere</span><span><a href="{{.CAPCaseURL}}">the case in Chambers</a>{{if .Case.ExternalURL}} &middot; <a href="{{deref .Case.ExternalURL}}">CAP</a>{{end}}</span>
+    </div>
+
+    {{if .InScope}}{{if not (deref .InScope)}}
+    <div class="alert alert-secondary py-2 px-3 small">
+        <strong>Outside the comparison.</strong> The dashboard counts the citing cases decided by 1920 that
+        have an opinion and that CAP's graph includes. This one was decided in
+        {{if .Case.Year}}{{deref .Case.Year}}{{else}}an unknown year{{end}}, has {{num .OpinionsN}}
+        opinion(s), and is {{if not .InMetadata}}not {{end}}in CAP's graph (<code>cap_citations.metadata</code>).
+        Its edges are shown all the same.
+    </div>
+    {{end}}{{end}}
+    {{if not .InMetadata}}
+    <p class="small text-secondary">CAP's graph does not include this case, so every edge below is ours.</p>
+    {{end}}
+
+    <div class="row g-3 mb-3">
+        <div class="col-6 col-md"><div class="stat" style="border-left-color:#6f42c1"><div class="n">{{num .Counts.InBoth}}</div><div class="l">Edges in both</div></div></div>
+        <div class="col-6 col-md"><div class="stat" style="border-left-color:#0d9488"><div class="n">{{num .Counts.OursOnly}}</div><div class="l">Only ours{{if .Counts.OursOnlyPincite}}, {{num .Counts.OursOnlyPincite}} only through pin cites{{end}}</div></div></div>
+        <div class="col-6 col-md"><div class="stat" style="border-left-color:#d97706"><div class="n">{{num .Counts.TheirsOnly}}</div><div class="l">Only CAP's</div></div></div>
+        <div class="col-6 col-md"><div class="stat"><div class="n">{{num (len .Other)}}</div><div class="l">Our links outside CAP</div></div></div>
+        <div class="col-6 col-md"><div class="stat"><div class="n">{{num .SelfCites}}</div><div class="l">Citations of the case itself</div></div></div>
+    </div>
+
+    <h2 class="section">Only in CAP's graph</h2>
+    {{if .TheirsOnly}}
+    <p class="small text-secondary mb-2">
+        Why each is not among our links, from the most direct evidence to the least: a citation we
+        detected and did not link to the case, a citation of ours in its pages under another spelling, its
+        cite in the opinion text with nothing detected, or its cite nowhere in the opinions. Hover a label
+        for what it rests on.
+    </p>
+    <table class="table table-sm small edge-table">
+        <thead><tr><th>Cited case</th><th>Cite</th><th class="num">Year</th><th>Why we lack it</th><th>Our citations</th></tr></thead>
+        <tbody>
+        {{range .TheirsOnly}}
+            <tr>
+                <td class="title-col">{{template "case" .Cited}}</td>
+                <td class="text-secondary">{{if .Cites}}{{join .Cites "; "}}{{else}}&mdash;{{end}}</td>
+                <td class="num">{{if .Cited.Year}}{{deref .Cited.Year}}{{else}}&mdash;{{end}}</td>
+                <td><span class="chip {{.Explanation.Class}}" title="{{.Explanation.Gloss}}">{{.Explanation.Label}}</span></td>
+                <td class="cites">{{range .Explanation.Citations}}{{template "cap_citation" .}}{{end}}</td>
+            </tr>
+        {{end}}
+        </tbody>
+    </table>
+    {{else}}
+    <p class="small text-secondary fst-italic">None.</p>
+    {{end}}
+
+    <h2 class="section">Only in our links</h2>
+    {{if .OursOnly}}
+    <p class="small text-secondary mb-2">
+        Either a citation CAP's extractor did not find, or one we linked to the wrong case. A
+        <span class="badge text-bg-light">pin</span> edge rests only on cites to interior pages, which are
+        often OCR noise.
+    </p>
+    <table class="table table-sm small edge-table">
+        <thead><tr><th>Cited case</th><th>Cite</th><th class="num">Year</th><th>Our citations</th></tr></thead>
+        <tbody>
+        {{range .OursOnly}}
+            <tr>
+                <td class="title-col">{{template "case" .Cited}}{{if .PinciteOnly}} <span class="badge text-bg-light" title="Every citation was a pin cite to an interior page of the case.">pin</span>{{end}}</td>
+                <td class="text-secondary">{{if .Cites}}{{join .Cites "; "}}{{else}}&mdash;{{end}}</td>
+                <td class="num">{{if .Cited.Year}}{{deref .Cited.Year}}{{else}}&mdash;{{end}}</td>
+                <td class="cites">{{range .Ours}}{{template "cap_citation" .}}{{end}}</td>
+            </tr>
+        {{end}}
+        </tbody>
+    </table>
+    {{else}}
+    <p class="small text-secondary fst-italic">None.</p>
+    {{end}}
+
+    <h2 class="section">In both</h2>
+    {{if .Both}}
+    <table class="table table-sm small edge-table">
+        <thead><tr><th>Cited case</th><th>Cite</th><th class="num">Year</th><th>Our citations</th></tr></thead>
+        <tbody>
+        {{range .Both}}
+            <tr>
+                <td class="title-col">{{template "case" .Cited}}</td>
+                <td class="text-secondary">{{if .Cites}}{{join .Cites "; "}}{{else}}&mdash;{{end}}</td>
+                <td class="num">{{if .Cited.Year}}{{deref .Cited.Year}}{{else}}&mdash;{{end}}</td>
+                <td class="cites">{{range .Ours}}{{template "cap_citation" .}}{{end}}</td>
+            </tr>
+        {{end}}
+        </tbody>
+    </table>
+    {{else}}
+    <p class="small text-secondary fst-italic">None.</p>
+    {{end}}
+
+    {{if .Other}}
+    <h2 class="section">Our links outside CAP</h2>
+    <p class="small text-secondary mb-2">Cases CAP's graph cannot hold: the English Reports, code reporters and stub cases.</p>
+    <table class="table table-sm small">
+        <thead><tr><th>Case</th><th class="num">Year</th><th>Cite</th><th class="num">Citations</th></tr></thead>
+        <tbody>
+        {{range .Other}}
+            <tr>
+                <td class="title-col">{{template "case" .CaseRef}}{{if .PinciteOnly}} <span class="badge text-bg-light">pin</span>{{end}}</td>
+                <td class="num">{{if .Year}}{{deref .Year}}{{else}}&mdash;{{end}}</td>
+                <td class="text-secondary">{{ptrOr .Cite "&mdash;"}}</td>
+                <td class="num">{{num .CiteCount}}</td>
+            </tr>
+        {{end}}
+        </tbody>
+    </table>
+    {{end}}
+
+    {{if .Unexplained}}
+    <h2 class="section">Our other citations</h2>
+    <p class="small text-secondary mb-2">
+        What we detected in the opinions that did not link and explains none of CAP's edges above: junk,
+        statutes, spellings the whitelist lacks, and cites to cases no source holds.
+    </p>
+    <table class="table table-sm small">
+        <thead><tr><th>Opinion</th><th>Detected</th><th>Link</th><th>Normalized</th></tr></thead>
+        <tbody>
+        {{range .Unexplained}}
+            <tr>
+                <td class="text-secondary">{{.Opinion}}</td>
+                <td><code>{{cleanRaw .Raw}}</code></td>
+                <td>{{template "chip" .Chip}}</td>
+                <td class="text-secondary">{{ptrOr .CiteNormalized "&mdash;"}}</td>
+            </tr>
+        {{end}}
+        </tbody>
+    </table>
+    {{end}}
+{{end}}
+
+{{/* cap_citation renders a capCitation: the detected string and its link. */}}
+{{define "cap_citation"}}<span class="cite" title="{{.Opinion}} opinion{{if .CiteNormalized}}; normalized {{deref .CiteNormalized}}{{end}}"><code>{{cleanRaw .Raw}}</code> {{template "chip" .Chip}}</span>{{end}}

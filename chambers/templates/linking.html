@@ -22,11 +22,15 @@
 {{end}}
 
 {{define "content"}}
-    <h1 class="h4 mb-1">Linking dashboard</h1>
+    <h1 class="h4 mb-1">{{.Page.Title}}</h1>
     <p class="small text-secondary mb-2">
-        How the linker fared over every citation the detector found: what was skipped, what linked, and to
-        which source. Every figure is as of the last <code>make db-maintenance</code>, which refreshes the
-        views behind this page, not as of the last linker run.
+        {{if eq .Corpus.Key "cap"}}How the linker fared over every citation the detector found in the opinions
+        of the CAP cases decided by 1920: what was skipped, what linked, and to which source. Below the
+        dashboard, our links from one CAP case to another are <a href="#graph">set against CAP's own
+        citation graph</a>.{{else}}How the linker fared over every citation the detector found: what was
+        skipped, what linked, and to which source.{{end}} Every figure is as of the last
+        <code>make db-maintenance</code>, which refreshes the views behind this page, not as of the last
+        linker run.
     </p>
     {{template "linking_nav" .}}
 
@@ -38,7 +42,7 @@
         <strong>Linking is incomplete.</strong>
         <span id="unprocessed-count"></span> detected citations have no link row yet,
         so the counts and percentages below describe a partial run.
-        Re-run <code>cite-linker</code>, then <code>make db-maintenance</code>.
+        Re-run <code>{{.Corpus.Linker}}</code>, then <code>make db-maintenance</code>.
     </div>
 
     <div id="chart-container" class="mb-4">
@@ -157,7 +161,7 @@
         Where each reporter's <code>no_match</code> citations gave out. A reporter whose
         failures pile up in one tier has a single fixable cause; one spread across tiers
         does not. Cells show the share of that reporter's <code>no_match</code> pool;
-        hover for the count. Click a reporter for its page.
+        hover for the count.{{if .Corpus.ReporterPages}} Click a reporter for its page.{{end}}
     </p>
     <div id="reporter-tier-container" class="mb-4">
         <div class="loading-text"><span class="spinner-border text-secondary me-2"></span> Loading reporter tier data&hellip;</div>
@@ -165,6 +169,10 @@
 
     <script type="module">
         import * as Plot from "https://esm.sh/@observablehq/plot@0.6?bundle-deps";
+
+        // The reporter pages show the treatises' figures, so only the MOML
+        // dashboard links to them.
+        const REPORTER_PAGES = {{.Corpus.ReporterPages}};
 
         function fmt(n) {
             if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + "M";
@@ -189,8 +197,8 @@
         }
 
         try {
-            const resp = await fetch("/api/linking-dashboard");
-            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+            const resp = await fetch({{.Corpus.DashboardAPI}});
+            if (!resp.ok) throw new Error(resp.status === 503 ? await resp.text() : `HTTP ${resp.status}`);
             const d = await resp.json();
 
             const totalLinked = d.LinkedCAP + d.LinkedEnglishReports + d.LinkedCodeReporter + d.LinkedStub;
@@ -363,9 +371,11 @@
                             `title="${n.toLocaleString()} citations">${Math.round(pct)}%</td>`;
                     }).join("");
                     const tr = document.createElement("tr");
+                    const name = REPORTER_PAGES
+                        ? `<a class="reporter-link" href="/reporters/${encodeURIComponent(r.reporter)}">${escapeHTML(r.reporter)}</a>`
+                        : escapeHTML(r.reporter);
                     tr.innerHTML =
-                        `<td><a class="reporter-link" href="/reporters/${encodeURIComponent(r.reporter)}">` +
-                        `${escapeHTML(r.reporter)}</a></td>` +
+                        `<td>${name}</td>` +
                         `<td class="num">${r.noMatch.toLocaleString()}</td>${cells}`;
                     tbody.append(tr);
                 }
@@ -483,7 +493,7 @@
 
                 // Make y-axis reporter labels clickable.
                 const reporterNameSet = new Set(reporterOrder);
-                reporterChart.querySelectorAll("text").forEach(text => {
+                if (REPORTER_PAGES) reporterChart.querySelectorAll("text").forEach(text => {
                     const name = text.textContent.trim();
                     if (!reporterNameSet.has(name)) return;
                     text.style.cursor = "pointer";
@@ -494,8 +504,12 @@
                 });
             }
         } catch (err) {
-            document.getElementById("chart-container").innerHTML =
-                '<div class="text-danger">Failed to load dashboard data: ' + err.message + '</div>';
+            const fail = document.createElement("div");
+            fail.className = "text-danger";
+            fail.textContent = "Failed to load dashboard data: " + err.message;
+            document.getElementById("chart-container").replaceChildren(fail);
         }
     </script>
+
+    {{if .Graph}}{{template "cap_graph" .Graph}}{{end}}
 {{end}}

@@ -31,13 +31,23 @@ func (s *server) routes() http.Handler {
 	mux.HandleFunc("GET /citations", s.handleCitations)
 	mux.HandleFunc("GET /citations/{id}", s.handleCitation)
 
-	// Detecting and linking.
-	mux.HandleFunc("GET /linking", s.handleLinking)
-	mux.HandleFunc("GET /linking/tiers", s.handleLinkingTiers)
+	// Detecting and linking, for each corpus: the treatises at /linking, the
+	// CAP opinions at /linking/cap. The APIs and the whitelist extender take
+	// the corpus as a parameter.
+	for _, c := range corpora {
+		mux.HandleFunc("GET "+c.Base, s.handleLinking(c))
+		mux.HandleFunc("GET "+c.TiersURL(), s.handleLinkingTiers(c))
+	}
 	mux.HandleFunc("GET /linking/whitelist", s.handleWhitelist)
 	mux.HandleFunc("GET /api/linking-dashboard", s.handleLinkingAPI)
 	mux.HandleFunc("GET /api/tiers", s.handleTiersAPI)
 	mux.HandleFunc("GET /api/whitelist-extender", s.handleWhitelistAPI)
+
+	// The CAP links set against CAP's own citation graph, case by case and
+	// reporter by reporter.
+	mux.HandleFunc("GET /linking/cap/cases", s.handleCAPGraphCaseForm)
+	mux.HandleFunc("GET /linking/cap/cases/{id}", s.handleCAPGraphCase)
+	mux.HandleFunc("GET /linking/cap/reporters/{id}", s.handleCAPGraphReporter)
 
 	// Static files.
 	staticSub, err := fs.Sub(staticFS, "static")

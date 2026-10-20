@@ -1,0 +1,325 @@
+{{/* cap_graph renders a capGraph: the CAP dashboard's comparison of our links
+     between CAP cases with CAP's own citation graph. */}}
+{{define "cap_graph"}}
+    <h2 class="h5 mt-5 pt-3 mb-1 border-top" id="graph">Against CAP's citation graph</h2>
+    <p class="small text-secondary mb-2">
+        CAP publishes its own case-to-case citation graph (<code>cap_citations.citations</code>), drawn
+        from the same cases by its own extractor. Here our links from one CAP case to another are set
+        beside it, and the unit changes: above, a citation; here, an <em>edge</em>, a citing case and a
+        cited case, which a case citing another three times makes once. The comparison covers the citing
+        cases decided by 1920 that have an opinion and that CAP's graph includes{{with .Cases}}
+        ({{num .Cases}} cases){{end}}, and only edges between two CAP cases: an opinion citing its own
+        case, and our links to the English Reports, code reporters and stub cases, have no counterpart in
+        CAP's graph and are left out. Neither graph is the truth. <strong>Recall</strong> is the share of
+        CAP's edges we also have; <strong>precision</strong> the share of ours CAP also has.
+    </p>
+
+    {{if .Available}}
+    <div class="row g-3 mb-4">
+        <div class="col-md">
+            <div class="stat-card" style="border-left-color:#6f42c1">
+                <div class="big-number">{{num .Total.InBoth}}</div>
+                <div class="big-label">Edges in both graphs</div>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="stat-card" style="border-left-color:#0d9488">
+                <div class="big-number">{{num .Total.OursOnly}}</div>
+                <div class="big-label">Only ours: {{num .Total.OursOnlyPincite}} ({{pct .Total.OursOnlyPincite .Total.OursOnly}}) only through pin cites</div>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="stat-card" style="border-left-color:#d97706">
+                <div class="big-number">{{num .Total.TheirsOnly}}</div>
+                <div class="big-label">Only CAP's</div>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="stat-card stat-neutral">
+                <div class="big-number">{{.Total.RecallPct}}</div>
+                <div class="big-label">Recall: of CAP's {{num .Total.Theirs}} edges, the share we have</div>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="stat-card stat-neutral">
+                <div class="big-number">{{.Total.PrecisionPct}}</div>
+                <div class="big-label">Precision: of our {{num .Total.Ours}} edges, the share CAP has</div>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="h6 text-secondary mb-2">By the citing case's year</h3>
+    <p class="small text-secondary mb-2">
+        Recall and precision for each year in which the graph they are a share of holds at least 100
+        edges, and below, the edges themselves. Hover for the counts.
+    </p>
+    <div id="graph-ratio-chart" class="mb-2">
+        <div class="loading-text"><span class="spinner-border text-secondary me-2"></span> Drawing&hellip;</div>
+    </div>
+    <div id="graph-year-chart" class="mb-4"></div>
+
+    <h3 class="h6 text-secondary mb-2">By the cited case's reporter</h3>
+    <p class="small text-secondary mb-2">
+        The {{len .Reporters}} reporters, of {{num .ReporterCount}}, where the two graphs disagree on the
+        most edges, by the reporter of the cited case. A reporter heavy with edges only CAP has is one the
+        detector or the whitelist misses; one heavy with edges only we have is where we find what CAP's
+        extractor did not, or link a cite to the wrong case. Click a segment, or a count in the table, for
+        a sample of those edges.
+    </p>
+    <div id="graph-reporter-chart" class="mb-2"></div>
+    <details class="small mb-4">
+        <summary class="text-secondary">As a table</summary>
+        <table class="table table-sm align-middle mt-2">
+            <thead>
+                <tr>
+                    <th>Reporter</th>
+                    <th class="num">In both</th>
+                    <th class="num">Only ours</th>
+                    <th class="num">of which pin cites</th>
+                    <th class="num">Only CAP's</th>
+                    <th class="num">Recall</th>
+                    <th class="num">Precision</th>
+                </tr>
+            </thead>
+            <tbody>
+            {{range .Reporters}}
+                <tr>
+                    <td title="{{.Name}}">{{.Label}}</td>
+                    <td class="num">{{num .InBoth}}</td>
+                    <td class="num"><a href="{{.OursURL}}">{{num .OursOnly}}</a></td>
+                    <td class="num">{{num .OursOnlyPincite}}</td>
+                    <td class="num"><a href="{{.TheirsURL}}">{{num .TheirsOnly}}</a></td>
+                    <td class="num">{{.RecallPct}}</td>
+                    <td class="num">{{.PrecisionPct}}</td>
+                </tr>
+            {{end}}
+            </tbody>
+        </table>
+    </details>
+
+    <h3 class="h6 text-secondary mb-2">By the citing case's jurisdiction</h3>
+    <div class="tier-scroll mb-4">
+        <table class="table table-sm align-middle small">
+            <thead>
+                <tr>
+                    <th>Jurisdiction</th>
+                    <th class="num">In both</th>
+                    <th class="num">Only ours</th>
+                    <th class="num">Only CAP's</th>
+                    <th class="num">Recall</th>
+                    <th class="num">Precision</th>
+                </tr>
+            </thead>
+            <tbody>
+            {{range .Jurisdictions}}
+                <tr>
+                    <td title="{{.Name}}">{{.Label}}</td>
+                    <td class="num">{{num .InBoth}}</td>
+                    <td class="num">{{num .OursOnly}}</td>
+                    <td class="num">{{num .TheirsOnly}}</td>
+                    <td class="num">{{.RecallPct}}</td>
+                    <td class="num">{{.PrecisionPct}}</td>
+                </tr>
+            {{end}}
+            </tbody>
+        </table>
+    </div>
+    {{end}}
+
+    {{with .Cases}}
+    <h3 class="h6 text-secondary mb-2">By citing case</h3>
+    <p class="small text-secondary mb-2">
+        Of the {{num .Cases}} citing cases, {{num .NoEdges}} have no edge in either graph and
+        {{num .Agreeing}} have the same edges in both. {{num .OnlyTheirs}} have edges in CAP's graph and
+        none of ours; {{num .OnlyOurs}} the reverse. A few cases with many edges on one side point at a
+        runaway detection or a gap in a case's text; the same total spread thinly is systematic.
+    </p>
+    <table class="table table-sm align-middle small mb-3" style="max-width: 36rem">
+        <thead>
+            <tr><th>Edges per case</th><th class="num">Median</th><th class="num">90th pct.</th><th class="num">99th pct.</th><th class="num">Most</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>In both</td>{{range .InBoth}}<td class="num">{{num .}}</td>{{end}}</tr>
+            <tr><td>Only ours</td>{{range .OursOnly}}<td class="num">{{num .}}</td>{{end}}</tr>
+            <tr><td>Only CAP's</td>{{range .TheirsOnly}}<td class="num">{{num .}}</td>{{end}}</tr>
+        </tbody>
+    </table>
+    {{end}}
+
+    <form class="d-flex gap-2 align-items-center mb-3" action="/linking/cap/cases" method="get">
+        <label for="graph-case-id" class="small text-secondary">Compare one case, by its CAP id</label>
+        <input id="graph-case-id" name="id" class="form-control form-control-sm" style="width: 10rem" inputmode="numeric" pattern="[0-9]+" required placeholder="1343497">
+        <button class="btn btn-sm btn-outline-secondary" type="submit">Compare</button>
+    </form>
+
+    {{if or .TopOurs .TopTheirs}}
+    <div class="row g-4 mb-4">
+        <div class="col-lg-6">
+            <h4 class="h6 mb-1">The most edges only we have</h4>
+            {{template "cap_graph_cases" .OursList}}
+        </div>
+        <div class="col-lg-6">
+            <h4 class="h6 mb-1">The most edges only CAP's graph has</h4>
+            {{template "cap_graph_cases" .TheirsList}}
+        </div>
+    </div>
+    {{end}}
+
+    {{if .Spellings}}
+    <h3 class="h6 text-secondary mb-2">Spellings the whitelist lacks</h3>
+    <p class="small text-secondary mb-2">
+        The {{len .Spellings}} spellings the detector found most often in the opinions that
+        <code>legalhist.whitelist</code> does not know, so the linker skipped every citation under them
+        as not whitelisted. Read live against the whitelist, so a spelling added to it drops off at once.
+        Classify them in the <a href="{{.SpellingsURL}}">whitelist extender</a>.
+    </p>
+    <div class="tier-scroll mb-4" style="max-height: 28rem; overflow-y: auto;">
+        <table class="table table-sm align-middle small" style="max-width: 36rem">
+            <thead><tr><th>Spelling</th><th class="num">Citations</th><th class="num">Citing cases</th></tr></thead>
+            <tbody>
+            {{range .Spellings}}
+                <tr><td><code>{{.ReporterAbbr}}</code></td><td class="num">{{num .Count}}</td><td class="num">{{num .CitingCases}}</td></tr>
+            {{end}}
+            </tbody>
+        </table>
+    </div>
+    {{end}}
+
+    <script type="module">
+        import * as Plot from "https://esm.sh/@observablehq/plot@0.6?bundle-deps";
+
+        const GRAPH = {{.Chart}};
+        const years = GRAPH.years || [];
+        const reporters = GRAPH.reporters || [];
+
+        // One colour per side, the same in every chart and on the cards above.
+        const SIDES = [
+            { key: "oursOnly", label: "Only ours", color: "#0d9488" },
+            { key: "inBoth", label: "In both", color: "#6f42c1" },
+            { key: "theirsOnly", label: "Only CAP's", color: "#d97706" },
+        ];
+        const sideColor = { domain: SIDES.map(s => s.label), range: SIDES.map(s => s.color) };
+        const MIN_EDGES = 100;
+
+        function fmt(n) {
+            if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + "M";
+            if (n >= 1_000) return (n / 1_000).toFixed(0) + "K";
+            return n.toString();
+        }
+        const pctFmt = v => v == null ? "—" : (v * 100).toFixed(1) + "%";
+
+        if (years.length > 0) {
+            const ratioEl = document.getElementById("graph-ratio-chart");
+            const yearEl = document.getElementById("graph-year-chart");
+            const width = ratioEl.clientWidth || 900;
+            const x = { domain: [years[0].key, years[years.length - 1].key + 1], label: null, tickFormat: "d" };
+
+            const ratios = [];
+            for (const y of years) {
+                const theirs = y.inBoth + y.theirsOnly, ours = y.inBoth + y.oursOnly;
+                if (theirs >= MIN_EDGES) ratios.push({ year: y.key, measure: "Recall", value: y.recall, n: theirs });
+                if (ours >= MIN_EDGES) ratios.push({ year: y.key, measure: "Precision", value: y.precision, n: ours });
+            }
+            const ratioChart = Plot.plot({
+                width, height: 220, marginRight: 70, x,
+                y: { domain: [0, 1], tickFormat: "%", label: "Share", grid: true },
+                color: { domain: ["Recall", "Precision"], range: ["#d97706", "#0d9488"], legend: true },
+                marks: [
+                    Plot.ruleY([0], { stroke: "#ced4da" }),
+                    Plot.line(ratios, { x: "year", y: "value", z: "measure", stroke: "measure", strokeWidth: 2 }),
+                    Plot.text(ratios, Plot.selectLast({
+                        x: "year", y: "value", z: "measure", text: "measure", fill: "#495057",
+                        dx: 6, textAnchor: "start", fontSize: 11,
+                    })),
+                    Plot.ruleX(ratios, Plot.pointerX({ x: "year", stroke: "#adb5bd" })),
+                    Plot.tip(ratios, Plot.pointerX({
+                        x: "year", y: "value",
+                        title: d => `${d.year} ${d.measure.toLowerCase()}: ${pctFmt(d.value)} of ${d.n.toLocaleString()} edges`,
+                    })),
+                ],
+            });
+            ratioEl.replaceChildren(ratioChart);
+
+            const counts = [];
+            for (const y of years) {
+                for (const s of SIDES) counts.push({ year: y.key, side: s.label, n: y[s.key] });
+            }
+            const yearChart = Plot.plot({
+                width, height: 220, marginRight: 70, x,
+                y: { label: "Edges", tickFormat: fmt, grid: true },
+                color: { ...sideColor, legend: true },
+                marks: [
+                    Plot.rectY(counts, {
+                        x: "year", interval: 1, y: "n", fill: "side", insetLeft: 0.5, insetRight: 0.5,
+                        order: SIDES.map(s => s.label),
+                        title: d => `${d.year}, ${d.side.toLowerCase()}: ${d.n.toLocaleString()} edges`,
+                    }),
+                    Plot.ruleY([0], { stroke: "#adb5bd" }),
+                ],
+            });
+            yearEl.replaceChildren(yearChart);
+        }
+
+        if (reporters.length > 0) {
+            const el = document.getElementById("graph-reporter-chart");
+            const rows = [];
+            for (const r of reporters) {
+                for (const s of SIDES) {
+                    rows.push({
+                        reporter: r.label, side: s.label, n: r[s.key],
+                        href: s.key === "oursOnly" ? r.oursURL : s.key === "theirsOnly" ? r.theirsURL : null,
+                    });
+                }
+            }
+            const chart = Plot.plot({
+                width: el.clientWidth || 900,
+                height: reporters.length * 20 + 50,
+                marginLeft: 120,
+                x: { label: "Edges", tickFormat: fmt, grid: true },
+                y: { label: null, domain: reporters.map(r => r.label) },
+                color: { ...sideColor, legend: true },
+                marks: [
+                    Plot.barX(rows, {
+                        x: "n", y: "reporter", fill: "side", href: "href",
+                        order: SIDES.map(s => s.label), insetTop: 1, insetBottom: 1,
+                        title: d => `${d.reporter}, ${d.side.toLowerCase()}: ${d.n.toLocaleString()} edges`,
+                    }),
+                    Plot.ruleX([0], { stroke: "#adb5bd" }),
+                ],
+            });
+            el.replaceChildren(chart);
+        }
+    </script>
+{{end}}
+
+{{/* cap_graph_cases renders a list of citing cases with their edges, the
+     column for Side ("ours" or "theirs") first. */}}
+{{define "cap_graph_cases"}}
+    {{if .Rows}}
+    <table class="table table-sm table-hover align-middle small">
+        <thead>
+            <tr>
+                <th>Case</th>
+                <th class="num">Year</th>
+                <th>Jur.</th>
+                <th class="num">{{if eq .Side "ours"}}Only ours{{else}}Only CAP's{{end}}</th>
+                <th class="num">In both</th>
+            </tr>
+        </thead>
+        <tbody>
+        {{$side := .Side}}
+        {{range .Rows}}
+            <tr>
+                <td class="title-col"><a href="{{.GraphURL}}">{{truncate .Display 60}}</a>{{if .Cite}} <span class="text-secondary">{{deref .Cite}}</span>{{end}}</td>
+                <td class="num">{{if .Year}}{{deref .Year}}{{else}}&mdash;{{end}}</td>
+                <td>{{ptrOr .Jurisdiction "&mdash;"}}</td>
+                <td class="num">{{if eq $side "ours"}}{{num .OursOnly}}{{if .OursOnlyPincite}} <span class="text-secondary" title="only through pin cites">({{num .OursOnlyPincite}} pin)</span>{{end}}{{else}}{{num .TheirsOnly}}{{end}}</td>
+                <td class="num">{{num .InBoth}}</td>
+            </tr>
+        {{end}}
+        </tbody>
+    </table>
+    {{else}}
+    <p class="small text-secondary fst-italic">None.</p>
+    {{end}}
+{{end}}
