@@ -16,13 +16,17 @@ import (
 // The whitelist extender walks through the reporter spellings the detector
 // found most often that the whitelist does not know, and offers the closest
 // reporter standards for each, producing CSVs for the seed migrations. It
-// writes nothing itself.
+// writes nothing itself. The spellings are a corpus's: the treatises' by
+// default, the CAP opinions' with corpus=cap.
 
 // UnwhitelistedReporter is a reporter abbreviation not found in the whitelist,
 // with a count of how many citations reference it and potential matches.
+// CitingCases is the number of CAP cases whose opinions use the spelling; it is
+// zero for the treatises, whose view does not count it.
 type UnwhitelistedReporter struct {
 	ReporterAbbr string          `json:"reporterAbbr"`
 	Count        int             `json:"count"`
+	CitingCases  int             `json:"citingCases,omitempty"`
 	Matches      []ReporterMatch `json:"matches"`
 }
 
@@ -33,21 +37,26 @@ type ReporterMatch struct {
 	Score       int    `json:"score"`
 }
 
-// getUnwhitelistedReporters returns the 250 spellings with the most citations
-// that the whitelist lacks, from the legalhist.top_reporters view of spelling
-// counts.
-func (s *server) getUnwhitelistedReporters(ctx context.Context) ([]UnwhitelistedReporter, error) {
-	slog.Debug("querying unwhitelisted reporters")
+// getUnwhitelistedReporters returns the limit spellings with the most
+// citations that the whitelist lacks, from the corpus's view of spelling
+// counts (legalhist.top_reporters for the treatises,
+// opinion_citations.top_reporters for the opinions).
+func (s *server) getUnwhitelistedReporters(ctx context.Context, c linkingCorpus, limit int) ([]UnwhitelistedReporter, error) {
+	slog.Debug("querying unwhitelisted reporters", "corpus", c.Key)
+	citingCases := "0"
+	if c.Key == capCorpus.Key {
+		citingCases = "t.citing_cases"
+	}
 	items, err := collect(ctx, s.db, `
-		SELECT t.reporter_abbr, t.n
-		FROM legalhist.top_reporters t
+		SELECT t.reporter_abbr, t.n, `+citingCases+`
+		FROM `+c.topReporters+` t
 		LEFT JOIN legalhist.whitelist wl ON wl.reporter_found = t.reporter_abbr
 		WHERE wl.reporter_found IS NULL
 		ORDER BY t.n DESC
-		LIMIT 250`, nil,
+		LIMIT $1`, []any{limit},
 		func(rows pgx.Rows) (UnwhitelistedReporter, error) {
 			var r UnwhitelistedReporter
-			return r, rows.Scan(&r.ReporterAbbr, &r.Count)
+			return r, rows.Scan(&r.ReporterAbbr, &r.Count, &r.CitingCases)
 		})
 	if err != nil {
 		return nil, fmt.Errorf("unwhitelisted reporters: %w", err)
@@ -162,17 +171,26 @@ func computeMatches(abbr string, standards []string, capMap map[string]string) [
 }
 
 func (s *server) handleWhitelist(w http.ResponseWriter, r *http.Request) {
-	s.render(w, r, "linking_whitelist.html", http.StatusOK, s.linkingPage("Whitelist extender", "Whitelist extender"))
+	c, ok := corpusParam(r)
+	if !ok {
+		s.badRequest(w, r, "The corpus is moml (the treatises) or cap (the CAP opinions).")
+		return
+	}
+	s.render(w, r, "linking_whitelist.html", http.StatusOK, newLinkingPage(c, "whitelist", "Whitelist extender", "Whitelist extender"))
 }
 
 func (s *server) handleWhitelistAPI(w http.ResponseWriter, r *http.Request) {
+	c, ok := corpusParam(r)
+	if !ok {
+		http.Error(w, "corpus must be moml or cap", http.StatusBadRequest)
+		return
+	}
 	ctx, cancel := s.ctx(r, 2*time.Minute)
 	defer cancel()
 
-	reporters, err := s.getUnwhitelistedReporters(ctx)
+	reporters, err := s.getUnwhitelistedReporters(ctx, c, 250)
 	if err != nil {
-		slog.Error("error querying unwhitelisted reporters", "error", err)
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		apiError(w, err, "error querying unwhitelisted reporters", c)
 		return
 	}
 	standards, err := s.getDistinctReporterStandards(ctx)

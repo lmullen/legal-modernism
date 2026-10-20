@@ -9,6 +9,8 @@ Chambers shows the citations that the treatises of the *Making of Modern Law* ma
 - **Reporters.** The series of law reports the treatises cite (`legalhist.reporters`, keyed by `reporter_standard`). A reporter connects to cases only through citations: the spelling a treatise used is mapped to a standard by `legalhist.whitelist`, and the linker resolves the cite.
 - **Citations.** A *citation* is one string the detector found on a page (`moml_citations.citations_unlinked`); its *link* (`moml_citations.citation_links`) is what the linker made of it: a status, a match tier, and at most one case. Aggregated, a citation is an edge from an edition to a case with a count (`moml_citations.edition_case_citations`, "this edition cites this case N times"), which is what the rankings and the top-cases tables are built from.
 
+The Detecting & linking section also covers the second corpus the detector and linker run over, the opinions of the CAP cases decided by 1920 (issue #74): its ledger is `opinion_citations`, the twin of `moml_citations`, and its links between CAP cases are set against CAP's own citation graph (`cap_citations.citations`).
+
 ## Running
 
 ```bash
@@ -39,8 +41,12 @@ Deployment: `Dockerfile` builds the binary into a distroless image; `.github/wor
 | `/citations/{uuid}` | One citation: what was detected, what the linker did, the case, and the page it was found on with the citation marked. |
 | `/linking` | The linking dashboard: what was skipped, what linked and to which source, by reporter, and the match tiers. |
 | `/linking/tiers` | The match tiers charted over the corpus and by reporter. |
-| `/linking/whitelist` | The whitelist extender: the spellings the detector found most often that the whitelist lacks, with candidate standards, producing CSVs for the seed migrations. It writes nothing. |
-| `/api/linking-dashboard`, `/api/tiers`, `/api/whitelist-extender` | The JSON behind the three linking pages, cached for an hour. |
+| `/linking/whitelist` | The whitelist extender: the spellings the detector found most often that the whitelist lacks, with candidate standards, producing CSVs for the seed migrations. It writes nothing. `corpus=cap` takes the spellings from the CAP opinions, with the citing cases of each. |
+| `/linking/cap` | The CAP dashboard: the same sections over the citations in the CAP opinions, then the comparison with CAP's citation graph, in edges (a citing case and a cited CAP case): the totals, recall and precision by the citing case's year, the cited reporters where the graphs disagree most, the citing jurisdictions, how the disagreement spreads over the citing cases and the cases where it is heaviest, and the CAP spellings the whitelist lacks. Reporter names do not link, since `/reporters/{standard}` shows the treatises' figures. |
+| `/linking/cap/tiers` | The match tiers of the CAP citations. |
+| `/linking/cap/cases/{id}` | One citing CAP case against CAP's graph, read live: its edges in both graphs, ours only and CAP's only, with the citations behind ours; each edge only CAP has explained by the most direct evidence (a citation we detected and did not link to the case, a citation of ours in its pages under another spelling, its cite in the opinion text with nothing detected, or its cite nowhere in the opinions); our links outside CAP; and the rest of what we detected. Says when the case is outside the comparison's scope. `/linking/cap/cases?id=` redirects to it. |
+| `/linking/cap/reporters/{id}` | A cited CAP reporter (`cap.reporters.id`): its agreement, the cited cases drawing the most edges on one side, and those edges, 100 a page. `side` is `theirs` (CAP's only, the default) or `ours`. |
+| `/api/linking-dashboard`, `/api/tiers`, `/api/whitelist-extender` | The JSON behind the three linking pages, cached for an hour. `corpus=cap` for the CAP opinions; a view not yet populated is a 503 that says to run `make db-maintenance`. |
 
 The routes of the app before the redesign (`/treatises`, `/treatise`, `/case`, `/cite`, `/reporters/check`, `/unmatched`, `/normalized`, `/linking-dashboard`, `/tiers`, `/whitelist-extender`) redirect permanently to their new homes; `redirects.go` has the table.
 
@@ -71,6 +77,11 @@ Two kinds of query serve the pages. Live queries read a page, a citation, a volu
 | `moml_citations.citations_unmatched_top` | one unmatched cite string that recurs five times or more | reporter pages |
 | `moml_citations.linking_dashboard_summary`, `_reporters`, `_tiers` | the corpus, a reporter, a reporter's status and tier | linking pages, reporter pages |
 | `legalhist.top_reporters` | one detected spelling and its count | reporter spellings, whitelist extender |
+| `opinion_citations.linking_dashboard_summary`, `_reporters`, `_tiers`, `top_reporters` | the same, for the CAP opinions | `/linking/cap`, `/linking/cap/tiers`, the extender with `corpus=cap` |
+| `opinion_citations.cap_graph_scope` | one citing case the comparison with CAP's graph covers | the case page's scope note |
+| `opinion_citations.cap_graph_edges` | one edge, a citing case and a cited CAP case, in our links, CAP's graph or both | the reporter page |
+| `opinion_citations.cap_graph_agreement` | the agreement by citing year and jurisdiction and cited jurisdiction and reporter (about 213K rows) | `/linking/cap`, the reporter page |
+| `opinion_citations.cap_graph_case_agreement` | the agreement of one citing case | `/linking/cap` |
 
 A section that reads a view which does not exist yet or has not been populated (the states between deploying, applying a migration and running `make db-maintenance`) renders empty with a notice naming the view, instead of failing the page; `isUnavailable` in `server.go` recognizes the two SQLSTATEs.
 
@@ -94,17 +105,18 @@ Single-binary Go web server using `net/http` (Go 1.22 route patterns, no router)
 | `server.go` | The `server` type every handler hangs off: rendering, error pages, timeouts, the unavailable-view check, the OCR replacer, and `collect`, the generic row scanner |
 | `routes.go` | Every route, the static files, the legacy redirects, and the home page |
 | `works.go`, `editions.go`, `pages.go`, `cases.go`, `reporters.go`, `citations.go` | One entity each: its types, its queries and its handlers |
-| `linking.go`, `whitelist.go` | The Detecting & linking section and its JSON APIs |
+| `linking.go`, `whitelist.go` | The Detecting & linking section and its JSON APIs, for both corpora: `linkingCorpus` names each one's schema and URLs |
+| `capgraph.go` | The CAP links against CAP's citation graph: the dashboard's comparison section, the case and reporter pages, and the rules that explain an edge only CAP has |
 | `casemeta.go` | `CaseRef` and the SQL fragments that join the four case sources the same way everywhere |
 | `vocabulary.go` | The statuses and tiers: labels, glosses, colours and order, keyed by the constants in `go/citations`, and handed to the linking pages' scripts |
 | `links.go` | Every URL Chambers builds for itself, and the Gale links |
 | `format.go`, `pagination.go`, `templates.go`, `redirects.go`, `logger.go` | Template functions, paging, template parsing, the redirect table, the JSON logger |
 
-Templates live in `templates/`. `baseof.html` is the layout (navbar, breadcrumbs, notices, shared CSS); the files whose names begin with an underscore are partials (`pagination`, `chip`, `case`, `top_cases`, `notice`, `linking_nav`); every other file is a page and is parsed with the layout and the partials, discovered rather than listed. Charts use Observable Plot from esm.sh; the work and case pages embed their data in the page, the linking pages fetch theirs from the APIs.
+Templates live in `templates/`. `baseof.html` is the layout (navbar, breadcrumbs, notices, shared CSS); the files whose names begin with an underscore are partials (`pagination`, `chip`, `case`, `top_cases`, `notice`, `linking_nav`, and `cap_graph`, the CAP dashboard's comparison section); every other file is a page and is parsed with the layout and the partials, discovered rather than listed. Charts use Observable Plot from esm.sh; the work and case pages, and the comparison with CAP's graph, embed their data in the page; the linking pages fetch theirs from the APIs.
 
 ## Tests
 
-`go test ./chambers/` needs no database. The tests parse every template and render the database-free pages, check that every `Tier*` and `Status*` constant in `go/citations` has a vocabulary entry, exercise the citation locating and highlighting, the LoC heading grouping, the URL builders, the citation-filter shapes, pagination and formatting, and request the home page, the static files and every legacy redirect through `httptest`.
+`go test ./chambers/` needs no database. The tests parse every template and render the database-free pages (the linking dashboard for each corpus and the two CAP comparison pages included), check that every `Tier*` and `Status*` constant in `go/citations` has a vocabulary entry, check the corpora's schema names and URLs and the rules that explain an edge only CAP's graph has, exercise the citation locating and highlighting, the LoC heading grouping, the URL builders, the citation-filter shapes, pagination and formatting, and request the home page, the static files and every legacy redirect through `httptest`.
 
 To check a page against the database, run the app with the read-only connection on a spare port and `curl` it; the queries that matter for speed are bounded as described above, and the largest edition (seven volumes, 285K citations) renders in about three seconds.
 

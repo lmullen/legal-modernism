@@ -50,11 +50,17 @@
     {{end}}
 {{end}}
 
-{{/* linking_nav is the sub-navigation of the Detecting & linking section. */}}
+{{/* linking_nav is the sub-navigation of the Detecting & linking section: the
+     corpus, which keeps the page, and the page, which keeps the corpus. */}}
 {{define "linking_nav"}}
-    <div class="btn-group btn-group-sm mb-3" role="group" aria-label="Detecting and linking">
-        <a href="/linking" class="btn {{if eq .Page.Title "Linking dashboard"}}btn-primary{{else}}btn-outline-secondary{{end}}">Dashboard</a>
-        <a href="/linking/tiers" class="btn {{if eq .Page.Title "Match tiers"}}btn-primary{{else}}btn-outline-secondary{{end}}">Match tiers</a>
-        <a href="/linking/whitelist" class="btn {{if eq .Page.Title "Whitelist extender"}}btn-primary{{else}}btn-outline-secondary{{end}}">Whitelist extender</a>
+    <div class="d-flex flex-wrap gap-2 mb-3">
+        <div class="btn-group btn-group-sm" role="group" aria-label="Corpus">
+            {{range .CorpusLinks}}<a href="{{.URL}}" class="btn {{if .Active}}btn-primary{{else}}btn-outline-secondary{{end}}">{{.Label}}</a>{{end}}
+        </div>
+        <div class="btn-group btn-group-sm" role="group" aria-label="Detecting and linking">
+            <a href="{{.Corpus.Base}}" class="btn {{if eq .Nav "dashboard"}}btn-primary{{else}}btn-outline-secondary{{end}}">Dashboard</a>
+            <a href="{{.Corpus.TiersURL}}" class="btn {{if eq .Nav "tiers"}}btn-primary{{else}}btn-outline-secondary{{end}}">Match tiers</a>
+            <a href="{{.Corpus.WhitelistURL}}" class="btn {{if eq .Nav "whitelist"}}btn-primary{{else}}btn-outline-secondary{{end}}">Whitelist extender</a>
+        </div>
     </div>
 {{end}}

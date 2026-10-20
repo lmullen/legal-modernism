@@ -14,7 +14,8 @@
     {{template "linking_nav" .}}
 
     <p class="small text-secondary">
-        Walk through the top 250 unwhitelisted reporter abbreviations and classify each one.
+        Walk through the top 250 unwhitelisted reporter abbreviations {{if eq .Corpus.Key "cap"}}found in the
+        CAP opinions{{else}}found in the treatises{{end}} and classify each one.
         For each abbreviation, choose a matching <code>reporter_standard</code>, mark it as
         junk or a statute, or skip it. Selections produce two CSVs: one for
         <code>legalhist.whitelist</code> (the variant-to-standard mapping) and one for
@@ -58,6 +59,8 @@
     </div>
 
     <script type="module">
+        // The CAP spellings carry how many citing cases use them.
+        const CITING_CASES = {{eq .Corpus.Key "cap"}};
         let reporters = [];
         let pendingIndices = []; // queue of reporter indices still to process
         // Each entry: { reporterIndex, kind: "match"|"junk"|"statute",
@@ -197,7 +200,7 @@
                     <div class="d-flex justify-content-between align-items-start mb-2">
                         <div>
                             <span class="reporter-abbr"><code>${escapeHTML(r.reporterAbbr)}</code></span>
-                            <span class="text-secondary ms-2">${r.count.toLocaleString()} raw citations</span>
+                            <span class="text-secondary ms-2">${r.count.toLocaleString()} raw citations${CITING_CASES ? `, ${(r.citingCases || 0).toLocaleString()} citing cases` : ""}</span>
                         </div>
                         <span class="badge bg-secondary">${progress}</span>
                     </div>
@@ -287,8 +290,8 @@
 
         // Load data
         try {
-            const resp = await fetch("/api/whitelist-extender");
-            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+            const resp = await fetch({{.Corpus.WhitelistAPI}});
+            if (!resp.ok) throw new Error(resp.status === 503 ? await resp.text() : `HTTP ${resp.status}`);
             reporters = await resp.json();
 
             // Populate collapsed table
@@ -302,12 +305,14 @@
                         <th class="text-end" style="width:3em">#</th>
                         <th>Reporter abbreviation</th>
                         <th class="text-end">Raw citations</th>
+                        ${CITING_CASES ? '<th class="text-end">Citing cases</th>' : ""}
                     </tr></thead><tbody>`;
                 for (let i = 0; i < reporters.length; i++) {
                     html += `<tr>
                         <td class="text-end text-secondary">${i + 1}</td>
                         <td><code>${escapeHTML(reporters[i].reporterAbbr)}</code></td>
                         <td class="text-end">${reporters[i].count.toLocaleString()}</td>
+                        ${CITING_CASES ? `<td class="text-end">${(reporters[i].citingCases || 0).toLocaleString()}</td>` : ""}
                     </tr>`;
                 }
                 html += "</tbody></table>";
@@ -317,8 +322,10 @@
                 renderNext();
             }
         } catch (err) {
-            document.getElementById("main-area").innerHTML =
-                '<div class="text-danger">Failed to load data: ' + err.message + '</div>';
+            const fail = document.createElement("div");
+            fail.className = "text-danger";
+            fail.textContent = "Failed to load data: " + err.message;
+            document.getElementById("main-area").replaceChildren(fail);
         }
     </script>
 {{end}}

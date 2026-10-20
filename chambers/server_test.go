@@ -29,7 +29,24 @@ func TestRoutes(t *testing.T) {
 	require.Equal(t, http.StatusNotFound, get(t, "/nope").StatusCode)
 	require.Equal(t, http.StatusGone, get(t, "/api/page-text?psmid=1&pageid=2").StatusCode)
 
-	resp, err := client.Post(srv.URL+"/works", "text/plain", nil)
+	// The linking pages that only render a shell, for each corpus, and the
+	// requests refused before any query.
+	for _, path := range []string{"/linking", "/linking/tiers", "/linking/cap/tiers", "/linking/whitelist", "/linking/whitelist?corpus=cap"} {
+		require.Equal(t, http.StatusOK, get(t, path).StatusCode, path)
+	}
+	for _, path := range []string{
+		"/linking/whitelist?corpus=x", "/api/linking-dashboard?corpus=x", "/api/tiers?corpus=x", "/api/whitelist-extender?corpus=x",
+		"/linking/cap/cases/abc", "/linking/cap/cases/-4", "/linking/cap/cases?id=abc",
+		"/linking/cap/reporters/x", "/linking/cap/reporters/3?side=both",
+	} {
+		require.Equal(t, http.StatusBadRequest, get(t, path).StatusCode, path)
+	}
+	resp := get(t, "/linking/cap/cases?id=+1343497")
+	var err error
+	require.Equal(t, http.StatusSeeOther, resp.StatusCode)
+	require.Equal(t, "/linking/cap/cases/1343497", resp.Header.Get("Location"))
+
+	resp, err = client.Post(srv.URL+"/works", "text/plain", nil)
 	require.NoError(t, err)
 	resp.Body.Close()
 	require.Equal(t, http.StatusMethodNotAllowed, resp.StatusCode)

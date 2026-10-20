@@ -1,0 +1,79 @@
+{{define "content"}}
+    <h1 class="h4 mb-1">{{.ShortName}}{{with .FullName}} <span class="text-secondary fw-normal">{{.}}</span>{{end}}</h1>
+    <p class="small text-secondary mb-2">
+        The edges from a CAP case to a case in this reporter that one graph has and the other lacks: ours,
+        the links of <code>cite-linker-cap</code>, and CAP's own citation graph. The reporter is the cited
+        case's in CAP, whatever spelling the citing opinion used. As of the last
+        <code>make db-maintenance</code>. The <a href="/linking/cap#graph">dashboard</a> has every reporter.
+    </p>
+
+    <div class="btn-group btn-group-sm mb-3" role="group" aria-label="Side">
+        <a href="{{.TheirsURL}}" class="btn {{if eq .Side "theirs"}}btn-primary{{else}}btn-outline-secondary{{end}}">Only CAP's</a>
+        <a href="{{.OursURL}}" class="btn {{if eq .Side "ours"}}btn-primary{{else}}btn-outline-secondary{{end}}">Only ours</a>
+    </div>
+
+    {{with .Totals}}
+    <div class="row g-3 mb-3">
+        <div class="col-6 col-md"><div class="stat" style="border-left-color:#6f42c1"><div class="n">{{num .InBoth}}</div><div class="l">Edges in both</div></div></div>
+        <div class="col-6 col-md"><div class="stat" style="border-left-color:#0d9488"><div class="n">{{num .OursOnly}}</div><div class="l">Only ours, {{num .OursOnlyPincite}} only through pin cites</div></div></div>
+        <div class="col-6 col-md"><div class="stat" style="border-left-color:#d97706"><div class="n">{{num .TheirsOnly}}</div><div class="l">Only CAP's</div></div></div>
+        <div class="col-6 col-md"><div class="stat"><div class="n">{{.RecallPct}}</div><div class="l">Recall</div></div></div>
+        <div class="col-6 col-md"><div class="stat"><div class="n">{{.PrecisionPct}}</div><div class="l">Precision</div></div></div>
+    </div>
+    {{end}}
+
+    <h2 class="section">{{.SideLabel}}: the cited cases with the most</h2>
+    {{if .TopCases}}
+    <p class="small text-secondary mb-2">
+        {{if eq .Side "ours"}}One case drawing many edges CAP lacks is a cite we may be sending to the wrong
+        case.{{else}}One case drawing many edges we lack is a cite the detector or the linker misses the same
+        way each time.{{end}}
+    </p>
+    <table class="table table-sm small" style="max-width: 48rem">
+        <thead><tr><th>Cited case</th><th class="num">Year</th><th>Cite</th><th class="num">Edges</th></tr></thead>
+        <tbody>
+        {{range .TopCases}}
+            <tr>
+                <td class="title-col">{{template "case" .CaseRef}}</td>
+                <td class="num">{{if .Year}}{{deref .Year}}{{else}}&mdash;{{end}}</td>
+                <td class="text-secondary">{{ptrOr .Cite "&mdash;"}}</td>
+                <td class="num">{{num .Edges}}</td>
+            </tr>
+        {{end}}
+        </tbody>
+    </table>
+    {{else}}
+    <p class="small text-secondary fst-italic">None.</p>
+    {{end}}
+
+    <h2 class="section">{{.SideLabel}}</h2>
+    <p class="small text-secondary mb-2">
+        In the order of the cited case. Open a citing case to see its edges and the citations behind them.
+    </p>
+    {{template "pagination" .Nav}}
+    {{if .Edges}}
+    <table class="table table-sm small">
+        <thead>
+            <tr>
+                <th>Citing case</th><th class="num">Year</th><th>Cited case</th><th class="num">Year</th>
+                {{if eq .Side "ours"}}<th>What we linked</th>{{end}}
+            </tr>
+        </thead>
+        <tbody>
+        {{$ours := eq .Side "ours"}}
+        {{range .Edges}}
+            <tr>
+                <td class="title-col"><a href="{{.CitingGraphURL}}">{{truncate .Citing.Display 60}}</a>{{if .Citing.Cite}} <span class="text-secondary">{{deref .Citing.Cite}}</span>{{end}}</td>
+                <td class="num">{{if .Citing.Year}}{{deref .Citing.Year}}{{else}}&mdash;{{end}}</td>
+                <td class="title-col">{{template "case" .Cited}}{{if .Cited.Cite}} <span class="text-secondary">{{deref .Cited.Cite}}</span>{{end}}</td>
+                <td class="num">{{if .Cited.Year}}{{deref .Cited.Year}}{{else}}&mdash;{{end}}</td>
+                {{if $ours}}<td>{{range .Raws}}<code class="me-2">{{cleanRaw .}}</code>{{end}}{{if .PinciteOnly}} <span class="badge text-bg-light" title="Every citation was a pin cite to an interior page of the case.">pin</span>{{end}}</td>{{end}}
+            </tr>
+        {{end}}
+        </tbody>
+    </table>
+    {{template "pagination" .Nav}}
+    {{else}}
+    <p class="small text-secondary fst-italic">None.</p>
+    {{end}}
+{{end}}

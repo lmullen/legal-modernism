@@ -16,6 +16,7 @@
                 {{if .Reporter}}<span class="label">Reporter</span><span><a href="{{.ReporterURL}}">{{derefStr .Reporter}}</a></span>{{end}}
                 {{if eq .Source "stub"}}<span class="label">Stub case</span><span class="text-secondary">A cite string no source holds, recorded in <code>legalhist.stub_cases</code> because it recurs across the corpus{{if .Pruned}}; this one has since been pruned from the registry and its links remain only until the linker is rerun{{end}}.</span>{{end}}
                 {{if .ExternalURL}}<span class="label">Source</span><span><a href="{{derefStr .ExternalURL}}" target="_blank" rel="noopener">view the case &nearr;</a></span>{{end}}
+                {{if eq .Source "cap"}}<span class="label">CAP opinions</span><span><a href="{{.CAPGraphURL}}">its citations against CAP's graph</a></span>{{end}}
                 <span class="label">Citations</span><span><a href="{{.CitationsURL}}">every citation linked to this case</a></span>
             </div>
         </div>
