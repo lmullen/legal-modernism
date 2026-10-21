@@ -31,9 +31,19 @@ func (s *LinkerDBStore) GetReporterWhitelist(ctx context.Context) (map[string]*W
 		) AS cap_different,
 		COALESCE(r.single_vol, false) AS single_vol,
 		COALESCE(r.type = 'statute', false) AS statute,
-		COALESCE(r.cited_by_year_from, 0) AS cited_by_year_from
+		COALESCE(r.cited_by_year_from, 0) AS cited_by_year_from,
+		w.fallback_standard,
+		f.reporter_cap AS fallback_cap,
+		COALESCE(f.jurisdiction LIKE 'uk%', false) AS fallback_uk,
+		EXISTS (
+			SELECT 1 FROM legalhist.reporters_diffvols d
+			WHERE d.reporter_standard = w.fallback_standard
+		) AS fallback_cap_different,
+		COALESCE(f.single_vol, false) AS fallback_single_vol,
+		COALESCE(f.cited_by_year_from, 0) AS fallback_cited_by_year_from
 	FROM legalhist.whitelist w
 	LEFT JOIN legalhist.reporters r ON r.reporter_standard = w.reporter_standard
+	LEFT JOIN legalhist.reporters f ON f.reporter_standard = w.fallback_standard
 	`
 	rows, err := s.DB.Query(ctx, query)
 	if err != nil {
@@ -44,10 +54,14 @@ func (s *LinkerDBStore) GetReporterWhitelist(ctx context.Context) (map[string]*W
 	whitelist := make(map[string]*WhitelistEntry)
 	for rows.Next() {
 		var found string
-		var e WhitelistEntry
-		err := rows.Scan(&found, &e.ReporterStandard, &e.ReporterCAP, &e.Junk, &e.UK, &e.CAPDifferent, &e.SingleVol, &e.Statute, &e.CitedByYearFrom)
+		var e, fb WhitelistEntry
+		err := rows.Scan(&found, &e.ReporterStandard, &e.ReporterCAP, &e.Junk, &e.UK, &e.CAPDifferent, &e.SingleVol, &e.Statute, &e.CitedByYearFrom,
+			&fb.ReporterStandard, &fb.ReporterCAP, &fb.UK, &fb.CAPDifferent, &fb.SingleVol, &fb.CitedByYearFrom)
 		if err != nil {
 			return nil, fmt.Errorf("scanning reporter whitelist row: %w", err)
+		}
+		if fb.ReporterStandard != nil {
+			e.Fallback = &fb
 		}
 		whitelist[found] = &e
 	}

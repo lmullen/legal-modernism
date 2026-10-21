@@ -30,6 +30,15 @@ type WhitelistEntry struct {
 	// lets one reporter row hold a volume-cited series and its year-cited
 	// continuation (issue #314).
 	CitedByYearFrom int
+	// Fallback is the reporter a spelling means when it does not mean its own
+	// (legalhist.whitelist.fallback_standard), or nil. Some spellings name one
+	// reporter in one jurisdiction or run of volumes and another elsewhere:
+	// "Porter" is Porter's Indiana Reports, but in Alabama Porter's Alabama
+	// Reports (issue #358). The linker tries the fallback only once the
+	// spelling's own reading has failed in a way that says it was the wrong
+	// reporter. Its fields describe the fallback reporter; it never has a
+	// Fallback of its own.
+	Fallback *WhitelistEntry
 }
 
 // DiffVolEntry maps an original volume number to the corresponding CAP volume

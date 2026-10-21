@@ -27,6 +27,17 @@ func TestLinkCitation(t *testing.T) {
 	abrStd := "A.B.R."
 	ltStd := "L.T."
 	kbStd := "K.B."
+	howardStd := "Howard"
+	howStd := "How."
+	denStd := "Den"
+	denioStd := "Denio"
+	stewartStd := "Stewart"
+	stewStd := "Stew."
+	njEqCAP := "N.J. Eq."
+	// Issue #358: spellings with a second reading.
+	howard := &citations.WhitelistEntry{ReporterStandard: &howardStd, Fallback: &citations.WhitelistEntry{ReporterStandard: &howStd}}
+	den := &citations.WhitelistEntry{ReporterStandard: &denStd, UK: true, Fallback: &citations.WhitelistEntry{ReporterStandard: &denioStd}}
+	stewart := &citations.WhitelistEntry{ReporterStandard: &stewartStd, ReporterCAP: &njEqCAP, Fallback: &citations.WhitelistEntry{ReporterStandard: &stewStd}}
 
 	tests := []struct {
 		name         string
@@ -551,6 +562,90 @@ func TestLinkCitation(t *testing.T) {
 			capCites:   map[string]int64{"7 Stat. 31": 111},
 			wantStatus: citations.StatusNoMatch,
 			wantTier:   citations.TierUSDiffVolsMissing,
+		},
+		{
+			// Issue #358. Howard's Mississippi Reports has seven volumes, so
+			// "10 Howard" is volume_absent under its own reading and is the
+			// Supreme Court's Howard.
+			name:       "volume_absent falls back to the other reading",
+			cite:       citations.UnlinkedCitation{ID: uuid.New(), Volume: ptr(10), ReporterAbbr: "Howard", Page: 100},
+			whitelist:  map[string]*citations.WhitelistEntry{"Howard": howard},
+			capCites:   map[string]int64{"5 Howard 100": 111, "10 How. 100": 222},
+			wantStatus: citations.StatusLinkedCAP,
+			wantTier:   citations.TierCAPDirect,
+			wantCAPID:  ptr(int64(222)),
+			wantLinked: ptr("10 How. 100"),
+		},
+		{
+			// A volume the spelling's own reporter has links there, and the
+			// fallback is never tried.
+			name:       "a link under the spelling's own reading is kept",
+			cite:       citations.UnlinkedCitation{ID: uuid.New(), Volume: ptr(5), ReporterAbbr: "Howard", Page: 100},
+			whitelist:  map[string]*citations.WhitelistEntry{"Howard": howard},
+			capCites:   map[string]int64{"5 Howard 100": 111, "5 How. 100": 222},
+			wantStatus: citations.StatusLinkedCAP,
+			wantTier:   citations.TierCAPDirect,
+			wantCAPID:  ptr(int64(111)),
+			wantLinked: ptr("5 Howard 100"),
+		},
+		{
+			// A page miss is no evidence of the wrong reporter: the reporter and
+			// the volume were found, so the fallback is not tried.
+			name:       "a page miss does not fall back",
+			cite:       citations.UnlinkedCitation{ID: uuid.New(), Volume: ptr(5), ReporterAbbr: "Howard", Page: 100},
+			whitelist:  map[string]*citations.WhitelistEntry{"Howard": howard},
+			capCites:   map[string]int64{"5 Howard 101": 111, "5 How. 100": 222},
+			wantStatus: citations.StatusNoMatch,
+			wantTier:   citations.TierUSPageAbsent,
+		},
+		{
+			// When the fallback misses too, the row is the first reading's miss,
+			// so its tier, and the stub registry built from it, are unchanged.
+			name:       "a fallback that also misses keeps the first reading's tier",
+			cite:       citations.UnlinkedCitation{ID: uuid.New(), Volume: ptr(10), ReporterAbbr: "Howard", Page: 100},
+			whitelist:  map[string]*citations.WhitelistEntry{"Howard": howard},
+			capCites:   map[string]int64{"5 Howard 100": 111, "10 How. 300": 222},
+			wantStatus: citations.StatusNoMatch,
+			wantTier:   citations.TierUSVolumeAbsent,
+		},
+		{
+			// A stub reached only through the fallback is not a reason to read
+			// the citation as the other reporter.
+			name:       "a fallback's stub link does not replace the miss",
+			cite:       citations.UnlinkedCitation{ID: uuid.New(), Volume: ptr(10), ReporterAbbr: "Howard", Page: 100},
+			whitelist:  map[string]*citations.WhitelistEntry{"Howard": howard},
+			capCites:   map[string]int64{"5 Howard 100": 111},
+			stubs:      map[string]struct{}{"10 How. 100": {}},
+			wantStatus: citations.StatusNoMatch,
+			wantTier:   citations.TierUSVolumeAbsent,
+		},
+		{
+			// "1 Stew. 50" in an 1850 Alabama opinion: Stewart's New Jersey
+			// Equity Reports begin in 1877, so the hit there is refused, and
+			// Stewart's Alabama Reports is what the citation means.
+			name:       "an anachronistic miss falls back",
+			cite:       citations.UnlinkedCitation{ID: uuid.New(), SourceYear: ptr(1850), Volume: ptr(1), ReporterAbbr: "Stew.", Page: 50},
+			whitelist:  map[string]*citations.WhitelistEntry{"Stew.": stewart},
+			capCites:   map[string]int64{"1 N.J. Eq. 50": 111, "1 Stew. 50": 222},
+			years:      Years{CAP: map[int64]int{111: 1877, 222: 1828}},
+			wantStatus: citations.StatusLinkedCAP,
+			wantTier:   citations.TierCAPDirect,
+			wantCAPID:  ptr(int64(222)),
+			wantLinked: ptr("1 Stew. 50"),
+		},
+		{
+			// The fallback can cross routes: Denison's Crown Cases has two
+			// volumes, so "4 Den." is uk_volume_absent, and Denio's New York
+			// Reports is tried on the US route.
+			name:       "a UK miss can fall back to a US reporter",
+			cite:       citations.UnlinkedCitation{ID: uuid.New(), Volume: ptr(4), ReporterAbbr: "Den.", Page: 20},
+			whitelist:  map[string]*citations.WhitelistEntry{"Den.": den},
+			erCites:    map[string]citations.ERCase{"1 Den 20": {ID: "er-1", Cases: 1}},
+			capCites:   map[string]int64{"4 Denio 20": 333},
+			wantStatus: citations.StatusLinkedCAP,
+			wantTier:   citations.TierCAPDirect,
+			wantCAPID:  ptr(int64(333)),
+			wantLinked: ptr("4 Denio 20"),
 		},
 		{
 			name:       "UK reporter at another volume is uk_volume_absent",
