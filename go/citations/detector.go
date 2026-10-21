@@ -252,11 +252,16 @@ func (d *Detector) Detect(doc sources.Document) []*Citation {
 		// across a line break through (issue #283).
 		m := reSpace.ReplaceAllString(raw, " ")
 
-		// Filter out the citations which are in these formats
+		// Filter out the readings that are a case name or a signal rather
+		// than a reporter:
 		// 	6 Ex parte Wray, 30
 		// 	5 Rex v. Osborn, 7
-		// Simply bail early if the matching string contains these substrings.
-		if strings.Contains(m, " v. ") || strings.Contains(m, "Ex parte") {
+		// 	6 Smith vs Jones, 30
+		// 	345 See 2
+		// They never link, since no such spelling is whitelisted, but every
+		// one is a row in the not-whitelisted pool the whitelist extender
+		// has to sift (issue #373).
+		if reCaseName.MatchString(m) {
 			continue
 		}
 
