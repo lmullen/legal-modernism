@@ -227,6 +227,15 @@ func (d *Detector) Detect(doc sources.Document) []*Citation {
 	for _, span := range matches {
 		raw := text[span[0]:span[1]]
 
+		// The page is \d{1,4} with nothing after it, so a longer run of
+		// digits was cut and its first four recorded as the page: "12 Mass.
+		// 12345" as page 1234, "12 Mass. 3451850" as 3451 (issue #366). RE2
+		// has no lookahead, so the boundary is tested here: a match that a
+		// digit follows is no citation at all.
+		if span[1] < len(text) && isASCIIDigit(text[span[1]]) {
+			continue
+		}
+
 		// Normalize all whitespace down to a single space. This happens before
 		// anything is decided about the match, because the OCR text separates
 		// lines with "\n\t\t\t" and every test below assumes a single space:

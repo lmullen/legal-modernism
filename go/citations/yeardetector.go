@@ -89,6 +89,11 @@ func (d *YearDetector) Detect(doc sources.Document) []*Citation {
 		if m == nil {
 			continue
 		}
+		// The page is bounded the way Detector bounds it (issue #366): a
+		// match that a digit follows was cut short of a longer number.
+		if end := i + m[1]; end < len(text) && isASCIIDigit(text[end]) {
+			continue
+		}
 		group := func(n int) string {
 			if m[2*n] < 0 {
 				return ""
