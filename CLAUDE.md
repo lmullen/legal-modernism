@@ -139,7 +139,7 @@ Internal web app for browsing and inspecting citation data. Located in `chambers
 
 ## GitHub
 
-Use the `gh` CLI for GitHub operations — creating pull requests, viewing issues, checking CI status, and commenting. It is authenticated via the `GH_TOKEN` environment variable.
+Use the `gh` CLI for GitHub operations — creating pull requests, viewing issues, checking CI status, and commenting. It is authenticated via the `GITHUB_TOKEN` environment variable.
 
 - Open a PR: `gh pr create --base main --head <branch> --title "..." --body "..."`
 - Reference the issue a PR closes in the commit or PR body with `Closes #<n>` so it auto-closes on merge.
