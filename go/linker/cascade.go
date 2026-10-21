@@ -89,8 +89,10 @@ func linkedToSource(status string) bool {
 }
 
 // linkCAPThenCode tries CAP first, then the FreeLaw parallel-citation crosswalk
-// (which also resolves to a CAP case), then both again under alternate reporter
-// spellings, then the Code Reporter, all using in-memory maps. The alternate spellings probe per map, not per alt: CAP is
+// (which also resolves to a CAP case), then both under the standard spelling
+// when the first probe was built from another (a diffvols translation or
+// reporter_cap), then both again under alternate reporter spellings, then the
+// Code Reporter, all using in-memory maps. The alternate spellings probe per map, not per alt: CAP is
 // exhausted across every alternate before FreeLaw is consulted, because the
 // source ranking is meaningful (CAP's own citation index over the FreeLaw
 // cluster crosswalk, matching the direct-probe order) while the position of an
@@ -224,6 +226,37 @@ func linkCAPThenCode(
 			result.CAPCaseID = &caseID
 			result.CiteLinked = &normalized
 			return result
+		}
+
+		// The standard spelling itself, when the probes above were built
+		// from another one (a diffvols translation or reporter_cap). CAP
+		// keys a case under its nominative cites as well as its official
+		// one -- "1 Allen 456" beside "83 Mass. 456" -- and spells those the
+		// way reporter_standard does, so this is the one spelling CAP shares
+		// with us; until now it was in probes, so the tier ladder and the
+		// range index counted it as tried, but no exact probe ever ran it
+		// (issue #371). It comes after the translated form, so a link that
+		// form makes is unchanged, and before the alternates, which are
+		// weaker evidence than the standard. A hit records cite_linked equal
+		// to cite_cleaned, which is what tells it from a hit under
+		// cite_normalized. The untranslated reporter_cap probe that runs
+		// ahead of this when no diffvols row covers the volume is issue
+		// #357; once it is gone, this is the probe that stands in its place.
+		if cleaned != normalized {
+			if caseID, ok := t.capCites[cleaned]; ok && admits(gate, t.years.CAP, caseID) {
+				result.Status = citations.StatusLinkedCAP
+				result.MatchTier = citations.TierCAPDirect
+				result.CAPCaseID = &caseID
+				result.CiteLinked = &cleaned
+				return result
+			}
+			if caseID, ok := t.freelawCites[cleaned]; ok && admits(gate, t.years.CAP, caseID) {
+				result.Status = citations.StatusLinkedCAP
+				result.MatchTier = citations.TierCAPFreelaw
+				result.CAPCaseID = &caseID
+				result.CiteLinked = &cleaned
+				return result
+			}
 		}
 
 		// Fall back to alternate reporter spellings: the same decision may be in
