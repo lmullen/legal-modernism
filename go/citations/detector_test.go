@@ -30,17 +30,23 @@ func TestDetector_Detect(t *testing.T) {
 	This has an edition 25 Biznes, 3rd ed. 484 associated with it.
 	Citing 1 How. Sp. T. Rep. 114 is an interesting case.
 	`
+	// Two of these are the prose between a page number and the volume of
+	// the next line's citation, read as an abbreviation: real behaviour,
+	// which the whitelist discards at link time, and which abbrMaxLen
+	// decides the reach of (issue #369). At the old cap of 16 neither fit.
 	expected := []string{
 		"6 N. Y. Sup. Ct. 69",
 		"2 Kans. 416",
 		"71 N. C. 297",
 		"71 N.C. 297",
+		"297 citations This doc has 39",
 		"39 N. Y. 436",
 		"39 N. Y. 436",
 		"6 Watts & S. 314",
 		"43 Md. 295",
 		"1 C. R. (N. S.) 413",
 		"30 Missis. 673",
+		"673 that is pretty clear. 6",
 		"30 Missis. 673",
 		"43 Missis. 1",
 		"1 Leach, 4th ed. 484",

@@ -22,9 +22,23 @@ const abbrUnit = `(?:` + abbrChar + `|` + abbrOCRDigit + `)`
 // edition is the optional edition suffix, e.g. "Leach, 4th ed. 484".
 const edition = `((1st|2nd|3rd|\dth)\sed.)??`
 
+// abbrMaxLen is the longest abbreviation GenericDetector matches, in
+// characters. A spelling longer than this is not truncated; it is lost, because
+// the page has to follow the abbreviation and nothing shorter than the whole
+// spelling is followed by one: at the old cap of 16, "12 N. Y. Sup. Ct. Rep.
+// 345" and "12 Smedes & Marshall 345" were not detected at all, and a
+// whitelist row for such a spelling could never be fed (issue #369). The
+// treatises use spellings up to about 21 characters ("Am. & Eng. R. R. Cas.",
+// "N. Y. Civ. Proc. Rep.", "Am. Law Reg. (N. S.)"), so 24 covers them with a
+// little room. The cost is more prose between two numbers read as an
+// abbreviation; those rows go to the not-whitelisted pool, where the whitelist
+// has always sorted them. The number is a parameter to tune once the junk it
+// adds has been measured on a sample.
+const abbrMaxLen = "24"
+
 // GenericDetector is a generic detector with a regular expression that looks for all
 // citations. Its abbreviation is alphabetic and admits no digits.
-var GenericDetector = NewDetector("Generic", abbrChar+`{3,16}`+edition)
+var GenericDetector = NewDetector("Generic", abbrChar+`{3,`+abbrMaxLen+`}`+edition)
 
 // GenericOCRDigitDetector finds the citations GenericDetector cannot, the ones
 // whose abbreviation the OCR corrupted by reading a letter as a digit. The

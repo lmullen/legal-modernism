@@ -50,14 +50,17 @@ func TestLoadFinders(t *testing.T) {
 func TestDetectDocument(t *testing.T) {
 	finders := []Finder{GenericDetector, NewSingleVolDetector("Cal.", "Cal.")}
 	ocr := sources.NewOCRReplacer([]*sources.OCRSubstitution{{Mistake: "Ca1.", Correction: "Cal."}})
-	// Sentences rather than a list: the generic detector reads a run like
-	// "185 and 5" as a citation too, which is real behaviour (the whitelist
-	// rejects it at link time) but not what this test is about.
-	doc := sources.NewDoc("d1", "See 123 Ca1. 185. The case in L. R. 5 Ch. 100 was followed. Also Cal. 12 applies.")
+	// Sentences rather than a list, with more than abbrMaxLen characters of
+	// prose between a number and the bare "Cal. 12": the generic detector
+	// reads a run like "100 was followed. Also Cal. 12" as a citation too,
+	// which is real behaviour (the whitelist rejects it at link time) but not
+	// what this test is about, and that reading would make "Cal. 12" its
+	// shadow.
+	doc := sources.NewDoc("d1", "See 123 Ca1. 185. The case in L. R. 5 Ch. 100 was followed in later decisions. Also Cal. 12 applies.")
 
 	kept, dropped := DetectDocument(doc, finders, ocr)
 
-	assert.Equal(t, "See 123 Cal. 185. The case in 5 L. R. Ch. 100 was followed. Also Cal. 12 applies.", doc.Text(), "the text is corrected and normalized in place")
+	assert.Equal(t, "See 123 Cal. 185. The case in 5 L. R. Ch. 100 was followed in later decisions. Also Cal. 12 applies.", doc.Text(), "the text is corrected and normalized in place")
 	assert.Equal(t, 1, dropped, "the single-volume reading of 'Cal. 185' inside '123 Cal. 185' is a shadow")
 
 	var cites []string
