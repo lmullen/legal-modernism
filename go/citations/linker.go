@@ -57,6 +57,19 @@ type ERCase struct {
 	Cases     int    // how many cases share the cite string; 1 when unambiguous
 }
 
+// SharedCase is one of the CAP cases that share a first-page cite string, with
+// how many pages it occupies (issue #359). The cases that begin on one page are
+// nearly always a decision of some length and one or more memorandum decisions
+// of a page or less, printed in the space the longer one leaves, so the pages
+// are what tell them apart. Pages is CAP's last_page - first_page + 1, or 0 when
+// CAP records no page range or an inverted one; as in CaseSpan it is a length,
+// not an end page, because the scanned pagination can be offset from the cited
+// one.
+type SharedCase struct {
+	ID    int64
+	Pages int
+}
+
 // CaseSpan is one first-page cite string, the case it names, and how many pages
 // that case occupies. It is the input to the page-range index that resolves pin
 // cites — citations to an interior page of a case, which can never match a
@@ -182,6 +195,7 @@ const (
 
 	// linked_*: which probe produced the link.
 	TierCAPDirect             = "cap_direct"               // cap.citations, under the normalized cite
+	TierCAPSharedLongest      = "cap_shared_longest"       // a cite several CAP cases share, linked to the longest of them (#359)
 	TierCAPFreelaw            = "cap_freelaw"              // freelaw.cite_to_cap, under the normalized cite
 	TierCAPAltSpelling        = "cap_alt_spelling"         // cap.citations, under a reporters_abbreviations alternate
 	TierCAPFreelawAltSpelling = "cap_freelaw_alt_spelling" // freelaw.cite_to_cap, under an alternate

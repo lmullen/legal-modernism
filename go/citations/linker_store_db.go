@@ -143,6 +143,65 @@ func (s *LinkerDBStore) LoadCAPCitations(ctx context.Context) (map[string]int64,
 	return m, nil
 }
 
+// LoadCAPSharedCitations loads the cites LoadCAPCitations drops: each cite that
+// belongs to more than one CAP case, with the distinct cases it belongs to and
+// how many pages each occupies, longest first and then by ID. Measured
+// 2026-10-20, these sit behind 108,357 CAP-ledger misses that were reported as
+// us_page_absent, and 304,943 MOML misses (2026-10-23), nearly all of them a
+// case and one or more one-page memorandum decisions beginning on the same page
+// (issue #359). The page count is CAP's own, last_page - first_page + 1, taken
+// as 0 when either page is missing or the range is inverted, so a case CAP
+// knows nothing about the length of ranks below every case it does.
+func (s *LinkerDBStore) LoadCAPSharedCitations(ctx context.Context) (map[string][]SharedCase, error) {
+	query := `
+	WITH shared AS (
+		SELECT DISTINCT cite, "case"
+		FROM cap.citations
+		WHERE cite IN (
+			SELECT cite FROM cap.citations GROUP BY cite HAVING count(DISTINCT "case") > 1
+		)
+	),
+	sized AS (
+		SELECT sh.cite, sh."case" AS case_id,
+		       CASE WHEN c.last_page >= c.first_page THEN c.last_page - c.first_page + 1 ELSE 0 END AS pages
+		FROM shared sh
+		LEFT JOIN cap.cases c ON c.id = sh."case"
+	)
+	SELECT cite,
+	       array_agg(case_id ORDER BY pages DESC, case_id) AS case_ids,
+	       array_agg(pages ORDER BY pages DESC, case_id) AS pages
+	FROM sized
+	GROUP BY cite
+	`
+	rows, err := s.DB.Query(ctx, query)
+	if err != nil {
+		return nil, fmt.Errorf("loading shared CAP citations: %w", err)
+	}
+	defer rows.Close()
+
+	m := make(map[string][]SharedCase)
+	for rows.Next() {
+		var cite string
+		var caseIDs []int64
+		var pages []int32
+		if err := rows.Scan(&cite, &caseIDs, &pages); err != nil {
+			return nil, fmt.Errorf("scanning shared CAP citation: %w", err)
+		}
+		if len(pages) != len(caseIDs) {
+			return nil, fmt.Errorf("scanning shared CAP citation %q: %d cases but %d page counts", cite, len(caseIDs), len(pages))
+		}
+		cases := make([]SharedCase, len(caseIDs))
+		for i := range caseIDs {
+			cases[i] = SharedCase{ID: caseIDs[i], Pages: int(pages[i])}
+		}
+		m[cite] = cases
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("iterating shared CAP citations: %w", err)
+	}
+	return m, nil
+}
+
 // LoadFreelawCites loads the FreeLaw parallel-citation crosswalk into an
 // in-memory map of cite -> cap_case_id. The matview is keyed on the same
 // "{volume} {reporter} {page}" cite string the linker builds, so the linker can

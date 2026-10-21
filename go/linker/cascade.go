@@ -108,6 +108,11 @@ func linkCAPThenCode(
 	// the rest of the cascade still runs and can reach a case of the right date.
 	gate := newYearGate(c)
 
+	// Set when an exact probe reached a cite several CAP cases share and more
+	// than one of them could be the case cited, so the miss is reported as an
+	// ambiguity rather than as a page no case begins on (issue #359).
+	ambiguous := false
+
 	// Run the whole cascade for the form we detected before trying the volume
 	// variant, so an existing link can never be rewired: the variant only ever
 	// turns a no_match into a link.
@@ -124,6 +129,32 @@ func linkCAPThenCode(
 			result.CAPCaseID = &caseID
 			result.CiteLinked = &normalized
 			return result
+		}
+
+		// A cite several CAP cases share, which capCites leaves out (issue #359).
+		// The cases that begin on one page are nearly always a decision of some
+		// length and one or more memorandum decisions of a page or less, printed
+		// in the space the longer one leaves: 89 Ga. 645 is Reese v. Reese, nine
+		// pages, beside Summers v. State, one. A citation to the page means the
+		// decision that fills it, so the citation links to the longest of the
+		// cases the year gate admits; the gate is applied here as it is to every
+		// other hit, not as the tie-breaker. When the longest is not unique, as
+		// in a table of one-page decisions (61 Kan. 859 holds eleven), nothing in
+		// the cite tells them apart: an honest ambiguity, and the cascade goes on
+		// in case another form or source resolves it. Skipped for an untranslated
+		// diffvols volume, for the same reason range matching is: the cite
+		// belongs to some other volume.
+		if shared, ok := t.capShared[normalized]; ok && !diffvolsMissing(f, entry, t.diffvols) {
+			left := admitted(gate, t.years.CAP, shared)
+			if caseID, ok := longest(left); ok {
+				result.Status = citations.StatusLinkedCAP
+				result.MatchTier = citations.TierCAPSharedLongest
+				result.CAPCaseID = &caseID
+				result.CiteLinked = &normalized
+				return result
+			} else if len(left) > 1 {
+				ambiguous = true
+			}
 		}
 
 		// Fall back to the FreeLaw crosswalk: if any parallel form of this decision
@@ -225,7 +256,7 @@ func linkCAPThenCode(
 	// misses are coverage gaps or pin cites, which the registry is built to
 	// exclude -- checking the tier here rather than trusting the registry keeps
 	// that true even when the registry is stale.
-	tier := usTier(probes, t.us, missingDiffvols, span)
+	tier := usTier(probes, t.us, missingDiffvols, ambiguous, span)
 	if tier == citations.TierUSReporterAbsent {
 		if cite, ok := t.stubs.lookup(standard); ok {
 			return linkStub(result, cite)

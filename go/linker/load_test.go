@@ -38,6 +38,9 @@ func (f *fakeStore) GetDiffVols(context.Context) (map[string]map[int]*citations.
 func (f *fakeStore) LoadCAPCitations(context.Context) (map[string]int64, error) {
 	return f.capCites, f.step("cap")
 }
+func (f *fakeStore) LoadCAPSharedCitations(context.Context) (map[string][]citations.SharedCase, error) {
+	return nil, f.step("capshared")
+}
 func (f *fakeStore) LoadFreelawCites(context.Context) (map[string]int64, error) {
 	return nil, f.step("freelaw")
 }
@@ -98,7 +101,7 @@ func TestLoad(t *testing.T) {
 // with the step, so the driver's startup message says what did not load.
 func TestLoadNamesTheFailedStep(t *testing.T) {
 	sentinel := errors.New("boom")
-	for _, step := range []string{"whitelist", "diffvols", "cap", "freelaw", "alts", "code", "er", "capspans", "erspans", "stubs", "years"} {
+	for _, step := range []string{"whitelist", "diffvols", "cap", "capshared", "freelaw", "alts", "code", "er", "capspans", "erspans", "stubs", "years"} {
 		_, err := Load(context.Background(), &fakeStore{failAt: step, fail: sentinel})
 		require.Error(t, err, step)
 		assert.True(t, errors.Is(err, sentinel), step)

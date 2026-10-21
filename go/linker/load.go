@@ -39,6 +39,13 @@ func Load(ctx context.Context, store citations.LinkerStore) (*Tables, error) {
 	}
 	slog.Info("loaded CAP citations", "entries", len(capCites))
 
+	slog.Info("loading shared CAP citations")
+	capShared, err := store.LoadCAPSharedCitations(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("could not load shared CAP citations: %w", err)
+	}
+	slog.Info("loaded shared CAP citations", "entries", len(capShared))
+
 	slog.Info("loading FreeLaw cite crosswalk")
 	freelawCites, err := store.LoadFreelawCites(ctx)
 	if err != nil {
@@ -133,7 +140,7 @@ func Load(ctx context.Context, store citations.LinkerStore) (*Tables, error) {
 	// to build the reporter/volume indexes a no_match is attributed with, and the
 	// page-range indexes that resolve pin cites.
 	slog.Info("indexing cite strings by reporter and volume")
-	t := NewTables(whitelist, diffvols, capCites, freelawCites, altAbbrs, codeCites, erCites, capSpans, erSpans, stubs, years)
+	t := NewTables(whitelist, diffvols, capCites, capShared, freelawCites, altAbbrs, codeCites, erCites, capSpans, erSpans, stubs, years)
 	stats := t.Stats()
 	slog.Info("indexed cite strings",
 		"us_reporters", stats.USReporters, "us_volumes", stats.USVolumes,

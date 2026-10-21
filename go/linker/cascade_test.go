@@ -27,6 +27,9 @@ func TestLinkCitation(t *testing.T) {
 	abrStd := "A.B.R."
 	ltStd := "L.T."
 	kbStd := "K.B."
+	nyStd := "N.Y."
+	gaStd := "Ga."
+	kanStd := "Kan."
 
 	tests := []struct {
 		name         string
@@ -34,6 +37,7 @@ func TestLinkCitation(t *testing.T) {
 		whitelist    map[string]*citations.WhitelistEntry
 		diffvols     map[string]map[int]*citations.DiffVolEntry
 		capCites     map[string]int64
+		capShared    map[string][]citations.SharedCase
 		freelawCites map[string]int64
 		altAbbrs     map[string][]string
 		codeCites    map[string]int64
@@ -553,6 +557,129 @@ func TestLinkCitation(t *testing.T) {
 			wantTier:   citations.TierUSDiffVolsMissing,
 		},
 		{
+			// Issue #359. 89 Ga. 645 belongs to two CAP cases: Reese v. Reese,
+			// nine pages, and Summers v. State, a one-page memorandum decision
+			// printed in the space it leaves. A citation to the page means the
+			// decision that fills it.
+			name:       "shared cite links to the longest case",
+			cite:       citations.UnlinkedCitation{ID: uuid.New(), SourceYear: ptr(1900), Volume: ptr(89), ReporterAbbr: "Ga.", Page: 645},
+			whitelist:  map[string]*citations.WhitelistEntry{"Ga.": {ReporterStandard: &gaStd}},
+			capShared:  map[string][]citations.SharedCase{"89 Ga. 645": {{ID: 111, Pages: 9}, {ID: 222, Pages: 1}}},
+			years:      Years{CAP: map[int64]int{111: 1892, 222: 1892}},
+			wantStatus: citations.StatusLinkedCAP,
+			wantTier:   citations.TierCAPSharedLongest,
+			wantCAPID:  ptr(int64(111)),
+			wantLinked: ptr("89 Ga. 645"),
+		},
+		{
+			// The loader orders the cases longest first, but the rule does not
+			// depend on it.
+			name:       "the longest case wins wherever it is listed",
+			cite:       citations.UnlinkedCitation{ID: uuid.New(), SourceYear: ptr(1900), Volume: ptr(89), ReporterAbbr: "Ga.", Page: 645},
+			whitelist:  map[string]*citations.WhitelistEntry{"Ga.": {ReporterStandard: &gaStd}},
+			capShared:  map[string][]citations.SharedCase{"89 Ga. 645": {{ID: 222, Pages: 1}, {ID: 333, Pages: 2}, {ID: 111, Pages: 9}}},
+			years:      Years{CAP: map[int64]int{111: 1892, 222: 1892, 333: 1892}},
+			wantStatus: citations.StatusLinkedCAP,
+			wantTier:   citations.TierCAPSharedLongest,
+			wantCAPID:  ptr(int64(111)),
+			wantLinked: ptr("89 Ga. 645"),
+		},
+		{
+			// A table of one-page decisions: nothing in the cite tells them
+			// apart, so it is an ambiguity, not a page no case begins on.
+			name:       "shared cite with cases of equal length is us_page_ambiguous",
+			cite:       citations.UnlinkedCitation{ID: uuid.New(), SourceYear: ptr(1910), Volume: ptr(61), ReporterAbbr: "Kan.", Page: 859},
+			whitelist:  map[string]*citations.WhitelistEntry{"Kan.": {ReporterStandard: &kanStd}},
+			capShared:  map[string][]citations.SharedCase{"61 Kan. 859": {{ID: 111, Pages: 1}, {ID: 222, Pages: 1}, {ID: 333, Pages: 1}}},
+			years:      Years{CAP: map[int64]int{111: 1900, 222: 1900, 333: 1900}},
+			wantStatus: citations.StatusNoMatch,
+			wantTier:   citations.TierUSPageAmbiguous,
+		},
+		{
+			// Two cases of the longest length among shorter ones are still a tie.
+			name:       "a tie for the longest is us_page_ambiguous",
+			cite:       citations.UnlinkedCitation{ID: uuid.New(), SourceYear: ptr(1910), Volume: ptr(61), ReporterAbbr: "Kan.", Page: 859},
+			whitelist:  map[string]*citations.WhitelistEntry{"Kan.": {ReporterStandard: &kanStd}},
+			capShared:  map[string][]citations.SharedCase{"61 Kan. 859": {{ID: 111, Pages: 3}, {ID: 222, Pages: 3}, {ID: 333, Pages: 1}}},
+			years:      Years{CAP: map[int64]int{111: 1900, 222: 1900, 333: 1900}},
+			wantStatus: citations.StatusNoMatch,
+			wantTier:   citations.TierUSPageAmbiguous,
+		},
+		{
+			// Cases whose length CAP does not record all count as 0 pages, so
+			// they cannot be told apart either.
+			name:       "shared cite with no page counts is us_page_ambiguous",
+			cite:       citations.UnlinkedCitation{ID: uuid.New(), SourceYear: ptr(1910), Volume: ptr(61), ReporterAbbr: "Kan.", Page: 859},
+			whitelist:  map[string]*citations.WhitelistEntry{"Kan.": {ReporterStandard: &kanStd}},
+			capShared:  map[string][]citations.SharedCase{"61 Kan. 859": {{ID: 111, Pages: 0}, {ID: 222, Pages: 0}}},
+			years:      Years{CAP: map[int64]int{111: 1900, 222: 1900}},
+			wantStatus: citations.StatusNoMatch,
+			wantTier:   citations.TierUSPageAmbiguous,
+		},
+		{
+			// The year gate is applied as it is to every other hit, before the
+			// length rule: 44 N.Y. 505 is shared with a case of 1978, which a
+			// citation of 1890 cannot mean however long it is, so the 1871 case
+			// is the longest of those admitted.
+			name:       "the longest is chosen among the cases the year gate admits",
+			cite:       citations.UnlinkedCitation{ID: uuid.New(), SourceYear: ptr(1890), Volume: ptr(44), ReporterAbbr: "N.Y.", Page: 505},
+			whitelist:  map[string]*citations.WhitelistEntry{"N.Y.": {ReporterStandard: &nyStd}},
+			capShared:  map[string][]citations.SharedCase{"44 N.Y. 505": {{ID: 222, Pages: 12}, {ID: 111, Pages: 3}}},
+			years:      Years{CAP: map[int64]int{111: 1871, 222: 1978}},
+			wantStatus: citations.StatusLinkedCAP,
+			wantTier:   citations.TierCAPSharedLongest,
+			wantCAPID:  ptr(int64(111)),
+			wantLinked: ptr("44 N.Y. 505"),
+		},
+		{
+			// With no citing year the gate admits every case, and the longest
+			// of them all is chosen.
+			name:       "shared cite without a citing year links to the longest case",
+			cite:       citations.UnlinkedCitation{ID: uuid.New(), Volume: ptr(44), ReporterAbbr: "N.Y.", Page: 505},
+			whitelist:  map[string]*citations.WhitelistEntry{"N.Y.": {ReporterStandard: &nyStd}},
+			capShared:  map[string][]citations.SharedCase{"44 N.Y. 505": {{ID: 222, Pages: 12}, {ID: 111, Pages: 3}}},
+			years:      Years{CAP: map[int64]int{111: 1871, 222: 1978}},
+			wantStatus: citations.StatusLinkedCAP,
+			wantTier:   citations.TierCAPSharedLongest,
+			wantCAPID:  ptr(int64(222)),
+			wantLinked: ptr("44 N.Y. 505"),
+		},
+		{
+			// One case refused and two equally long ones admitted is still an
+			// ambiguity: the refusal of one case must not be reported as
+			// anachronistic.
+			name:       "a refused case among several possible ones does not make the cite anachronistic",
+			cite:       citations.UnlinkedCitation{ID: uuid.New(), SourceYear: ptr(1910), Volume: ptr(190), ReporterAbbr: "N.Y.", Page: 536},
+			whitelist:  map[string]*citations.WhitelistEntry{"N.Y.": {ReporterStandard: &nyStd}},
+			capShared:  map[string][]citations.SharedCase{"190 N.Y. 536": {{ID: 333, Pages: 20}, {ID: 111, Pages: 1}, {ID: 222, Pages: 1}}},
+			years:      Years{CAP: map[int64]int{111: 1907, 222: 1907, 333: 1950}},
+			wantStatus: citations.StatusNoMatch,
+			wantTier:   citations.TierUSPageAmbiguous,
+		},
+		{
+			// Every case sharing the cite was decided after the citing document.
+			name:       "shared cite with every case too late is us_anachronistic",
+			cite:       citations.UnlinkedCitation{ID: uuid.New(), SourceYear: ptr(1850), Volume: ptr(44), ReporterAbbr: "N.Y.", Page: 505},
+			whitelist:  map[string]*citations.WhitelistEntry{"N.Y.": {ReporterStandard: &nyStd}},
+			capShared:  map[string][]citations.SharedCase{"44 N.Y. 505": {{ID: 222, Pages: 12}, {ID: 111, Pages: 3}}},
+			years:      Years{CAP: map[int64]int{111: 1871, 222: 1978}},
+			wantStatus: citations.StatusNoMatch,
+			wantTier:   citations.TierUSAnachronistic,
+		},
+		{
+			// An untranslated diffvols volume probes some other volume, so a
+			// shared cite there is no evidence at all.
+			name:       "shared cite under an unmapped diffvols volume is not resolved",
+			cite:       citations.UnlinkedCitation{ID: uuid.New(), SourceYear: ptr(1890), Volume: ptr(7), ReporterAbbr: "Stat.", Page: 30},
+			whitelist:  map[string]*citations.WhitelistEntry{"Stat.": {ReporterStandard: &statStd, CAPDifferent: true}},
+			diffvols:   map[string]map[int]*citations.DiffVolEntry{"Stat.": {2: {CAPVol: 81, CAPReporter: "Stat."}}},
+			capCites:   map[string]int64{"7 Stat. 31": 999},
+			capShared:  map[string][]citations.SharedCase{"7 Stat. 30": {{ID: 111, Pages: 9}, {ID: 222, Pages: 1}}},
+			years:      Years{CAP: map[int64]int{111: 1800, 222: 1978}},
+			wantStatus: citations.StatusNoMatch,
+			wantTier:   citations.TierUSDiffVolsMissing,
+		},
+		{
 			name:       "UK reporter at another volume is uk_volume_absent",
 			cite:       citations.UnlinkedCitation{ID: uuid.New(), Volume: ptr(1), ReporterAbbr: "Q.B.", Page: 20},
 			whitelist:  map[string]*citations.WhitelistEntry{"Q.B.": {ReporterStandard: &qbStd, UK: true}},
@@ -1060,7 +1187,7 @@ func TestLinkCitation(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tables := NewTables(tt.whitelist, tt.diffvols, tt.capCites, tt.freelawCites, tt.altAbbrs, tt.codeCites, tt.erCites, tt.capSpans, tt.erSpans, tt.stubs, tt.years)
+			tables := NewTables(tt.whitelist, tt.diffvols, tt.capCites, tt.capShared, tt.freelawCites, tt.altAbbrs, tt.codeCites, tt.erCites, tt.capSpans, tt.erSpans, tt.stubs, tt.years)
 			got := linkCitation(&tt.cite, tables)
 
 			assert.Equal(t, tt.wantStatus, got.Status)
@@ -1160,7 +1287,7 @@ func TestVolumeVariantRecordsDetectedForm(t *testing.T) {
 	whitelist := map[string]*citations.WhitelistEntry{"Toth": {ReporterStandard: &std, SingleVol: true}}
 
 	tables := NewTables(whitelist, map[string]map[int]*citations.DiffVolEntry{},
-		map[string]int64{"1 Toth 123": 777}, nil, nil, nil, nil, nil, nil, nil, Years{})
+		map[string]int64{"1 Toth 123": 777}, nil, nil, nil, nil, nil, nil, nil, nil, Years{})
 	got := linkCitation(c, tables)
 
 	assert.Equal(t, citations.StatusLinkedCAP, got.Status)
