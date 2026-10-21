@@ -196,6 +196,18 @@ func (d *Detector) Detect(doc sources.Document) []*Citation {
 
 		for _, start := range starts {
 			i := start[0]
+			// A volume is a number of its own, not the tail of a longer one
+			// or of a word. The starting places are found leftmost and
+			// non-overlapping, so "1850 Mass. 12" has no start at the "1"
+			// (no whitespace follows three digits there) and one at the "8",
+			// which read the year as volume 850; "l2 Mass. 12", an OCR "l"
+			// for "1", likewise read the volume as 2 (issue #365).
+			// YearDetector refuses a start after a digit for the same
+			// reason, and eyecite requires a non-alphanumeric character
+			// ahead of every citation.
+			if i > 0 && isASCIIAlnum(text[i-1]) {
+				continue
+			}
 			loc := d.anchored.FindStringIndex(text[i:])
 			if loc != nil {
 				// The location is relative to text[i:], and loc[0] is always 0
@@ -281,4 +293,12 @@ func (d *Detector) Detect(doc sources.Document) []*Citation {
 		citations = append(citations, c)
 	}
 	return citations
+}
+
+// isASCIIAlnum reports whether b is an ASCII letter or digit. Only ASCII is
+// tested: the last byte of a multi-byte character is never in this range, so a
+// volume may follow one, and no OCR reading glues a non-ASCII letter to a
+// volume that a boundary should separate.
+func isASCIIAlnum(b byte) bool {
+	return isASCIIDigit(b) || (b >= 'a' && b <= 'z') || (b >= 'A' && b <= 'Z')
 }
