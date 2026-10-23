@@ -25,8 +25,21 @@ Conventions in chambers:
 - Page: `/viz/<name>`, template `templates/viz_<name>.html`.
 - Data: `/api/viz/<name>`, written with `writeJSON` (see `linking.go`), following
   the 503 convention of `apiError` for a view that is not populated yet.
-- Shared style module: `static/viz/style.js`, created with the first chart.
-- Add each visualization to a "Visualizations" section of `home.html`.
+- Shared style module: `static/viz/style.js`. It exports the typefaces, the
+  colours (the registry below), the type sizes, the `plotStyle` every
+  `Plot.plot` call takes, a stylesheet for the anatomy and controls (classes
+  `viz-title`, `viz-subtitle`, `viz-source`, `viz-notes`, `viz-controls`, the
+  toggles and the two-handled year slider), and the number formats.
+  `ensureStyles()` loads the fonts and the stylesheet once.
+- Chart module: `static/viz/<name>.js`, with a `summarize(data, options)` that
+  reduces the JSON to what the chart shows and the words for the title and
+  subtitle, a `chart(summary, {width, height})` that returns Plot's figure, and
+  a `table(summary)` for the accessible table.
+- Add each visualization to the "Draft public visualizations" section of
+  `home.html`; the navbar's "Draft visualizations" links there. The page's
+  `Section` is `viz`.
+- Keep the view's state (the selection, the years) in the query string, so a
+  view can be shared.
 
 ## Before starting one
 
@@ -132,4 +145,9 @@ chart to chart. Add a row whenever a visualization fixes one.
 
 | Category | Colour | Scheme / source | First used in |
 | -------- | ------ | --------------- | ------------- |
-| _none yet_ | | | |
+| A U.S. jurisdiction (a state, territory or the federal courts) | `#4269d0` | `observable10` blue | `/viz/jurisdictions` |
+| The United Kingdom | `#ff725c` | `observable10` red-orange | `/viz/jurisdictions` |
+
+The two keep their separation under protanopia, deuteranopia and tritanopia
+(ΔE above 20 in OKLab under each). The red-orange is below 3:1 against white,
+so a mark in it always carries a direct label.
