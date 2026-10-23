@@ -1,6 +1,9 @@
 package citations
 
-import "unicode"
+import (
+	"sort"
+	"unicode"
+)
 
 // RemoveShadows drops every citation that is a second reading of a citation
 // another detector found on the same page, and returns the rest in their
@@ -44,6 +47,20 @@ import "unicode"
 // no whitelist row will ever admit, must not take the real citation ahead of
 // it with it.
 //
+// A volumed citation that begins inside an earlier volumed citation. When the
+// separator between two citations is lost, the generic detector reads the
+// first citation's page as the second's volume: "12 Mass. 345 Gray 7" yields
+// "12 Mass. 345" and "345 Gray 7" (issue #368). The earlier reading is the one
+// to keep, as eyecite keeps it: its volume stands where a volume belongs. The
+// readings are taken in order of their start, and a reading that begins inside
+// the last one kept is dropped -- the last one kept, not the last one seen,
+// so that a prose reading bridging two real citations ("345 and S. C. 2" in
+// "12 Mass. 345 and S. C. 2 Pick. 12") takes neither of them with it: it is
+// dropped for beginning inside the first, and the second does not begin inside
+// the first. As above, only a citation with a capital letter in its
+// abbreviation blocks the readings after it, and a citation that carries a
+// year is never dropped.
+//
 // Containment must be strict: two single-volume detectors whose abbreviations
 // are prefixes of one another ("Toth" and "Tothill") produce identical spans for
 // the same text, and those are the same citation, not a shadow -- the unique
@@ -52,14 +69,46 @@ import "unicode"
 // The comparison is quadratic in the number of citations on the page, which is
 // at most a few hundred.
 func RemoveShadows(cites []*Citation) []*Citation {
+	overlapped := overlappingVolumed(cites)
 	kept := make([]*Citation, 0, len(cites))
 	for _, c := range cites {
-		if shadowed(c, cites) {
+		if overlapped[c] || shadowed(c, cites) {
 			continue
 		}
 		kept = append(kept, c)
 	}
 	return kept
+}
+
+// overlappingVolumed finds the volumed, year-less citations that begin inside
+// an earlier volumed citation that was itself kept, in order of start. A
+// citation blocks the ones after it only if its abbreviation has a capital
+// letter; see RemoveShadows.
+func overlappingVolumed(cites []*Citation) map[*Citation]bool {
+	volumed := make([]*Citation, 0, len(cites))
+	for _, c := range cites {
+		if c.Volume != nil {
+			volumed = append(volumed, c)
+		}
+	}
+	sort.SliceStable(volumed, func(i, j int) bool {
+		if volumed[i].Start != volumed[j].Start {
+			return volumed[i].Start < volumed[j].Start
+		}
+		return volumed[i].End > volumed[j].End
+	})
+	dropped := make(map[*Citation]bool)
+	var last *Citation // the last citation kept that blocks what follows
+	for _, c := range volumed {
+		if last != nil && c.Year == nil && c.Start > last.Start && c.Start < last.End {
+			dropped[c] = true
+			continue
+		}
+		if hasUpper(c.ReporterAbbr) {
+			last = c
+		}
+	}
+	return dropped
 }
 
 // shadowed reports whether c's span lies strictly inside the span of another
