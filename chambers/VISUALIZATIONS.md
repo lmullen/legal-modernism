@@ -83,7 +83,7 @@ There is no link to download the data.
   which Plot exposes via `scheme`): a categorical scheme such as `observable10` or
   `tableau10` for categories, a sequential scheme for quantities, and a diverging
   scheme for quantities with a meaningful midpoint. The website's accent is
-  purple (`#ba02e8`); chambers uses `#6f42c1`. Neither is fixed for charts yet.
+  purple (`#ba02e8`), which chambers shares; it is not yet fixed for any category in charts.
 - **Consistency:** once a category has a colour, it keeps it in every chart.
   Record each decision in the colour registry below.
 - **Restraint:** light grid lines or none, no chart borders, no 3-D, no
