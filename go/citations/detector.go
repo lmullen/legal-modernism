@@ -242,6 +242,24 @@ func (d *Detector) Detect(doc sources.Document) []*Citation {
 	for _, span := range matches {
 		raw := text[span[0]:span[1]]
 
+		// The page is \d{1,4} with nothing after it, so a longer run of
+		// digits was cut and its first four recorded as the page: "12 Mass.
+		// 12345" as page 1234, "12 Mass. 3451850" as 3451 (issue #366). RE2
+		// has no lookahead, so the boundary is tested here: a match that a
+		// digit follows is no citation at all.
+		if span[1] < len(text) && isASCIIDigit(text[span[1]]) {
+			continue
+		}
+
+		// An edition ordinal after the page: "Hob. 4th ed. 123" read as
+		// "Hob. 4", or "12 Mass. 4th ed." with no page as "12 Mass. 4"
+		// (issue #370). The single-volume pattern has no edition group, and
+		// the generic one's is only reached when the shorter reading fails.
+		// A page followed by any other letter ("13 N. Y. 215b") stands.
+		if followsOrdinal(text, span[1]) {
+			continue
+		}
+
 		// Normalize all whitespace down to a single space. This happens before
 		// anything is decided about the match, because the OCR text separates
 		// lines with "\n\t\t\t" and every test below assumes a single space:
@@ -317,4 +335,17 @@ func (d *Detector) Detect(doc sources.Document) []*Citation {
 // volume that a boundary should separate.
 func isASCIIAlnum(b byte) bool {
 	return isASCIIDigit(b) || (b >= 'a' && b <= 'z') || (b >= 'A' && b <= 'Z')
+}
+
+// followsOrdinal reports whether the text at i begins with an ordinal suffix:
+// "st", "nd", "rd", "th", or the "d" of the legal "2d" and "3d". A number the
+// suffix follows is an edition, not a page.
+func followsOrdinal(text string, i int) bool {
+	rest := text[i:]
+	for _, suffix := range []string{"st", "nd", "rd", "th", "d"} {
+		if strings.HasPrefix(rest, suffix) {
+			return true
+		}
+	}
+	return false
 }
