@@ -188,6 +188,44 @@ type DashboardData struct {
 	Reporters     []ReporterStats    `json:"Reporters,omitempty"`
 	Tiers         []TierStat         `json:"Tiers,omitempty"`
 	ReporterTiers []ReporterTierStat `json:"ReporterTiers,omitempty"`
+	// Names is how far the detected case names reach (issue #392): one row
+	// per status, tier and source, from the corpus's case_name_summary view.
+	// Nil until the view exists and is populated.
+	Names []NameStat `json:"Names,omitempty"`
+}
+
+// NameStat is one row of a corpus's case_name_summary: the citations of one
+// status and match tier whose case name was found one way, or not at all
+// (Source empty). Tier is empty for the statuses that carry none.
+type NameStat struct {
+	Status string `json:"status"`
+	Tier   string `json:"tier"`
+	Source string `json:"source"`
+	N      int    `json:"n"`
+}
+
+// getCaseNameSummary reads the corpus's case_name_summary view.
+func (s *server) getCaseNameSummary(ctx context.Context, c linkingCorpus) ([]NameStat, error) {
+	slog.Debug("querying case name summary view", "corpus", c.Key)
+	rows, err := s.db.Query(ctx, `
+		SELECT status, COALESCE(match_tier, ''), COALESCE(case_name_source, ''), n
+		FROM `+c.rel("case_name_summary")+`
+		ORDER BY n DESC
+	`)
+	if err != nil {
+		return nil, fmt.Errorf("querying case name summary: %w", err)
+	}
+	defer rows.Close()
+	var results []NameStat
+	for rows.Next() {
+		var n NameStat
+		if err := rows.Scan(&n.Status, &n.Tier, &n.Source, &n.N); err != nil {
+			return nil, fmt.Errorf("scanning case name summary: %w", err)
+		}
+		results = append(results, n)
+	}
+	slog.Debug("fetched case name summary", "count", len(results))
+	return results, rows.Err()
 }
 
 // TotalLinked returns the sum of all linked statuses.
@@ -284,6 +322,9 @@ func (s *server) getDashboardData(ctx context.Context, c linkingCorpus) (*Dashbo
 	}
 	if d.ReporterTiers, err = s.getReporterTiers(ctx, c); err != nil {
 		slog.Warn("reporter tiers unavailable, rendering dashboard without them", "error", err)
+	}
+	if d.Names, err = s.getCaseNameSummary(ctx, c); err != nil {
+		slog.Warn("case name summary unavailable, rendering dashboard without it", "error", err)
 	}
 
 	slog.Debug("dashboard data complete", "corpus", c.Key, "total_raw_cites", d.TotalRawCites, "total_linked", d.TotalLinked(),

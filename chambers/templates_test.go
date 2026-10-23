@@ -67,6 +67,8 @@ func TestRenderPages(t *testing.T) {
 		require.Contains(t, out, "REPORTER_PAGES =  true")
 		require.Contains(t, out, "<code>cite-linker</code>")
 		require.Contains(t, out, `<a href="/linking" class="btn btn-primary">MOML treatises</a>`)
+		require.Contains(t, out, `id="names-container"`)
+		require.Contains(t, out, "renderNames(d.Names)")
 		require.NotContains(t, out, `id="graph"`)
 	})
 

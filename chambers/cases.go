@@ -214,8 +214,8 @@ type CaseDetail struct {
 	NamedAgree int
 	Unnamed    int
 	Citing     []CitingEdition
-	Nav          Pagination
-	Sort         string
+	Nav        Pagination
+	Sort       string
 }
 
 func (d *CaseDetail) ReporterURL() string {

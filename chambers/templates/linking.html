@@ -156,6 +156,20 @@
         <div class="loading-text"><span class="spinner-border text-secondary me-2"></span> Loading tier data&hellip;</div>
     </div>
 
+    <h2 class="h6 text-secondary mb-2">Case names</h2>
+    <p class="small text-secondary mb-2">
+        The detector records the case name printed before each citation (<code>case_name</code>, #387) and how
+        it found it: <em>direct</em>, printed before the citation; <em>parallel</em>, inherited from the
+        preceding parallel cite; <em>table</em>, the plaintiff taken from the row above in a table of cases.
+        How far the names reach, by status and by match tier. A real case citation almost always has a name
+        before it and a statute rarely does, so the share is also a reading of what each status holds.
+        Whether a name agrees with the case its citation linked to is judged live on the citation, page and
+        case pages, not here.
+    </p>
+    <div id="names-container" class="mb-4">
+        <div class="loading-text"><span class="spinner-border text-secondary me-2"></span> Loading case name data&hellip;</div>
+    </div>
+
     <h2 class="h6 text-secondary mb-2">Failure tiers by reporter</h2>
     <p class="small text-secondary mb-2">
         Where each reporter's <code>no_match</code> citations gave out. A reporter whose
@@ -395,8 +409,91 @@
                 }
             }
 
+            // Case names: the share of citations with a name, by status and
+            // by match tier, and the source mix, from case_name_summary.
+            const NAME_SOURCES = ["direct", "parallel", "table"];
+            function renderNames(names) {
+                const container = document.getElementById("names-container");
+                if (!names || names.length === 0) {
+                    container.innerHTML = '<div class="text-secondary small">No case name data available. ' +
+                        'The <code>case_name_summary</code> view needs <code>make db-up</code> and then ' +
+                        '<code>make db-maintenance</code>.</div>';
+                    return;
+                }
+
+                // Roll the rows up by one key, keeping the total, the named
+                // total, and the count of each source.
+                function rollup(keyFn, filterFn) {
+                    const m = new Map();
+                    for (const r of names) {
+                        if (filterFn && !filterFn(r)) continue;
+                        const k = keyFn(r);
+                        if (!m.has(k)) m.set(k, { key: k, total: 0, named: 0, direct: 0, parallel: 0, table: 0 });
+                        const g = m.get(k);
+                        g.total += r.n;
+                        if (r.source) { g.named += r.n; g[r.source] = (g[r.source] || 0) + r.n; }
+                    }
+                    return [...m.values()];
+                }
+                const pct = (a, b) => b === 0 ? "—" : Math.round(a / b * 100) + "%";
+                const all = rollup(() => "all")[0];
+
+                const cards = document.createElement("div");
+                cards.className = "row g-3 mb-3";
+                const card = (n, label, cls) =>
+                    `<div class="col-md-3"><div class="stat-card ${cls}"><div class="big-number">${n}</div><div class="big-label">${label}</div></div></div>`;
+                cards.innerHTML =
+                    card(fmtMillions(all.named), `citations with a case name (${pct(all.named, all.total)} of raw)`, "stat-positive") +
+                    card(pct(all.direct, all.named), "of the names read directly", "stat-neutral") +
+                    card(pct(all.parallel, all.named), "inherited from a parallel cite", "stat-neutral") +
+                    card(pct(all.table, all.named), "taken from a table of cases", "stat-neutral");
+
+                function table(rows, headLabel, labelFn, glossFn) {
+                    const t = document.createElement("table");
+                    t.className = "table table-sm tier-table align-middle";
+                    t.innerHTML = `<thead><tr><th>${headLabel}</th><th>What it means</th><th class="num">Citations</th>` +
+                        `<th class="num">With a name</th><th class="num">Share</th><th class="num">direct</th><th class="num">parallel</th><th class="num">table</th></tr></thead><tbody></tbody>`;
+                    const tbody = t.querySelector("tbody");
+                    for (const g of rows) {
+                        const tr = document.createElement("tr");
+                        // Shade the share so the named and nameless statuses read at a glance.
+                        const share = g.total === 0 ? 0 : g.named / g.total;
+                        const alpha = (0.06 + 0.5 * share).toFixed(3);
+                        tr.innerHTML =
+                            `<td>${labelFn(g)}</td>` +
+                            `<td class="tier-gloss">${escapeHTML(glossFn(g))}</td>` +
+                            `<td class="num">${g.total.toLocaleString()}</td>` +
+                            `<td class="num">${g.named.toLocaleString()}</td>` +
+                            `<td class="num" style="background:rgba(25,135,84,${alpha})">${pct(g.named, g.total)}</td>` +
+                            `<td class="num text-secondary">${pct(g.direct, g.named)}</td>` +
+                            `<td class="num text-secondary">${pct(g.parallel, g.named)}</td>` +
+                            `<td class="num text-secondary">${pct(g.table, g.named)}</td>`;
+                        tbody.append(tr);
+                    }
+                    return t;
+                }
+
+                const byStatus = rollup(r => r.status).sort((a, b) => statusRank(a.key) - statusRank(b.key));
+                const statusTable = table(byStatus, "Status",
+                    g => `<code>${escapeHTML(g.key)}</code>`,
+                    g => TIER_GLOSS[g.key] ? TIER_GLOSS[g.key].replace(/^no tier: /, "") : "");
+
+                const byTier = rollup(r => r.tier, r => r.tier && r.status.startsWith("linked_"))
+                    .sort((a, b) => b.total - a.total);
+                const tierTable = table(byTier, "Linked tier",
+                    g => `<code>${escapeHTML(g.key)}</code>`,
+                    g => TIER_GLOSS[g.key] || "");
+
+                container.innerHTML = "";
+                container.append(cards);
+                const h1 = document.createElement("div"); h1.className = "small fw-semibold mb-1"; h1.textContent = "By link status";
+                const h2 = document.createElement("div"); h2.className = "small fw-semibold mb-1 mt-3"; h2.textContent = "By match tier, for the linked citations";
+                container.append(h1, statusTable, h2, tierTable);
+            }
+
             renderTierTable(d.Tiers);
             renderReporterTierTable(d.ReporterTiers);
+            renderNames(d.Names);
 
             // Build stacked bar chart
             const categories = [

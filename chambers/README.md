@@ -39,7 +39,7 @@ Deployment: `Dockerfile` builds the binary into a distroless image; `.github/wor
 | `/reporters/{standard}` | A reporter: its record, its spellings with how often each was found, its alternate abbreviations and CAP renumbering, its citations by status and tier (each linking to the citations), the cases reached through it, the editions citing it most, and its unmatched cites that recur. |
 | `/citations` | The citation list. See the parameters below. |
 | `/citations/{uuid}` | One citation: what was detected, the case name read before it and whether it names the linked case, what the linker did, the case, and the page it was found on with the citation and the name marked. |
-| `/linking` | The linking dashboard: what was skipped, what linked and to which source, by reporter, and the match tiers. |
+| `/linking` | The linking dashboard: what was skipped, what linked and to which source, by reporter, the match tiers, and how far the detected case names reach by status, tier and source. |
 | `/linking/tiers` | The match tiers charted over the corpus and by reporter. |
 | `/linking/whitelist` | The whitelist extender: the spellings the detector found most often that the whitelist lacks, with candidate standards, producing CSVs for the seed migrations. It writes nothing. `corpus=cap` takes the spellings from the CAP opinions, with the citing cases of each. |
 | `/linking/cap` | The CAP dashboard: the same sections over the citations in the CAP opinions, then the comparison with CAP's citation graph, in edges (a citing case and a cited CAP case): the totals, recall and precision by the citing case's year, the cited reporters where the graphs disagree most, the citing jurisdictions, how the disagreement spreads over the citing cases and the cases where it is heaviest, and the CAP spellings the whitelist lacks. Reporter names do not link, since `/reporters/{standard}` shows the treatises' figures. |
@@ -82,6 +82,7 @@ Two kinds of query serve the pages. Live queries read a page, a citation, a volu
 | `moml_citations.linking_dashboard_summary`, `_reporters`, `_tiers` | the corpus, a reporter, a reporter's status and tier | linking pages, reporter pages |
 | `legalhist.top_reporters` | one detected spelling and its count | reporter spellings, whitelist extender |
 | `opinion_citations.linking_dashboard_summary`, `_reporters`, `_tiers`, `top_reporters` | the same, for the CAP opinions | `/linking/cap`, `/linking/cap/tiers`, the extender with `corpus=cap` |
+| `moml_citations.case_name_summary`, `opinion_citations.case_name_summary` | the citations of one status, tier and `case_name_source` (NULL for no name) | the dashboards' Case names section |
 | `opinion_citations.cap_graph_scope` | one citing case the comparison with CAP's graph covers | the case page's scope note |
 | `opinion_citations.cap_graph_edges` | one edge, a citing case and a cited CAP case, in our links, CAP's graph or both | the reporter page |
 | `opinion_citations.cap_graph_agreement` | the agreement by citing year and jurisdiction and cited jurisdiction and reporter (about 213K rows) | `/linking/cap`, the reporter page |
