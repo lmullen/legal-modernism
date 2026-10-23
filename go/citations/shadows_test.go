@@ -174,3 +174,51 @@ func TestRemoveShadows_VolumedInsideWiderSpan(t *testing.T) {
 	kept = RemoveShadows([]*Citation{inner, outer})
 	assert.Equal(t, []*Citation{outer}, kept)
 }
+
+// TestRemoveShadows_SurnameOverlap is issue #367: a defendant's surname that is
+// a single-volume spelling is read as a volume-less citation whose page is the
+// following citation's volume. The two spans overlap without either containing
+// the other, so the containment rule alone kept both.
+func TestRemoveShadows_SurnameOverlap(t *testing.T) {
+	tests := []struct {
+		name      string
+		text      string
+		detectors []Finder
+		want      []string
+	}{
+		{
+			name:      "surname before a volumed citation",
+			text:      "Smith v. Jones, 12 Mass. 345.",
+			detectors: []Finder{GenericDetector, NewSingleVolDetector("Jones", "Jones")},
+			want:      []string{"12 Mass. 345"},
+		},
+		{
+			name:      "stemmed spelling before a volumed citation",
+			text:      "Bass v. Comstock, 38 N. Y. 21",
+			detectors: []Finder{GenericDetector, NewSingleVolDetector("Comst.", "Comst")},
+			want:      []string{"38 N. Y. 21"},
+		},
+		{
+			// A real single-volume citation beside a volumed one, not
+			// overlapping it, is kept.
+			name:      "adjacent single-volume citation is not a shadow",
+			text:      "See Jones 12; 12 Mass. 345.",
+			detectors: []Finder{GenericDetector, NewSingleVolDetector("Jones", "Jones")},
+			want:      []string{"Jones 12", "12 Mass. 345"},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			doc := sources.NewDoc("test-367", tt.text)
+			var found []*Citation
+			for _, d := range tt.detectors {
+				found = append(found, d.Detect(doc)...)
+			}
+			var got []string
+			for _, c := range RemoveShadows(found) {
+				got = append(got, c.CleanCite())
+			}
+			assert.ElementsMatch(t, tt.want, got)
+		})
+	}
+}

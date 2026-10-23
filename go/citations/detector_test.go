@@ -667,3 +667,47 @@ func TestDetector_NoLetterAbbrsKeepsRealCitations(t *testing.T) {
 	}
 	assert.Equal(t, []string{"43 Md. 295"}, got)
 }
+
+// TestDetector_CaseNameReadings is issue #373: a match whose abbreviation is
+// a case name -- a versus or a stop word as a whole word, or the OCR's
+// spelling of "v." between two capitalised words -- is not a citation.
+// Reporter abbreviations that look alike must survive.
+func TestDetector_CaseNameReadings(t *testing.T) {
+	rejected := []string{
+		"6 Smith v Jones, 30",
+		"6 Smith v. Jones, 30",
+		"6 Smith vs. Jones, 30",
+		"6 In re Smith, 30",
+		"6 Ex parte Smith, 30",
+		"6 Ex rel. Smith, 30",
+		"6 Matter of Smith, 30",
+		"594 Coryell r. Cain, 16",
+		"3 Peck c. Newton, 46",
+		"4 Besser t. Hawthorne, 3",
+		"2 HART . SEIXAS, 21",
+		"6 See Smith, 30",
+		"6 Cf. Smith, 30",
+	}
+	for _, text := range rejected {
+		t.Run("rejects "+text, func(t *testing.T) {
+			doc := sources.NewDoc("test-373", text)
+			assert.Empty(t, GenericDetector.Detect(doc))
+		})
+	}
+	kept := map[string]string{
+		"1 V. & B. 123":        "V. & B.",
+		"5 Ld. Raym. 45":       "Ld. Raym.",
+		"2 Cromp. M. & R. 240": "Cromp. M. & R.",
+		"3 Hill a Denio 12":    "Hill a Denio",
+		"4 E. D. Smith, 428":   "E. D. Smith",
+		"2 Ca. t. Hardw. 200":  "Ca. t. Hardw.",
+	}
+	for text, abbr := range kept {
+		t.Run("keeps "+text, func(t *testing.T) {
+			doc := sources.NewDoc("test-373", text)
+			cites := GenericDetector.Detect(doc)
+			require.Len(t, cites, 1)
+			assert.Equal(t, abbr, cites[0].ReporterAbbr)
+		})
+	}
+}

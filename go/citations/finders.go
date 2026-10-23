@@ -96,5 +96,10 @@ func DetectDocument(doc sources.Document, finders []Finder, ocr *sources.OCRRepl
 		found = append(found, f.Detect(doc)...)
 	}
 	kept = RemoveShadows(found)
+	// With the shadows gone, read the case name printed before each citation
+	// (issue #387). It runs last because a shadow -- "Comstock, 38" inside
+	// "Bass v. Comstock, 38 N. Y. 21" -- would otherwise swallow the real
+	// citation's name.
+	NameCitations(doc.Text(), kept)
 	return kept, len(found) - len(kept)
 }

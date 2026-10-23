@@ -44,11 +44,21 @@ func RemoveShadows(cites []*Citation) []*Citation {
 
 // shadowed reports whether c's span lies strictly inside the span of another
 // citation in cites that it is a lesser reading of: any other citation when c
-// carries no volume, or a citation that carries a year.
+// carries no volume, or a citation that carries a year. A volume-less,
+// year-less citation is also a shadow when it begins before a volumed citation
+// and runs into it (issue #367): "Smith v. Jones, 12 Mass. 345" yields "Jones,
+// 12" from the single-volume spelling "Jones" beside "12 Mass. 345", and the
+// number the two readings share is the second citation's volume, so the first
+// is a defendant's surname, never a reporter. A volume-less span that contains
+// a volumed one is not that case and is left alone, as it always was.
 func shadowed(c *Citation, cites []*Citation) bool {
 	for _, o := range cites {
 		if o == c {
 			continue
+		}
+		runsInto := c.Start < o.Start && o.Start < c.End && c.End < o.End
+		if runsInto && c.Volume == nil && c.Year == nil && o.Volume != nil {
+			return true
 		}
 		contains := o.Start <= c.Start && c.End <= o.End
 		strict := o.Start < c.Start || c.End < o.End
