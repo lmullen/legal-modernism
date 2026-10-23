@@ -12,7 +12,10 @@ import (
 // GenericOCRDigitDetector was added. GenericDetector must keep behaving exactly
 // like it, which is the whole reason the corrupted abbreviations are handled by
 // a separate detector.
-const originalGenericPattern = `[\p{L}\s\.,&\(\)]{3,16}((1st|2nd|3rd|\dth)\sed.)??`
+// The cap on the abbreviation's length was 16 when this guard was written and
+// is abbrMaxLen now (issue #369); the guard is about the character class and
+// the edition group, which the OCR-digit work must leave alone.
+const originalGenericPattern = `[\p{L}\s\.,&\(\)]{3,` + abbrMaxLen + `}((1st|2nd|3rd|\dth)\sed.)??`
 
 // TestGenericDetector_Unchanged is the guard on the whole approach. Handling
 // corrupted abbreviations in a separate detector is only worth the extra scan
