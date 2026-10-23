@@ -89,7 +89,7 @@ slog.Error("batch failed", batch.LogID("error", err)...)
 
 1. Create `db/migrations/YYYYMMDDHHMMSS_description.sql` with `-- migrate:up` / `-- migrate:down` sections; the `down` must fully reverse the `up`. Start the `migrate:up` with `SET ROLE = law_admin;`, as the existing migrations do.
 2. Before adding a constraint, verify existing rows won't violate it (query with the read-only `LAW_CLAUDE` connection); a constraint that current data violates fails to apply.
-3. Apply with `make db-up`. dbmate dumps the schema after `up`, so that one command also regenerates `db/schema.sql`; `make db-schema` only redoes the dump and is not needed after `db-up`. It needs write access via `LAW_DBSTR`, so Claude cannot run it — ask the user to.
+3. Apply with `make db-up`. dbmate dumps the schema after `up`, so that one command also regenerates `db/schema.sql`; `make db-schema` only redoes the dump and is not needed after `db-up`. It needs write access via `LAW_DBSTR`, so Claude cannot run it — ask the user to, giving first the command that puts them in the branch's worktree (see Claude database access).
 4. Commit **both** the migration file and the regenerated `db/schema.sql`. "Don't update `db/schema.sql`" means don't hand-edit it, not don't commit it.
 
 ## Pipeline run order
@@ -116,6 +116,7 @@ The CAP corpus (issue #74) runs through the same script with `--corpus cap`: `pr
 
 - **Never use `LAW_DBSTR`.** When connecting to the database, always use the `LAW_CLAUDE` environment variable, which connects with a read-only user.
 - **Read-only access only.** Only run `SELECT` queries. Never run `INSERT`, `UPDATE`, `DELETE`, `DROP`, `ALTER`, `TRUNCATE`, `CREATE`, or any other command that writes to or modifies the database.
+- **Commands for the user on a branch.** When you need the user to run a database command for work on a branch (`make db-up`, `make db-schema`, `make db-stubs`, `make db-maintenance`, a `TRUNCATE`, `scripts/pipeline.sh`, …), first give the command that puts them in that branch's worktree, e.g. `cd .worktrees/<branch-name>` from the project root, and only then the database command, so it runs against the branch's migrations and code rather than whatever the main checkout has checked out.
 
 ## Website
 
@@ -137,6 +138,23 @@ Internal web app for browsing and inspecting citation data. Located in `chambers
 - To add a new page: add query in `queries.go`, create template in `templates/`, add handler and register route in `main.go`, add nav link to `home.html`
 
 **Frontend:** Use the latest version of Bootstrap CSS via CDN (no Bootstrap JavaScript). Use Observable Plot (`@observablehq/plot`) for data visualizations when possible, and D3.js otherwise.
+
+## Branches and worktrees
+
+Whenever the user asks you to work on a separate branch, use a git worktree instead of switching branches in the current checkout.
+
+- Never run `git switch` or `git checkout <branch>` in the main working directory. Leave it on whatever branch it's on, with any uncommitted changes untouched.
+- Create worktrees inside the project at `.worktrees/<branch-name>` (replace `/` in branch names with `-`).
+- Before creating the first worktree, make sure `.worktrees/` is listed in `.gitignore`. If it isn't, add it and tell the user.
+- For a new branch, base it on `main` unless the user says otherwise:
+  `git worktree add -b <branch> .worktrees/<branch> main`
+- For an existing branch: `git worktree add .worktrees/<branch> <branch>`
+- If a worktree for that branch already exists (check `git worktree list`), reuse it rather than creating another.
+- After creating a worktree, do all reading, editing, building, and testing from inside that directory. Install dependencies there if needed (e.g., `go mod download`, `npm install`).
+- Tell the user the worktree path when you create it.
+- Commit work in the worktree's branch. Don't merge into `main` or push unless the user asks.
+- Don't remove a worktree or delete its branch unless the user asks. When they do, use `git worktree remove <path>` followed by `git branch -d <branch>`, and run `git worktree prune` if needed.
+- When the user needs to run a database command for the branch, give the command to switch to its worktree (`cd .worktrees/<branch-name>`) before the database command itself (see Claude database access).
 
 ## GitHub
 
