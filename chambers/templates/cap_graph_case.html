@@ -136,11 +136,12 @@
         statutes, spellings the whitelist lacks, and cites to cases no source holds.
     </p>
     <table class="table table-sm small">
-        <thead><tr><th>Opinion</th><th>Detected</th><th>Link</th><th>Normalized</th></tr></thead>
+        <thead><tr><th>Opinion</th><th>Case name</th><th>Detected</th><th>Link</th><th>Normalized</th></tr></thead>
         <tbody>
         {{range .Unexplained}}
             <tr>
                 <td class="text-secondary">{{.Opinion}}</td>
+                <td>{{if .Name}}{{template "name" .Name}}{{else}}<span class="text-secondary">&mdash;</span>{{end}}</td>
                 <td><code>{{cleanRaw .Raw}}</code></td>
                 <td>{{template "chip" .Chip}}</td>
                 <td class="text-secondary">{{ptrOr .CiteNormalized "&mdash;"}}</td>
@@ -152,4 +153,4 @@
 {{end}}
 
 {{/* cap_citation renders a capCitation: the detected string and its link. */}}
-{{define "cap_citation"}}<span class="cite" title="{{.Opinion}} opinion{{if .CiteNormalized}}; normalized {{deref .CiteNormalized}}{{end}}"><code>{{cleanRaw .Raw}}</code> {{template "chip" .Chip}}</span>{{end}}
+{{define "cap_citation"}}<span class="cite" title="{{.Opinion}} opinion{{if .CiteNormalized}}; normalized {{deref .CiteNormalized}}{{end}}">{{if .Name}}{{template "name" .Name}} {{end}}<code>{{cleanRaw .Raw}}</code> {{template "chip" .Chip}}</span>{{end}}

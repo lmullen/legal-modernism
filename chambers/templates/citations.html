@@ -9,7 +9,9 @@
         Find the citations the detector found, one row each, with what the linker made of them. Give one of:
         an exact normalized cite (the whitelist's spelling of the reporter with its volume and page, as the linker
         wrote it); a reporter, with a volume and page for one cite or alone for a sample; an edition; a case; or a
-        citation's id. Status and tier narrow any of them.
+        citation's id. Status, tier and the case name the detector read before the citation narrow any of them:
+        a name coloured <span class="cname name-agree">green</span> names the case the citation linked to, one in
+        <span class="cname name-disagree">red</span> does not.
     </p>
 
     <form method="get" class="search row g-2 align-items-end mb-3">
@@ -58,6 +60,18 @@
             </select>
         </div>
         <div class="col-auto">
+            <label class="form-label" for="name">Case name contains</label>
+            <input type="text" id="name" name="name" value="{{.Filter.Name}}" class="form-control form-control-sm" placeholder="Marbury" style="width: 9rem;" title="The case name the detector read before the citation">
+        </div>
+        <div class="col-auto">
+            <label class="form-label" for="names">Names</label>
+            <select id="names" name="names" class="form-select form-select-sm" title="named: has a case name; agree or disagree: whether the name names the linked case">
+                <option value="" {{if eq .Filter.Names ""}}selected{{end}}>any</option>
+                {{$names := .Filter.Names}}
+                {{range .Names}}<option value="{{.}}" {{if eq $names .}}selected{{end}}>{{.}}</option>{{end}}
+            </select>
+        </div>
+        <div class="col-auto">
             <label class="form-label" for="id">Citation id</label>
             <input type="text" id="id" name="id" class="form-control form-control-sm font-monospace" placeholder="UUID" style="width: 13rem;">
         </div>
@@ -72,12 +86,13 @@
         </p>
         <table class="table table-sm table-hover align-middle">
             <thead>
-                <tr><th>Detected</th><th>Link</th><th class="title-col">Edition</th><th>Page</th><th class="title-col">Case</th><th></th></tr>
+                <tr><th>Detected</th><th class="title-col">Case name</th><th>Link</th><th class="title-col">Edition</th><th>Page</th><th class="title-col">Case</th><th></th></tr>
             </thead>
             <tbody>
             {{range .Items}}
                 <tr>
                     <td class="raw">{{.Raw}}{{if .CiteNormalized}}<br><span class="text-secondary small">{{derefStr .CiteNormalized}}</span>{{end}}</td>
+                    <td class="title-col small">{{if .Name}}{{template "name" .Name}}{{else}}<span class="text-secondary">&mdash;</span>{{end}}</td>
                     <td>{{template "chip" .Chip}}</td>
                     <td class="title-col small">{{if .EditionURL}}<a href="{{.EditionURL}}">{{ptrOr .Title "(untitled)"}}</a>{{if .Year}} <span class="text-secondary">({{deref .Year}})</span>{{end}}{{else}}<code>{{.PSMID}}</code>{{end}}</td>
                     <td class="small"><a href="{{.PageURL}}">{{.PageLabel}}</a>{{if .PageType}} <span class="text-secondary">{{.PageType}}</span>{{end}}</td>
@@ -85,7 +100,7 @@
                     <td><a href="{{.DetailURL}}" class="small">detail</a></td>
                 </tr>
             {{else}}
-                <tr><td colspan="6" class="text-secondary">No citations match.</td></tr>
+                <tr><td colspan="7" class="text-secondary">No citations match.</td></tr>
             {{end}}
             </tbody>
         </table>

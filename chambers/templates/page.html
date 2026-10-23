@@ -57,19 +57,21 @@
         </div>
         <div class="col-lg-6">
             <h2 class="h6 border-bottom pb-1">
-                Citations <span class="text-secondary fw-normal">({{len .Citations}} detected, {{.LinkedCount}} linked)</span>
+                Citations <span class="text-secondary fw-normal">({{len .Citations}} detected, {{.LinkedCount}} linked, {{.NamedCount}} with a case name{{if .DisagreeCount}}, {{.DisagreeCount}} whose name does not name the linked case{{end}})</span>
             </h2>
             <p class="small mb-1">
                 In the order they appear on the page.
                 <span class="legend-dot chip-linked"></span> linked &nbsp;
                 <span class="legend-dot chip-nomatch"></span> no match &nbsp;
                 <span class="legend-dot chip-skip"></span> not attempted &nbsp;
-                <span class="legend-dot chip-junk"></span> junk or statute
+                <span class="legend-dot chip-junk"></span> junk or statute &nbsp;
+                <mark class="name">&nbsp;&nbsp;</mark> case name read before the citation
             </p>
             <div class="cites">
             {{range .Citations}}
                 <div class="cite {{.Chip.Class}}{{if not .Found}} unfound{{end}}">
                     <span class="raw"><span class="n">{{.Index}}.</span>{{if .Found}}<a href="#cite-{{.Index}}" title="Find it in the text">{{.Raw}}</a>{{else}}<span title="Not found verbatim in the text shown">{{.Raw}}</span>{{end}}</span>
+                    {{if .Name}}<span class="meta">{{if .NameFound}}<a href="#name-{{.Index}}" class="text-reset text-decoration-none" title="Find the name in the text">{{template "name" .Name}}</a>{{else}}{{template "name" .Name}}{{end}}{{if .Name.Verdict}} <span class="text-secondary">&middot; {{.Name.Verdict}}</span>{{end}}</span>{{end}}
                     <span class="meta">
                         {{template "chip" .Chip}}
                         {{if .Case}}&rarr; {{template "case" .Case}}{{if .Case.Year}} <span class="text-secondary">({{deref .Case.Year}})</span>{{end}}{{end}}

@@ -161,11 +161,74 @@ func TestRenderPages(t *testing.T) {
 			Ordered  bool
 			Statuses []string
 			Tiers    []TierInfo
-		}{Page: Page{Title: "Citations", Section: "citations"}, Statuses: statusOrder, Tiers: tierVocabulary}
+			Names    []string
+		}{Page: Page{Title: "Citations", Section: "citations"}, Statuses: statusOrder, Tiers: tierVocabulary, Names: namesOptions}
 		out := render(t, "citations.html", data)
 		require.Contains(t, out, `name="cite"`)
 		require.Contains(t, out, `<option value="cap_direct"`)
 		require.NotContains(t, out, `<option value="no_match" selected`)
+		require.Contains(t, out, `name="name"`)
+		require.Contains(t, out, `<option value="disagree"`)
+
+		no := false
+		name := "Marbury v. Madison"
+		data.Shape = "case"
+		data.Items = []CitationRow{
+			{Raw: "1 Cranch 137", Chip: Chip{Status: "linked_cap", Tier: "cap_direct"}, PSMID: "p", PageID: "00010",
+				Case: &CaseRef{Source: "cap", ID: "1", Name: &name}, Name: &DetectedName{Name: "Marbury v. Madison", Source: "parallel", Agrees: &no}},
+			{Raw: "2 Mass. 420", PSMID: "p", PageID: "00011"},
+		}
+		out = render(t, "citations.html", data)
+		require.Contains(t, out, `<span class="cname name-disagree" title="does not name the linked case; inherited from the preceding parallel cite`)
+		require.Contains(t, out, `<span class="cname-src">parallel</span>`)
+	})
+
+	t.Run("page with names", func(t *testing.T) {
+		yes := true
+		v := &PageView{Page: Page{Title: "P", Section: "works"}, PSMID: "p", PageID: "00010", VolumeTitle: "T",
+			Text: "Smith v. Jones, 2 Mass. 420"}
+		v.Citations = locateCitations(v.Text, []PageCitation{
+			{orig: "2 Mass. 420", Chip: Chip{Status: "linked_cap", Tier: "cap_direct"}, Name: &DetectedName{Name: "Smith v. Jones", Source: "direct", Agrees: &yes}},
+		})
+		v.Highlighted = highlightSpans(v.Text, v.Citations)
+		out := render(t, "page.html", v)
+		require.Contains(t, out, "1 with a case name")
+		require.Contains(t, out, `<mark class="name" id="name-1">Smith v. Jones</mark>`)
+		require.Contains(t, out, `href="#name-1"`)
+		require.Contains(t, out, `<span class="cname name-agree"`)
+		require.Contains(t, out, "names the linked case")
+	})
+
+	t.Run("case page named as", func(t *testing.T) {
+		yes, no := true, false
+		name := "Young v. Gibson"
+		d := &CaseDetail{Page: Page{Title: "C", Section: "cases"}, CaseRef: CaseRef{Source: "cap", ID: "1", Name: &name},
+			CitedAsTotal: 10, NamedTotal: 8, NamedAgree: 6, Unnamed: 2,
+			NamedAs: []NamedAs{
+				{Name: DetectedName{Name: "Young v. Gibson", Source: "direct", Agrees: &yes}, N: 6},
+				{Name: DetectedName{Name: "Stivers v. Cherryvale", Source: "direct", Agrees: &no}, N: 2},
+			}}
+		out := render(t, "case.html", d)
+		require.Contains(t, out, "<strong>75%</strong>")
+		require.Contains(t, out, "2 have none")
+		require.Contains(t, out, `<span class="cname name-disagree">Stivers v. Cherryvale</span>`)
+		require.Contains(t, out, `href="/citations?case=cap%3A1&amp;names=disagree"`)
+	})
+
+	t.Run("citation detail with name", func(t *testing.T) {
+		yes := true
+		name := "Smith v. Jones"
+		c := &CitationDetail{Page: Page{Title: "C", Section: "citations"}, Raw: "2 Mass. 420", ReporterAbbr: "Mass.", PageNo: 420,
+			PSMID: "p", PageID: "00010", Chip: Chip{Status: "linked_cap", Tier: "cap_direct"},
+			Case: &CaseRef{Source: "cap", ID: "1", Name: &name},
+			Name: &DetectedName{Name: "Smith v. Jones", Source: "direct", Agrees: &yes}}
+		text := "Smith v. Jones, 2 Mass. 420"
+		c.OCRText = &text
+		c.Highlighted, c.NameFound = highlightCitation(text, c.Raw, c.Name)
+		out := render(t, "citation.html", c)
+		require.Contains(t, out, "it <strong>names the linked case</strong>")
+		require.Contains(t, out, `<mark class="name">Smith v. Jones</mark>, <mark>2 Mass. 420</mark>`)
+		require.Contains(t, out, "the case name read before it")
 	})
 
 	t.Run("notices and crumbs", func(t *testing.T) {

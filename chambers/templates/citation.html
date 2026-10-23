@@ -13,6 +13,7 @@
                 <span class="label">Raw</span><span class="raw">{{.Raw}}</span>
                 <span class="label">Parsed</span><span>{{.Parsed}}</span>
                 <span class="label">Reporter</span><span>{{if .ReporterStd}}<a href="{{.ReporterURL}}">{{derefStr .ReporterStd}}</a> <span class="text-secondary">by the whitelist, from the spelling <code>{{.ReporterAbbr}}</code></span>{{else if .Junk}}<span class="text-secondary">the spelling <code>{{.ReporterAbbr}}</code> is junk in the whitelist</span>{{else}}<span class="text-secondary">the spelling <code>{{.ReporterAbbr}}</code> is not in the whitelist</span>{{end}}</span>
+                <span class="label">Case name</span><span>{{if .Name}}{{template "name" .Name}} <span class="text-secondary">&middot; {{.Name.SourceGloss}}{{if .Name.Verdict}}; it <strong>{{.Name.Verdict}}</strong>{{if .Name.Disagrees}}, {{.Case.Display}}{{end}}{{end}}</span>{{else}}<span class="text-secondary">none read before the citation</span>{{end}}</span>
             </div>
 
             <h2 class="section">Linking</h2>
@@ -56,7 +57,7 @@
     <h2 class="section">Page text</h2>
     {{if .OCRText}}
     <pre class="ocrtext bg-light border rounded p-3">{{.Highlighted}}</pre>
-    <p class="small text-secondary">The scan's OCR text, with the first occurrence of the raw citation marked. <a href="{{.PageURL}}">Read the page with every citation marked.</a></p>
+    <p class="small text-secondary">The scan's OCR text, with the first occurrence of the raw citation marked{{if .NameFound}} and the case name read before it <mark class="name">marked</mark>{{else if .Name}}; the case name was read from the text as the detector corrected it and is not found verbatim here{{end}}. <a href="{{.PageURL}}">Read the page with every citation marked.</a></p>
     {{else}}
     <p class="text-secondary fst-italic small">No OCR text for this page.</p>
     {{end}}

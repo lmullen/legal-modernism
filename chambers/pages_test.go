@@ -37,6 +37,35 @@ func TestLocateCitations(t *testing.T) {
 	require.NotContains(t, html, "cite-5", "an unfound citation gets no mark")
 }
 
+// TestHighlightSpansNames marks the case name read before each citation,
+// once when two citations share it, and never over a citation.
+func TestHighlightSpansNames(t *testing.T) {
+	text := "Smith v. Jones, 2 Mass. 420; 3 Mo. 391. Brown v. Green, 7 Ad. & El. 540."
+	cites := locateCitations(text, []PageCitation{
+		{orig: "2 Mass. 420", Name: &DetectedName{Name: "Smith v. Jones", Source: "direct"}},
+		{orig: "3 Mo. 391", Name: &DetectedName{Name: "Smith v. Jones", Source: "parallel"}},
+		{orig: "7 Ad. & El. 540", Name: &DetectedName{Name: "Brown v. Green", Source: "direct"}},
+	})
+	require.True(t, cites[0].NameFound)
+	require.True(t, cites[1].NameFound, "the parallel cite's name is the span before the first cite")
+	require.Equal(t, cites[0].namePos, cites[1].namePos)
+	require.True(t, cites[2].NameFound)
+
+	html := string(highlightSpans(text, cites))
+	require.Equal(t, 1, countOf(html, "Smith v. Jones</mark>"), "a shared name is marked once")
+	require.Contains(t, html, `<mark class="name" id="name-1">Smith v. Jones</mark>, <mark id="cite-1">2 Mass. 420</mark>; <mark id="cite-2">3 Mo. 391</mark>.`)
+	require.Contains(t, html, `<mark class="name" id="name-3">Brown v. Green</mark>, <mark id="cite-3">7 Ad. &amp; El. 540</mark>.`)
+
+	// A name that would overlap a citation gives way to it.
+	text = "Taylor 1, 2 Mass. 420"
+	cites = locateCitations(text, []PageCitation{
+		{orig: "Taylor 1"},
+		{orig: "2 Mass. 420", Name: &DetectedName{Name: "Taylor 1", Source: "direct"}},
+	})
+	html = string(highlightSpans(text, cites))
+	require.Equal(t, `<mark id="cite-1">Taylor 1</mark>, <mark id="cite-2">2 Mass. 420</mark>`, html)
+}
+
 func TestHighlightSpansNested(t *testing.T) {
 	text := "cited at 1 L. R. Ch. 100 <here>"
 	cites := locateCitations(text, []PageCitation{{orig: "L. R. Ch. 100"}, {orig: "1 L. R. Ch. 100"}})

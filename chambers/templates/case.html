@@ -67,6 +67,38 @@
     <p class="small text-secondary fst-italic">No citation is linked to this case.</p>
     {{end}}
 
+    <h2 class="section">Named as</h2>
+    <p class="small text-secondary">
+        The case names the detector read before the citations linked to this case, and how each was found:
+        printed before the citation, inherited from the preceding parallel cite, or taken from the row above in
+        a table of cases.
+        {{if .NamedTotal}}Of the {{num .CitedAsTotal}} citations, {{num .NamedTotal}} have a name{{if .CanCompare}}, and
+        <strong>{{.NamedAgreePct}}</strong> of those name this case{{end}}{{if .Unnamed}}; {{num .Unnamed}} have none{{end}}.{{end}}
+        {{if .CanCompare}}A name in <span class="cname name-disagree">red</span> names another case: the citation was probably
+        linked here by mistake, as a pin cite that lands inside the case's pages often is (#391).
+        {{if ne .NamedAgree .NamedTotal}}<a href="{{.DisagreeURL}}">See those citations.</a>{{end}}{{else}}This case has
+        no name of its own to compare them with{{if eq .Source "stub"}}: the names are what the treatises call the
+        case behind the cite, and a curated <code>stub_case_metadata</code> row would give it one{{end}}.{{end}}
+    </p>
+    {{if .NamedAs}}
+    <table class="table table-sm table-hover align-middle" style="max-width: 60rem;">
+        <thead><tr><th>Name as read</th><th>Found</th><th>Names this case</th><th class="num">Citations</th></tr></thead>
+        <tbody>
+        {{range .NamedAs}}
+            <tr>
+                <td><span class="cname {{.Name.Class}}">{{.Name.Name}}</span></td>
+                <td class="small" title="{{.Name.SourceGloss}}">{{.Name.SourceLabel}}</td>
+                <td class="small">{{if .Name.Agrees}}{{if deref .Name.Agrees}}yes{{else}}<span class="text-danger">no</span>{{end}}{{else}}&mdash;{{end}}</td>
+                <td class="num">{{num .N}}</td>
+            </tr>
+        {{end}}
+        </tbody>
+    </table>
+    {{if lt (len .NamedAs) 30}}{{else}}<p class="small text-secondary">The 30 most frequent names.</p>{{end}}
+    {{else}}
+    <p class="small text-secondary fst-italic">No citation linked to this case carries a name.</p>
+    {{end}}
+
     <h2 class="section">Citing editions</h2>
     <p class="small text-secondary">
         The editions in the treatise view that cite this case, with how many citations each makes. A

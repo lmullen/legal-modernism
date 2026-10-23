@@ -33,13 +33,29 @@ type CitationFilter struct {
 	Tier     string
 	Edition  string
 	Case     string
+	// Name narrows to the citations whose detected case name contains the
+	// string; Names to those with a name, without one, or whose name agrees
+	// or disagrees with the linked case (issue #392).
+	Name  string
+	Names string
 }
+
+// The values of the names parameter.
+const (
+	namesNamed    = "named"
+	namesUnnamed  = "unnamed"
+	namesAgree    = "agree"
+	namesDisagree = "disagree"
+)
+
+var namesOptions = []string{namesNamed, namesUnnamed, namesAgree, namesDisagree}
 
 func parseCitationFilter(q url.Values) CitationFilter {
 	get := func(k string) string { return strings.TrimSpace(q.Get(k)) }
 	return CitationFilter{
 		ID: get("id"), Cite: get("cite"), Reporter: get("reporter"), Volume: get("volume"), Page: get("page"),
 		Year: get("year"), Status: get("status"), Tier: get("tier"), Edition: get("edition"), Case: get("case"),
+		Name: get("name"), Names: get("names"),
 	}
 }
 
@@ -70,6 +86,7 @@ func (f CitationFilter) Values() url.Values {
 	for k, val := range map[string]string{
 		"cite": f.Cite, "reporter": f.Reporter, "volume": f.Volume, "page": f.Page, "year": f.Year,
 		"status": f.Status, "tier": f.Tier, "edition": f.Edition, "case": f.Case,
+		"name": f.Name, "names": f.Names,
 	} {
 		if val != "" {
 			v.Set(k, val)
@@ -92,6 +109,7 @@ type CitationRow struct {
 	Title          *string
 	Year           *int
 	Case           *CaseRef
+	Name           *DetectedName
 }
 
 func (c CitationRow) DetailURL() string { return citationURL(c.ID.String()) }
@@ -186,8 +204,30 @@ func (s *server) buildCitationQuery(ctx context.Context, f CitationFilter) (*cit
 	if f.Tier != "" {
 		q.where = append(q.where, "cl.match_tier = "+q.arg(f.Tier))
 	}
+	if f.Name != "" {
+		// position() rather than LIKE, so that % and _ in the search string
+		// mean themselves.
+		q.where = append(q.where, "position(lower("+q.arg(f.Name)+") IN lower(cu.case_name)) > 0")
+	}
+	switch f.Names {
+	case "":
+	case namesNamed:
+		q.where = append(q.where, "cu.case_name IS NOT NULL")
+	case namesUnnamed:
+		q.where = append(q.where, "cu.case_name IS NULL")
+	case namesAgree:
+		q.where = append(q.where, citationNameAgreement+" IS TRUE")
+	case namesDisagree:
+		q.where = append(q.where, citationNameAgreement+" IS FALSE")
+	default:
+		return nil, fmt.Errorf("names must be one of %s, not %q", strings.Join(namesOptions, ", "), f.Names)
+	}
 	return q, nil
 }
+
+// citationNameAgreement is the verdict on a citation's detected name against
+// the case its link reached, on the aliases of getCitations' query.
+var citationNameAgreement = caseNameAgreementSQL("cu.case_name", caseFullNameSQL())
 
 // addCase adds the predicate for a source:id case key on the typed column.
 func (q *citationQuery) addCase(key string) error {
@@ -290,7 +330,8 @@ func (s *server) getCitations(ctx context.Context, q *citationQuery) ([]Citation
 	SELECT cu.id, cu.raw, cl.status, cl.match_tier, cl.cite_normalized,
 	       cu.moml_treatise, cu.moml_page, COALESCE(mp.sourcepage, ''), COALESCE(mp.type, ''),
 	       v.bibliographicid, v.display_title, v.year,
-	       ` + caseMetaColumns("cl") + `
+	       ` + caseMetaColumns("cl") + `,
+	       cu.case_name, cu.case_name_source, ` + citationNameAgreement + `
 	FROM moml_citations.citations_unlinked cu
 	LEFT JOIN moml_citations.citation_links cl ON cl.citation_id = cu.id
 	LEFT JOIN moml.volumes v ON v.psmid = cu.moml_treatise
@@ -302,14 +343,16 @@ func (s *server) getCitations(ctx context.Context, q *citationQuery) ([]Citation
 	slog.Debug("querying citations", "where", q.where)
 	items, err := collect(ctx, s.db, query, q.args, func(rows pgx.Rows) (CitationRow, error) {
 		var c CitationRow
-		var status, tier, source, id, name, cite *string
+		var status, tier, source, id, name, cite, caseName, nameSource *string
 		var year *int
+		var agrees *bool
 		err := rows.Scan(&c.ID, &c.Raw, &status, &tier, &c.CiteNormalized,
 			&c.PSMID, &c.PageID, &c.SourcePage, &c.PageType, &c.BiblioID, &c.Title, &c.Year,
-			&source, &id, &name, &year, &cite)
+			&source, &id, &name, &year, &cite, &caseName, &nameSource, &agrees)
 		c.Raw = cleanRaw(c.Raw)
 		c.Chip = chipFor(status, tier)
 		c.Case = caseRefFrom(source, id, name, year, cite)
+		c.Name = detectedNameFrom(caseName, nameSource, agrees)
 		return c, err
 	})
 	if err != nil {
@@ -344,8 +387,9 @@ func (s *server) handleCitations(w http.ResponseWriter, r *http.Request) {
 		Ordered  bool
 		Statuses []string
 		Tiers    []TierInfo
+		Names    []string
 	}{Page: Page{Title: "Citations", Section: "citations"}, Filter: f, Shape: f.Shape(),
-		Statuses: statusOrder, Tiers: tierVocabulary}
+		Statuses: statusOrder, Tiers: tierVocabulary, Names: namesOptions}
 
 	if data.Shape == "" {
 		s.render(w, r, "citations.html", http.StatusOK, data)
@@ -384,6 +428,8 @@ type CitationDetail struct {
 	Year         *int
 	PSMID        string
 	PageID       string
+	Name         *DetectedName
+	NameFound    bool // the name was located in the page text and marked
 
 	Chip           Chip
 	Status         *string
@@ -448,7 +494,7 @@ func (c *CitationDetail) Parsed() string {
 	return b.String()
 }
 
-const citationDetailQuery = `
+var citationDetailQuery = `
 SELECT cu.id, cu.raw, cu.volume, cu.reporter_abbr, cu.page, cu.year, cu.moml_treatise, cu.moml_page,
        wl.reporter_standard, wl.junk,
        cl.status, cl.match_tier, cl.cite_cleaned, cl.cite_normalized, cl.cite_linked, cl.stub_cite,
@@ -464,7 +510,9 @@ SELECT cu.id, cu.raw, cu.volume, cu.reporter_abbr, cu.page, cu.year, cu.moml_tre
        st.cite, st.vol_year,
        v.bibliographicid, v.display_title, v.year, e.author, w.work_id, w.title,
        (SELECT t.jurisdiction FROM moml.treatises t WHERE t.bibliographicid = v.bibliographicid),
-       v.product_link, NULLIF(mp.sourcepage, ''), mp.type, po.ocrtext
+       v.product_link, NULLIF(mp.sourcepage, ''), mp.type, po.ocrtext,
+       cu.case_name, cu.case_name_source,
+       ` + caseNameAgreementSQL("cu.case_name", caseFullNameSQL()) + `
 FROM moml_citations.citations_unlinked cu
 LEFT JOIN legalhist.whitelist wl ON wl.reporter_found = cu.reporter_abbr
 LEFT JOIN moml_citations.citation_links cl ON cl.citation_id = cu.id
@@ -494,6 +542,8 @@ func (s *server) getCitationDetail(ctx context.Context, id uuid.UUID) (*Citation
 	var tier, source, caseID, name, cite *string
 	var year *int
 	var productLink *string
+	var caseName, nameSource *string
+	var agrees *bool
 	err := s.db.QueryRow(ctx, citationDetailQuery, id).Scan(
 		&c.ID, &c.Raw, &c.Volume, &c.ReporterAbbr, &c.PageNo, &c.Year, &c.PSMID, &c.PageID,
 		&c.ReporterStd, &c.Junk,
@@ -502,7 +552,8 @@ func (s *server) getCitationDetail(ctx context.Context, id uuid.UUID) (*Citation
 		&c.FullName, &c.Court, &c.Jurisdiction, &c.ExternalURL,
 		&c.StubCite, &c.VolYear,
 		&c.BiblioID, &c.VolumeTitle, &c.VolumeYear, &c.Author, &c.WorkID, &c.WorkTitle, &c.Treatise,
-		&productLink, &c.SourcePage, &c.PageType, &c.OCRText)
+		&productLink, &c.SourcePage, &c.PageType, &c.OCRText,
+		&caseName, &nameSource, &agrees)
 	if isNoRows(err) {
 		return nil, nil
 	}
@@ -511,15 +562,38 @@ func (s *server) getCitationDetail(ctx context.Context, id uuid.UUID) (*Citation
 	}
 	c.Chip = chipFor(c.Status, tier)
 	c.Case = caseRefFrom(source, caseID, name, year, cite)
+	c.Name = detectedNameFrom(caseName, nameSource, agrees)
 	c.StubPruned = c.Case != nil && c.Case.Source == "stub" && c.StubCite == nil
 	c.Gale = galeLinks(productLink, c.PageID)
 	if c.OCRText != nil {
-		text := *c.OCRText
-		escaped := template.HTMLEscapeString(text)
-		raw := template.HTMLEscapeString(c.Raw)
-		c.Highlighted = template.HTML(strings.Replace(escaped, raw, "<mark>"+raw+"</mark>", 1))
+		c.Highlighted, c.NameFound = highlightCitation(*c.OCRText, c.Raw, c.Name)
 	}
 	return c, nil
+}
+
+// highlightCitation renders the page text with the first occurrence of the
+// citation marked and, when the citation has a name that is printed before
+// it, the name marked too. It reports whether the name was found.
+func highlightCitation(text, raw string, name *DetectedName) (template.HTML, bool) {
+	start, end := findCitation(text, raw, 0)
+	if start < 0 {
+		return template.HTML(template.HTMLEscapeString(text)), false
+	}
+	nameStart, nameEnd := -1, -1
+	if name != nil {
+		nameStart, nameEnd = locateName(text, name.Name, start)
+	}
+	var b strings.Builder
+	at := 0
+	if nameStart >= 0 {
+		b.WriteString(template.HTMLEscapeString(text[:nameStart]))
+		b.WriteString(`<mark class="name">` + template.HTMLEscapeString(text[nameStart:nameEnd]) + `</mark>`)
+		at = nameEnd
+	}
+	b.WriteString(template.HTMLEscapeString(text[at:start]))
+	b.WriteString(`<mark>` + template.HTMLEscapeString(text[start:end]) + `</mark>`)
+	b.WriteString(template.HTMLEscapeString(text[end:]))
+	return template.HTML(b.String()), nameStart >= 0
 }
 
 func (s *server) handleCitation(w http.ResponseWriter, r *http.Request) {
