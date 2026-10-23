@@ -265,7 +265,7 @@ func linkCAPThenCode(
 		// this reporter (keyed by the canonical reporter_standard, like diffvols)
 		// against CAP first, then all of them against FreeLaw. A hit links to the
 		// CAP case (status linked_cap).
-		altCites := buildAltCites(f, t.altAbbrs[*entry.ReporterStandard])
+		altCites := buildAltCites(f, entry, t.altAbbrs[*entry.ReporterStandard])
 		for i := range altCites {
 			if caseID, ok := t.capCites[altCites[i]]; ok && admits(gate, t.years.CAP, caseID) {
 				result.Status = citations.StatusLinkedCAP
@@ -492,19 +492,24 @@ func volumeForms(c *citations.UnlinkedCitation, entry *citations.WhitelistEntry)
 
 // buildAltCites constructs the alternate-spelling cite strings for a citation
 // form, one per alternate abbreviation, in order; nil when there are none.
-// Volume-nil is handled the same way as buildStandardCite. The alternates
-// deliberately bypass buildCAPCite's reporter_cap/diffvols handling: they are
-// the other source's own spellings, so remapping their volumes would be wrong.
-func buildAltCites(c *citations.UnlinkedCitation, alts []string) []string {
+// Volume-nil is handled the same way as buildStandardCite, and so is the year:
+// a citation to a reporter cited by year leads with it, "[1905] 2 KB 1", as
+// every other probe of such a reporter does (see yearPrefix). Without the
+// year the string named a different reporter as far as every index is
+// concerned (issue #372). The alternates deliberately bypass buildCAPCite's
+// reporter_cap/diffvols handling: they are the other source's own spellings,
+// so remapping their volumes would be wrong.
+func buildAltCites(c *citations.UnlinkedCitation, entry *citations.WhitelistEntry, alts []string) []string {
 	if len(alts) == 0 {
 		return nil
 	}
+	year := yearPrefix(c, entry)
 	altCites := make([]string, len(alts))
 	for i, alt := range alts {
 		if c.Volume == nil {
-			altCites[i] = fmt.Sprintf("%s %d", alt, c.Page)
+			altCites[i] = year + fmt.Sprintf("%s %d", alt, c.Page)
 		} else {
-			altCites[i] = fmt.Sprintf("%d %s %d", *c.Volume, alt, c.Page)
+			altCites[i] = year + fmt.Sprintf("%d %s %d", *c.Volume, alt, c.Page)
 		}
 	}
 	return altCites
