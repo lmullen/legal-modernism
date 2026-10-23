@@ -44,7 +44,7 @@ func NewOpinionDBStore(db *pgxpool.Pool) *DBStore {
 }
 
 // insertMOMLCitations and insertOpinionCitations are the two shapes of the
-// insert SaveCitations runs: the same eight arrays and created_at scalar,
+// insert SaveCitations runs: the same ten arrays and created_at scalar,
 // expanded with unnest, into the corpus's citations_unlinked. The MOML table
 // keys a page by two strings; the opinion table keys an opinion and its case
 // by bigint ids, cast from the strings the Document interface carries the way
@@ -53,18 +53,18 @@ func NewOpinionDBStore(db *pgxpool.Pool) *DBStore {
 const (
 	insertMOMLCitations = `
 	INSERT INTO moml_citations.citations_unlinked
-		(id, moml_treatise, moml_page, raw, volume, reporter_abbr, page, year, created_at)
-	SELECT u.id::uuid, u.moml_treatise, u.moml_page, u.raw, u.volume, u.reporter_abbr, u.page, u.year, $9
-	FROM unnest($1::text[], $2::text[], $3::text[], $4::text[], $5::int4[], $6::text[], $7::int4[], $8::int4[])
-		AS u(id, moml_treatise, moml_page, raw, volume, reporter_abbr, page, year)
+		(id, moml_treatise, moml_page, raw, volume, reporter_abbr, page, year, case_name, case_name_source, created_at)
+	SELECT u.id::uuid, u.moml_treatise, u.moml_page, u.raw, u.volume, u.reporter_abbr, u.page, u.year, u.case_name, u.case_name_source, $11
+	FROM unnest($1::text[], $2::text[], $3::text[], $4::text[], $5::int4[], $6::text[], $7::int4[], $8::int4[], $9::text[], $10::text[])
+		AS u(id, moml_treatise, moml_page, raw, volume, reporter_abbr, page, year, case_name, case_name_source)
 	ON CONFLICT DO NOTHING;
 	`
 	insertOpinionCitations = `
 	INSERT INTO opinion_citations.citations_unlinked
-		(id, cap_case, cap_opinion, raw, volume, reporter_abbr, page, year, created_at)
-	SELECT u.id::uuid, u.cap_case::bigint, u.cap_opinion::bigint, u.raw, u.volume, u.reporter_abbr, u.page, u.year, $9
-	FROM unnest($1::text[], $2::text[], $3::text[], $4::text[], $5::int4[], $6::text[], $7::int4[], $8::int4[])
-		AS u(id, cap_case, cap_opinion, raw, volume, reporter_abbr, page, year)
+		(id, cap_case, cap_opinion, raw, volume, reporter_abbr, page, year, case_name, case_name_source, created_at)
+	SELECT u.id::uuid, u.cap_case::bigint, u.cap_opinion::bigint, u.raw, u.volume, u.reporter_abbr, u.page, u.year, u.case_name, u.case_name_source, $11
+	FROM unnest($1::text[], $2::text[], $3::text[], $4::text[], $5::int4[], $6::text[], $7::int4[], $8::int4[], $9::text[], $10::text[])
+		AS u(id, cap_case, cap_opinion, raw, volume, reporter_abbr, page, year, case_name, case_name_source)
 	ON CONFLICT DO NOTHING;
 	`
 )
@@ -109,6 +109,10 @@ func (r *DBStore) SaveCitations(ctx context.Context, cites []*Citation) error {
 	abbrs := make([]string, 0, len(cites))
 	pageNums := make([]int32, 0, len(cites))
 	years := make([]*int32, 0, len(cites))
+	// The case name and how it was found (issue #387); both NULL when the
+	// scan found nothing, which the table's check constraint requires.
+	caseNames := make([]*string, 0, len(cites))
+	caseNameSources := make([]*string, 0, len(cites))
 
 	for _, c := range cites {
 		k := citationKey(c)
@@ -135,13 +139,21 @@ func (r *DBStore) SaveCitations(ctx context.Context, cites []*Citation) error {
 			y := int32(*c.Year)
 			years = append(years, &y)
 		}
+		if c.CaseName == "" {
+			caseNames = append(caseNames, nil)
+			caseNameSources = append(caseNameSources, nil)
+		} else {
+			name, source := c.CaseName, c.CaseNameSource
+			caseNames = append(caseNames, &name)
+			caseNameSources = append(caseNameSources, &source)
+		}
 	}
 
 	insert := r.insert
 	if insert == "" {
 		insert = insertMOMLCitations
 	}
-	_, err := r.DB.Exec(ctx, insert, ids, parents, docs, raws, volumes, abbrs, pageNums, years, time.Now())
+	_, err := r.DB.Exec(ctx, insert, ids, parents, docs, raws, volumes, abbrs, pageNums, years, caseNames, caseNameSources, time.Now())
 	if err != nil {
 		return fmt.Errorf("batch saving %d citations: %w", len(ids), err)
 	}

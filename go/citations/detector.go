@@ -38,6 +38,21 @@ func NewDetector(reporter string, abbreviation string) *Detector {
 	return detector
 }
 
+// reCaseNameReading matches what makes a detector's match a case name rather
+// than a citation (issue #373): a versus or one of eyecite's stop words as a
+// whole word -- v, vs, In re, Ex parte, Ex rel., See, Cf., citing, quoting,
+// aff'd, denied, Matter of -- or what the OCR makes of "v." (r. a. c. t. s. u.
+// '. or a lone period) between two capitalised words, which is where no
+// reporter abbreviation has one: "594 Coryell r. Cain, 16" is a case name,
+// "5 Ld. Raym. 45" and "1 V. & B. 123" (Vesey & Beames) are not. Case matters
+// for the stop words so that "V." stays a reporter; the OCR forms other than
+// v and vs must carry their period so that "Hill a Denio" (an OCR'd "&") is
+// kept. Such a match never links, and it swallows the name the citation next
+// to it carries, which NameCitations needs.
+var reCaseNameReading = regexp.MustCompile(
+	`(?:^|\s)(?:v|vs|v\.|vs\.|In re|in re|Ex parte|ex parte|Ex rel\.|ex rel\.|Matter of|See|see|Cf\.|cf\.|citing|quoting|aff'd|denied)(?:\s|$)` +
+		`|[A-Z][\w'-]*,? (?:v|V|vs|VS|\.|(?:r|a|c|t|s|u|rs|')[.:,']+)[.:,']* [A-Z(]`)
+
 // stemMinAbbrLen is the shortest abbreviation, counted without its whitespace
 // and periods, that may carry the \w* stem. The stem lets an abbreviation reach
 // a longer form of the same word, but a short abbreviation is a prefix of far
@@ -222,11 +237,12 @@ func (d *Detector) Detect(doc sources.Document) []*Citation {
 		// across a line break through (issue #283).
 		m := reSpace.ReplaceAllString(raw, " ")
 
-		// Filter out the citations which are in these formats
+		// Filter out the matches that are a case name rather than a citation:
 		// 	6 Ex parte Wray, 30
 		// 	5 Rex v. Osborn, 7
-		// Simply bail early if the matching string contains these substrings.
-		if strings.Contains(m, " v. ") || strings.Contains(m, "Ex parte") {
+		// 	594 Coryell r. Cain, 16
+		// See reCaseNameReading (issue #373).
+		if reCaseNameReading.MatchString(m) {
 			continue
 		}
 

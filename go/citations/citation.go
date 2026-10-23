@@ -21,6 +21,14 @@ type Citation struct {
 	// year is part of what identifies the case.
 	Year *int
 
+	// CaseName is the case name printed before the citation, as NameCitations
+	// read it: "Plaintiff v. Defendant" with the versus normalized to "v.",
+	// or "In re X" / "Ex parte X", or a bare name; "" when none was found.
+	// CaseNameSource says how it was found (CaseNameDirect, CaseNameParallel,
+	// CaseNameTable) and is "" exactly when CaseName is (issue #387).
+	CaseName       string
+	CaseNameSource string
+
 	// Start and End are the byte offsets of Raw in Source.Text(), so that
 	// Source.Text()[Start:End] == Raw. They are not persisted: SaveCitation
 	// does not read them. They exist so that detections from different
