@@ -397,7 +397,16 @@ func TestLoadCAPCitationsIntegration(t *testing.T) {
 			('108 S. Ct. 185', 'official', 222),
 			('108 S. Ct. 185', 'official', 333),
 			('2 Mass. 4', 'official', 444),
-			('2 Mass. 4', 'parallel', 444)`,
+			('2 Mass. 4', 'parallel', 444),
+			('61 Kan. 859', 'official', 555),
+			('61 Kan. 859', 'official', 666),
+			('61 Kan. 859', 'official', 777)`,
+		// The page counts the shared loader ranks by. 333 is the one-page
+		// memorandum beside 222; 555 has no range, 666 an inverted one, and 777
+		// has no cap.cases row at all, so all three count as 0 pages.
+		`CREATE TABLE cap.cases (id bigint PRIMARY KEY, first_page integer, last_page integer)`,
+		`INSERT INTO cap.cases VALUES (111, 10, 12), (222, 185, 190), (333, 185, 185), (444, 4, 9),
+			(555, NULL, NULL), (666, 870, 859)`,
 	}
 	for _, stmt := range setup {
 		_, err := s.DB.Exec(ctx, stmt)
@@ -413,6 +422,17 @@ func TestLoadCAPCitationsIntegration(t *testing.T) {
 		"5 U.S. 10": 111,
 		"2 Mass. 4": 444,
 	}, got)
+
+	// The shared loader holds exactly what that drops, each cite with its
+	// distinct cases and their page counts, longest first and then by ID; a
+	// case with no usable range, or no cap.cases row, counts as 0 pages
+	// (issue #359).
+	shared, err := s.LoadCAPSharedCitations(ctx)
+	require.NoError(t, err)
+	assert.Equal(t, map[string][]SharedCase{
+		"108 S. Ct. 185": {{ID: 222, Pages: 6}, {ID: 333, Pages: 1}},
+		"61 Kan. 859":    {{ID: 555, Pages: 0}, {ID: 666, Pages: 0}, {ID: 777, Pages: 0}},
+	}, shared)
 }
 
 func TestLoadCodeReporterCitationsIntegration(t *testing.T) {
