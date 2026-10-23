@@ -288,6 +288,12 @@ func (d *Detector) Detect(doc sources.Document) []*Citation {
 		vol := reVolume.FindString(m)
 		if vol != "" {
 			v, _ := strconv.Atoi(vol)
+			// No reporter has a volume 0, so "0 Mass. 12" is a reading the
+			// detector knows to be wrong (issue #374). "012 Mass. 34" still
+			// parses as volume 12.
+			if v == 0 {
+				continue
+			}
 			c.Volume = &v
 		}
 
