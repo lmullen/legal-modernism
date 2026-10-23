@@ -139,7 +139,7 @@ Internal web app for browsing and inspecting citation data. Located in `chambers
 
 **Frontend:** Use the latest version of Bootstrap CSS via CDN (no Bootstrap JavaScript). Use Observable Plot (`@observablehq/plot`) for data visualizations when possible, and D3.js otherwise.
 
-**Public visualizations:** visualizations meant for readers outside the project (articles, talks, eventually the website) follow `chambers/VISUALIZATIONS.md`: anatomy, typography, colour, interactivity, accessibility, sizing, and how they consume JSON. Read it before building one, ask whether it is full screen or in the viewport before starting, and record every colour assigned to a category in its colour registry.
+**Public visualizations:** visualizations meant for readers outside the project (articles, talks, eventually the website) follow `chambers/VISUALIZATIONS.md`: anatomy, typography, colour, interactivity, accessibility, sizing, and how they consume JSON. Read it before building one, ask whether it is full screen or in the viewport before starting, and record every colour assigned to a category in its colour registry. They live under "Draft public visualizations" on the home page, at `/viz/<name>` with their JSON at `/api/viz/<name>`; the first is `/viz/jurisdictions` (issue #216), which reads `opinion_citations.jurisdiction_citations`, our CAP links rolled up by the citing case's jurisdiction and year and the cited case's jurisdiction, with the English Reports as `uk`.
 
 ## Branches and worktrees
 
