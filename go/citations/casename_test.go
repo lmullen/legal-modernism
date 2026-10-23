@@ -169,6 +169,24 @@ func TestNameCitations(t *testing.T) {
 				"5 So. 569":      {"", ""},
 			},
 		},
+		{
+			name: "stray OCR mark touching the cite (issue #396)",
+			text: "cited. Darnell v. State, *18 Ark. 321; Dyer v. Walker, 40 Pa. St. 157;",
+			want: map[string][2]string{
+				"18 Ark. 321":    {"Darnell v. State", CaseNameDirect},
+				"40 Pa. St. 157": {"Dyer v. Walker", CaseNameDirect},
+			},
+		},
+		{
+			name: "degree sign fused to the name (issue #396)",
+			text: "as held in Clark v. Merriam,°5 Conn. 576, and",
+			want: map[string][2]string{"5 Conn. 576": {"Clark v. Merriam", CaseNameDirect}},
+		},
+		{
+			name: "comma hidden behind a period (issue #396)",
+			text: "Vroom, 527; Moore v. Thompson,. 69 N. C. 121; and",
+			want: map[string][2]string{"69 N. C. 121": {"Moore v. Thompson", CaseNameDirect}},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
