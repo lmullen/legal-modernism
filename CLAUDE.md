@@ -158,7 +158,7 @@ Whenever the user asks you to work on a separate branch, use a git worktree inst
 
 ## GitHub
 
-Use the `gh` CLI for GitHub operations — creating pull requests, viewing issues, checking CI status, and commenting. It is authenticated via the `GITHUB_TOKEN` environment variable.
+Use the `gh` CLI for GitHub operations — creating pull requests, viewing issues, checking CI status, and commenting. In the sandbox it is authenticated as the machine account `lmullen-agent` (see Attribution).
 
 - Open a PR: `gh pr create --base main --head <branch> --title "..." --body "..."`
 - Reference the issue a PR closes in the commit or PR body with `Closes #<n>` so it auto-closes on merge.
@@ -171,21 +171,23 @@ The project status board is https://github.com/orgs/chnm/projects/21/views/1.
 
 ### Attribution
 
-Work that Claude does should be attributed to Claude, not to the repository owner.
+Work that Claude does is attributed to the machine account `lmullen-agent`, not to the
+repository owner `lmullen`.
 
-- **Commits:** pass `--author="Claude <noreply@anthropic.com>"` to `git commit`. The
-  committer stays whoever `git config user.email` names, so GitHub shows the commit as
-  "Claude authored and lmullen committed". Do **not** change `user.name` or `user.email`
-  in git config to accomplish this — that would relabel hand-written commits too.
+- **Commits:** in the sandbox, `GIT_AUTHOR_*` and `GIT_COMMITTER_*` in
+  `/etc/sandbox-persistent.sh` make `lmullen-agent <lincoln+agent@lincolnmullen.com>` both
+  author and committer, so commit without `--author`. Do **not** set `user.name` or
+  `user.email` in the repository's git config: the sandbox mounts the host's checkout, so
+  that would relabel the user's own commits too. If `git var GIT_AUTHOR_IDENT` names
+  anyone else, stop and tell the user rather than committing.
 - **Trailer:** keep the usual `Co-Authored-By: Claude ... <noreply@anthropic.com>` trailer
   at the end of the commit message.
-- **Comments, PR bodies, and issue text:** `gh` posts under the authenticated human account
-  and there is no way to change that, so open any body Claude writes with an attribution
-  line, followed by a blank line:
-
-      _Written by Claude Code._
-
-  Text that Claude drafts for a human to post themselves does not need the line.
+- **Comments, PR bodies, and issue text:** the sandbox's GitHub token belongs to
+  `lmullen-agent`, so `gh` posts as that account and no attribution line is needed. If
+  `gh api user --jq .login` names anyone else, stop and tell the user rather than posting.
+- **Reviews:** because Claude's PRs are opened by `lmullen-agent`, `lmullen` can approve
+  them, which the ruleset on `main` requires. Merge only when the user asks, after their
+  approval, with a merge commit (not squash); don't reach for `--admin`.
 
 ## CI
 
