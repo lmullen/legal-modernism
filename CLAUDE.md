@@ -36,7 +36,7 @@ Support directories:
 - Run: `go run ./cmd-name/`
 - Test: `go test ./...`
 - Tests use `stretchr/testify` with table-driven test patterns
-- Key dependencies: `jackc/pgx/v4` (PostgreSQL), `gammazero/workerpool` (concurrency), `schollz/progressbar` (CLI progress), `stretchr/testify` (testing)
+- Key dependencies: `jackc/pgx/v5` (PostgreSQL), `gammazero/workerpool` (concurrency), `schollz/progressbar` (CLI progress), `stretchr/testify` (testing)
 
 Write code in Go unless instructed otherwise.
 
@@ -67,7 +67,7 @@ slog.Error("batch failed", batch.LogID("error", err)...)
 
 ## Database
 
-- PostgreSQL 17.x, connected via `go/db/db.go` using pgx v4 connection pooling
+- PostgreSQL 17.x, connected via `go/db/db.go` using pgx v5 connection pooling
 - Connection string from `LAW_DBSTR` environment variable
 - Migrations managed by [dbmate](https://github.com/amacneil/dbmate) in `db/migrations/`
 - Migration naming: `YYYYMMDDHHMMSS_description.sql`
