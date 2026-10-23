@@ -1169,8 +1169,26 @@ CREATE TABLE moml_citations.citations_unlinked (
     reporter_abbr text NOT NULL,
     page integer NOT NULL,
     created_at timestamp without time zone NOT NULL,
-    year integer
+    year integer,
+    case_name text,
+    case_name_source text,
+    CONSTRAINT chk_citations_unlinked_case_name_pair CHECK (((case_name IS NULL) = (case_name_source IS NULL))),
+    CONSTRAINT chk_citations_unlinked_case_name_source CHECK (((case_name_source IS NULL) OR (case_name_source = ANY (ARRAY['direct'::text, 'parallel'::text, 'table'::text]))))
 );
+
+
+--
+-- Name: COLUMN citations_unlinked.case_name; Type: COMMENT; Schema: moml_citations; Owner: -
+--
+
+COMMENT ON COLUMN moml_citations.citations_unlinked.case_name IS 'The case name printed before the citation, as the detector read it: "Plaintiff v. Defendant", "In re X", or a bare name; NULL when none was found (issue #387).';
+
+
+--
+-- Name: COLUMN citations_unlinked.case_name_source; Type: COMMENT; Schema: moml_citations; Owner: -
+--
+
+COMMENT ON COLUMN moml_citations.citations_unlinked.case_name_source IS 'How case_name was found: direct (printed before this citation), parallel (inherited from the preceding parallel cite), table (plaintiff taken from the row above in a table of cases).';
 
 
 --
@@ -2405,7 +2423,11 @@ CREATE TABLE opinion_citations.citations_unlinked (
     reporter_abbr text NOT NULL,
     page integer NOT NULL,
     year integer,
-    created_at timestamp without time zone NOT NULL
+    created_at timestamp without time zone NOT NULL,
+    case_name text,
+    case_name_source text,
+    CONSTRAINT chk_citations_unlinked_case_name_pair CHECK (((case_name IS NULL) = (case_name_source IS NULL))),
+    CONSTRAINT chk_citations_unlinked_case_name_source CHECK (((case_name_source IS NULL) OR (case_name_source = ANY (ARRAY['direct'::text, 'parallel'::text, 'table'::text]))))
 );
 
 
@@ -2414,6 +2436,20 @@ CREATE TABLE opinion_citations.citations_unlinked (
 --
 
 COMMENT ON TABLE opinion_citations.citations_unlinked IS 'Our detections from the text of cap.opinions, written by cite-detector-cap for the cases decided by the run''s --max-year: one row per opinion and distinct cite (volume, reporter spelling, page, year). The twin of moml_citations.citations_unlinked. Not CAP''s own citation graph, which is cap_citations.citations. The foreign keys onto cap.cases and cap.opinions mean a TRUNCATE of cap.opinions needs CASCADE and empties the detections.';
+
+
+--
+-- Name: COLUMN citations_unlinked.case_name; Type: COMMENT; Schema: opinion_citations; Owner: -
+--
+
+COMMENT ON COLUMN opinion_citations.citations_unlinked.case_name IS 'The case name printed before the citation, as the detector read it: "Plaintiff v. Defendant", "In re X", or a bare name; NULL when none was found (issue #387).';
+
+
+--
+-- Name: COLUMN citations_unlinked.case_name_source; Type: COMMENT; Schema: opinion_citations; Owner: -
+--
+
+COMMENT ON COLUMN opinion_citations.citations_unlinked.case_name_source IS 'How case_name was found: direct (printed before this citation), parallel (inherited from the preceding parallel cite), table (plaintiff taken from the row above in a table of cases).';
 
 
 --
@@ -4506,4 +4542,6 @@ INSERT INTO sys_admin.migrations_dbmate (version) VALUES
     ('20260926130100'),
     ('20260926130200'),
     ('20261020120000'),
-    ('20261020120100');
+    ('20261020120100'),
+    ('20261021120000'),
+    ('20261023120000');
