@@ -18,6 +18,11 @@
 {{/* case renders a CaseRef as a link with its source badge. */}}
 {{define "case"}}<a href="{{.URL}}">{{.Display}}</a> <span class="badge {{.BadgeClass}}">{{.SourceLabel}}</span>{{end}}
 
+{{/* name renders a DetectedName: the case name the detector read before the
+     citation, coloured by whether it names the linked case, with how it was
+     found as a tag (direct, parallel, table). */}}
+{{define "name"}}<span class="cname {{.Class}}" title="{{if .Verdict}}{{.Verdict}}; {{end}}{{.SourceGloss}}">{{.Name}}</span>{{if ne .Source "direct"}} <span class="cname-src">{{.SourceLabel}}</span>{{end}}{{end}}
+
 {{/* top_cases renders a TopCasesView: the cases a set of editions cites most. */}}
 {{define "top_cases"}}
     {{if .Rows}}

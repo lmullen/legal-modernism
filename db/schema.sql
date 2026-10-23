@@ -2120,6 +2120,28 @@ COMMENT ON COLUMN moml_citations.case_edition_counts.works IS 'Distinct works th
 
 
 --
+-- Name: case_name_summary; Type: MATERIALIZED VIEW; Schema: moml_citations; Owner: -
+--
+
+CREATE MATERIALIZED VIEW moml_citations.case_name_summary AS
+ SELECT COALESCE(cl.status, 'unprocessed'::text) AS status,
+    cl.match_tier,
+    cu.case_name_source,
+    count(*) AS n
+   FROM (moml_citations.citations_unlinked cu
+     LEFT JOIN moml_citations.citation_links cl ON ((cl.citation_id = cu.id)))
+  GROUP BY COALESCE(cl.status, 'unprocessed'::text), cl.match_tier, cu.case_name_source
+  WITH NO DATA;
+
+
+--
+-- Name: MATERIALIZED VIEW case_name_summary; Type: COMMENT; Schema: moml_citations; Owner: -
+--
+
+COMMENT ON MATERIALIZED VIEW moml_citations.case_name_summary IS 'Citations per link status, match tier and case_name_source over the MOML corpus; a NULL source is a citation with no detected case name (issues #387, #392). Refreshed by make db-maintenance.';
+
+
+--
 -- Name: citation_links_detail; Type: VIEW; Schema: moml_citations; Owner: -
 --
 
@@ -2651,6 +2673,28 @@ CREATE MATERIALIZED VIEW opinion_citations.cap_graph_case_agreement AS
 --
 
 COMMENT ON MATERIALIZED VIEW opinion_citations.cap_graph_case_agreement IS 'Edges in both graphs, ours only and theirs only, for each citing case in cap_graph_scope, zeros included (issue #349). Refreshed by make db-maintenance.';
+
+
+--
+-- Name: case_name_summary; Type: MATERIALIZED VIEW; Schema: opinion_citations; Owner: -
+--
+
+CREATE MATERIALIZED VIEW opinion_citations.case_name_summary AS
+ SELECT COALESCE(cl.status, 'unprocessed'::text) AS status,
+    cl.match_tier,
+    cu.case_name_source,
+    count(*) AS n
+   FROM (opinion_citations.citations_unlinked cu
+     LEFT JOIN opinion_citations.citation_links cl ON ((cl.citation_id = cu.id)))
+  GROUP BY COALESCE(cl.status, 'unprocessed'::text), cl.match_tier, cu.case_name_source
+  WITH NO DATA;
+
+
+--
+-- Name: MATERIALIZED VIEW case_name_summary; Type: COMMENT; Schema: opinion_citations; Owner: -
+--
+
+COMMENT ON MATERIALIZED VIEW opinion_citations.case_name_summary IS 'Citations per link status, match tier and case_name_source over the CAP corpus; the twin of moml_citations.case_name_summary (issues #387, #392). Refreshed by make db-maintenance.';
 
 
 --
@@ -3674,6 +3718,13 @@ CREATE INDEX case_edition_counts_works_idx ON moml_citations.case_edition_counts
 
 
 --
+-- Name: case_name_summary_uq; Type: INDEX; Schema: moml_citations; Owner: -
+--
+
+CREATE UNIQUE INDEX case_name_summary_uq ON moml_citations.case_name_summary USING btree (status, match_tier, case_name_source) NULLS NOT DISTINCT;
+
+
+--
 -- Name: citation_links_cite_normalized_idx; Type: INDEX; Schema: moml_citations; Owner: -
 --
 
@@ -3965,6 +4016,13 @@ CREATE INDEX case_case_citations_stub_idx ON opinion_citations.case_case_citatio
 --
 
 CREATE UNIQUE INDEX case_case_citations_uq ON opinion_citations.case_case_citations USING btree (citing_case_id, cap_case_id, er_case_id, code_reporter_id, stub_cite) NULLS NOT DISTINCT;
+
+
+--
+-- Name: case_name_summary_uq; Type: INDEX; Schema: opinion_citations; Owner: -
+--
+
+CREATE UNIQUE INDEX case_name_summary_uq ON opinion_citations.case_name_summary USING btree (status, match_tier, case_name_source) NULLS NOT DISTINCT;
 
 
 --
@@ -4556,4 +4614,5 @@ INSERT INTO sys_admin.migrations_dbmate (version) VALUES
     ('20261021120000'),
     ('20261021130000'),
     ('20261021140000'),
-    ('20261023120000');
+    ('20261023120000'),
+    ('20261023150000');

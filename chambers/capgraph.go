@@ -324,6 +324,7 @@ type capCitation struct {
 	Chip           Chip
 	CapCaseID      *int64
 	CiteNormalized *string
+	Name           *DetectedName
 }
 
 // Explanations of an edge CAP's graph has and our links lack, from the most
@@ -600,18 +601,22 @@ func (s *server) getCAPCaseEdges(ctx context.Context, id int64) ([]capEdge, erro
 func (s *server) getCAPCaseCitations(ctx context.Context, id int64) ([]capCitation, error) {
 	cits, err := collect(ctx, s.db, `
 		SELECT cu.id::text, o.type, cu.raw, cu.volume, cu.reporter_abbr, cu.page,
-		       cl.status, cl.match_tier, cl.cap_case_id, cl.cite_normalized
+		       cl.status, cl.match_tier, cl.cap_case_id, cl.cite_normalized,
+		       cu.case_name, cu.case_name_source, `+caseNameAgreementSQL("cu.case_name", "k.name")+`
 		FROM opinion_citations.citations_unlinked cu
 		JOIN cap.opinions o ON o.id = cu.cap_opinion
 		LEFT JOIN opinion_citations.citation_links cl ON cl.citation_id = cu.id
+		LEFT JOIN cap.cases k ON k.id = cl.cap_case_id
 		WHERE cu.cap_case = $1::bigint
 		ORDER BY o.id, cu.reporter_abbr, cu.volume, cu.page`, []any{id},
 		func(rows pgx.Rows) (capCitation, error) {
 			var c capCitation
-			var status, tier *string
+			var status, tier, caseName, nameSource *string
+			var agrees *bool
 			err := rows.Scan(&c.ID, &c.Opinion, &c.Raw, &c.Volume, &c.ReporterAbbr, &c.Page,
-				&status, &tier, &c.CapCaseID, &c.CiteNormalized)
+				&status, &tier, &c.CapCaseID, &c.CiteNormalized, &caseName, &nameSource, &agrees)
 			c.Chip = chipFor(status, tier)
+			c.Name = detectedNameFrom(caseName, nameSource, agrees)
 			return c, err
 		})
 	if err != nil {

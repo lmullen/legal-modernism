@@ -206,9 +206,16 @@ type CaseDetail struct {
 	CitedAs      []CitedAs
 	CitedAsTotal int
 	NonBody      int // citations found on pages other than body pages
-	Citing       []CitingEdition
-	Nav          Pagination
-	Sort         string
+	// The case names the detector read before the citations linked to this
+	// case (issue #392): the most frequent, how many citations have one, how
+	// many of those name this case, and how many have none.
+	NamedAs    []NamedAs
+	NamedTotal int
+	NamedAgree int
+	Unnamed    int
+	Citing     []CitingEdition
+	Nav        Pagination
+	Sort       string
 }
 
 func (d *CaseDetail) ReporterURL() string {
@@ -235,6 +242,44 @@ func (d *CaseDetail) CitationsURL() string {
 // NonBodyPct is the share of the citations that came from index, table of
 // contents, front-matter or back-matter pages, where tables of cases live.
 func (d *CaseDetail) NonBodyPct() string { return pct(d.NonBody, d.CitedAsTotal) }
+
+// NamedAgreePct is the share of the named citations whose name names this
+// case.
+func (d *CaseDetail) NamedAgreePct() string { return pct(d.NamedAgree, d.NamedTotal) }
+
+// ComparedName is the name of the case that the detected names are compared
+// with: the full name where the source records one, else the display name,
+// both for an English Reports case so that either spelling counts.
+func (d *CaseDetail) ComparedName() *string {
+	parts := []string{}
+	for _, p := range []*string{d.FullName, d.Name} {
+		if p != nil && *p != "" && (len(parts) == 0 || parts[0] != *p) {
+			parts = append(parts, *p)
+		}
+	}
+	if len(parts) == 0 {
+		return nil
+	}
+	s := strings.Join(parts, " ")
+	return &s
+}
+
+// CanCompare is whether the case has a name to judge the detected names by;
+// a stub without curated metadata has none.
+func (d *CaseDetail) CanCompare() bool { return d.ComparedName() != nil }
+
+// DisagreeURL lists the citations linked to this case whose name names
+// another case.
+func (d *CaseDetail) DisagreeURL() string {
+	return citationsURL(url.Values{"case": {d.Key()}, "names": {namesDisagree}})
+}
+
+// NamedAs is one case name the citations linked to a case were printed
+// under, with how it was found, whether it names the case, and how often.
+type NamedAs struct {
+	Name DetectedName
+	N    int
+}
 
 // CaseSummary is the case's row of case_edition_counts.
 type CaseSummary struct {
@@ -467,6 +512,59 @@ func (s *server) getCitedAs(ctx context.Context, source, id string, limit int) (
 	return items, total, nonBody, nil
 }
 
+// getNamedAs groups the citations linked to a case by the case name the
+// detector read before them, with the source and the verdict against the
+// case's own name, most frequent first. The row for the citations with no
+// name is sorted first and taken off as the count of unnamed citations. Bound
+// by the partial index on the case column, like getCitedAs.
+func (s *server) getNamedAs(ctx context.Context, d *CaseDetail, limit int) error {
+	col, placeholder := caseIDColumn(d.Source, 1)
+	compared := d.ComparedName()
+	rows, err := collect(ctx, s.db, `
+		SELECT regexp_replace(cu.case_name, '\s+', ' ', 'g'), cu.case_name_source,
+		       `+caseNameAgreementSQL("cu.case_name", "$3::text")+`, count(*)
+		FROM moml_citations.citation_links cl
+		JOIN moml_citations.citations_unlinked cu ON cu.id = cl.citation_id
+		WHERE cl.`+col+` = `+placeholder+`
+		GROUP BY 1, 2, 3
+		ORDER BY (min(cu.case_name) IS NULL) DESC, count(*) DESC, 1
+		LIMIT $2`, []any{d.ID, limit + 1, compared},
+		func(rows pgx.Rows) (NamedAs, error) {
+			var n NamedAs
+			var name, source *string
+			var agrees *bool
+			err := rows.Scan(&name, &source, &agrees, &n.N)
+			if dn := detectedNameFrom(name, source, agrees); dn != nil {
+				n.Name = *dn
+			}
+			return n, err
+		})
+	if err != nil {
+		return fmt.Errorf("named as: %w", err)
+	}
+	d.NamedAs, d.NamedTotal, d.NamedAgree, d.Unnamed = nil, 0, 0, 0
+	for _, n := range rows {
+		if n.Name.Name == "" {
+			d.Unnamed = n.N
+			continue
+		}
+		d.NamedAs = append(d.NamedAs, n)
+	}
+	if len(d.NamedAs) > limit {
+		d.NamedAs = d.NamedAs[:limit]
+	}
+	// The totals count every named citation, not only the rows shown.
+	err = s.db.QueryRow(ctx, `
+		SELECT count(*), count(*) FILTER (WHERE `+caseNameAgreementSQL("cu.case_name", "$2::text")+`)
+		FROM moml_citations.citation_links cl
+		JOIN moml_citations.citations_unlinked cu ON cu.id = cl.citation_id
+		WHERE cl.`+col+` = `+placeholder+` AND cu.case_name IS NOT NULL`, d.ID, compared).Scan(&d.NamedTotal, &d.NamedAgree)
+	if err != nil {
+		return fmt.Errorf("named totals: %w", err)
+	}
+	return nil
+}
+
 func (s *server) handleCase(w http.ResponseWriter, r *http.Request) {
 	source, id := r.PathValue("source"), r.PathValue("id")
 	if !validCaseSource(source) || id == "" {
@@ -519,6 +617,10 @@ func (s *server) handleCase(w http.ResponseWriter, r *http.Request) {
 
 	if d.CitedAs, d.CitedAsTotal, d.NonBody, err = s.getCitedAs(ctx, source, id, 30); err != nil {
 		s.serverError(w, r, err, "grouping the case's spellings", "source", source, "id", id)
+		return
+	}
+	if err = s.getNamedAs(ctx, d, 30); err != nil {
+		s.serverError(w, r, err, "grouping the case's names", "source", source, "id", id)
 		return
 	}
 

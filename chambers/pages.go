@@ -73,6 +73,29 @@ func (v *PageView) LinkedCount() int {
 	return n
 }
 
+// NamedCount is how many of the page's citations carry a detected case name.
+func (v *PageView) NamedCount() int {
+	n := 0
+	for _, c := range v.Citations {
+		if c.Name != nil {
+			n++
+		}
+	}
+	return n
+}
+
+// DisagreeCount is how many of the page's citations carry a name that does
+// not name the case they linked to.
+func (v *PageView) DisagreeCount() int {
+	n := 0
+	for _, c := range v.Citations {
+		if c.Name != nil && c.Name.Disagrees() {
+			n++
+		}
+	}
+	return n
+}
+
 // PageCitation is one citation detected on the page.
 type PageCitation struct {
 	ID               uuid.UUID
@@ -83,11 +106,15 @@ type PageCitation struct {
 	Chip             Chip
 	CiteLinked       *string
 	Case             *CaseRef
+	Name             *DetectedName
 	Found            bool
+	NameFound        bool // the name was located in the text before the citation
 
 	orig string // raw as stored, for locating it in the text
 	pos  int    // byte offset in the text; unfound citations sort after every found one
 	end  int
+	// The span of the name in the text, when NameFound.
+	namePos, nameEnd int
 }
 
 func (c PageCitation) DetailURL() string { return citationURL(c.ID.String()) }
@@ -190,7 +217,8 @@ func (s *server) getPageText(ctx context.Context, psmid, pageid string) (string,
 func (s *server) getPageCitations(ctx context.Context, psmid, pageid string) ([]PageCitation, error) {
 	query := `
 	SELECT cu.id, cu.raw, cu.reporter_abbr, wl.reporter_standard, cl.status, cl.match_tier, cl.cite_linked,
-	       ` + caseMetaColumns("cl") + `
+	       ` + caseMetaColumns("cl") + `,
+	       cu.case_name, cu.case_name_source, ` + caseNameAgreementSQL("cu.case_name", caseFullNameSQL()) + `
 	FROM moml_citations.citations_unlinked cu
 	LEFT JOIN moml_citations.citation_links cl ON cl.citation_id = cu.id
 	LEFT JOIN legalhist.whitelist wl ON wl.reporter_found = cu.reporter_abbr
@@ -199,13 +227,15 @@ func (s *server) getPageCitations(ctx context.Context, psmid, pageid string) ([]
 	ORDER BY cu.created_at, cu.id`
 	items, err := collect(ctx, s.db, query, []any{psmid, pageid}, func(rows pgx.Rows) (PageCitation, error) {
 		var c PageCitation
-		var status, tier, source, id, name, cite *string
+		var status, tier, source, id, name, cite, caseName, nameSource *string
 		var year *int
+		var agrees *bool
 		err := rows.Scan(&c.ID, &c.orig, &c.ReporterAbbr, &c.ReporterStandard, &status, &tier, &c.CiteLinked,
-			&source, &id, &name, &year, &cite)
+			&source, &id, &name, &year, &cite, &caseName, &nameSource, &agrees)
 		c.Raw = cleanRaw(c.orig)
 		c.Chip = chipFor(status, tier)
 		c.Case = caseRefFrom(source, id, name, year, cite)
+		c.Name = detectedNameFrom(caseName, nameSource, agrees)
 		return c, err
 	})
 	if err != nil {
@@ -245,12 +275,26 @@ func locateCitations(text string, cites []PageCitation) []PageCitation {
 		c.Found = true
 		c.pos, c.end = start, end
 		claimed[c.orig] = end
+		if c.Name != nil {
+			if ns, ne := locateName(text, c.Name.Name, start); ns >= 0 {
+				c.NameFound = true
+				c.namePos, c.nameEnd = ns, ne
+			}
+		}
 	}
 	sort.SliceStable(cites, func(i, j int) bool { return cites[i].pos < cites[j].pos })
 	for i := range cites {
 		cites[i].Index = i + 1
 	}
 	return cites
+}
+
+// textSpan is one stretch of the page text to mark: a citation, or the case
+// name read before one.
+type textSpan struct {
+	pos, end int
+	index    int  // the citation's index
+	name     bool // a name rather than a citation
 }
 
 // findCitation returns the byte span of raw in text at or after from, first
@@ -283,30 +327,46 @@ func findCitation(text, raw string, from int) (int, int) {
 }
 
 // highlightSpans renders the text with each located citation wrapped in a
-// mark whose id is the citation's index, so the citation list can link to it.
-// A span inside an earlier, longer span is dropped rather than nested.
+// mark whose id is the citation's index, so the citation list can link to it,
+// and each located case name in a mark of its own class. A span inside an
+// earlier, longer span is dropped rather than nested, and a name that
+// overlaps a citation gives way to it. Two citations that share one name (a
+// parallel cite inherits the name of the cite before it) mark it once.
 func highlightSpans(text string, cites []PageCitation) template.HTML {
-	found := make([]PageCitation, 0, len(cites))
+	spans := make([]textSpan, 0, 2*len(cites))
+	seen := make(map[[2]int]bool)
 	for _, c := range cites {
-		if c.Found {
-			found = append(found, c)
+		if !c.Found {
+			continue
+		}
+		spans = append(spans, textSpan{pos: c.pos, end: c.end, index: c.Index})
+		if c.NameFound && !seen[[2]int{c.namePos, c.nameEnd}] {
+			seen[[2]int{c.namePos, c.nameEnd}] = true
+			spans = append(spans, textSpan{pos: c.namePos, end: c.nameEnd, index: c.Index, name: true})
 		}
 	}
-	sort.SliceStable(found, func(i, j int) bool {
-		if found[i].pos != found[j].pos {
-			return found[i].pos < found[j].pos
+	sort.SliceStable(spans, func(i, j int) bool {
+		if spans[i].pos != spans[j].pos {
+			return spans[i].pos < spans[j].pos
 		}
-		return found[i].end > found[j].end
+		if spans[i].name != spans[j].name {
+			return !spans[i].name // a citation before a name that starts with it
+		}
+		return spans[i].end > spans[j].end
 	})
 	var b strings.Builder
 	at := 0
-	for _, c := range found {
-		if c.pos < at {
+	for _, sp := range spans {
+		if sp.pos < at {
 			continue
 		}
-		b.WriteString(template.HTMLEscapeString(text[at:c.pos]))
-		fmt.Fprintf(&b, `<mark id="cite-%d">%s</mark>`, c.Index, template.HTMLEscapeString(text[c.pos:c.end]))
-		at = c.end
+		b.WriteString(template.HTMLEscapeString(text[at:sp.pos]))
+		if sp.name {
+			fmt.Fprintf(&b, `<mark class="name" id="name-%d">%s</mark>`, sp.index, template.HTMLEscapeString(text[sp.pos:sp.end]))
+		} else {
+			fmt.Fprintf(&b, `<mark id="cite-%d">%s</mark>`, sp.index, template.HTMLEscapeString(text[sp.pos:sp.end]))
+		}
+		at = sp.end
 	}
 	b.WriteString(template.HTMLEscapeString(text[at:]))
 	return template.HTML(b.String())

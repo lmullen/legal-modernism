@@ -35,6 +35,11 @@ func TestCitationFilterShape(t *testing.T) {
 	f := parseCitationFilter(url.Values{"cite": {" 2 Mass. 420 "}, "tier": {"cap_direct"}})
 	require.Equal(t, "2 Mass. 420", f.Cite)
 	require.Equal(t, "cite=2+Mass.+420&tier=cap_direct", f.Values().Encode())
+
+	f = parseCitationFilter(url.Values{"case": {"cap:1"}, "name": {" Marbury "}, "names": {"disagree"}})
+	require.Equal(t, "case", f.Shape(), "the name filters narrow a shape, they are not one")
+	require.Equal(t, "case=cap%3A1&name=Marbury&names=disagree", f.Values().Encode())
+	require.Equal(t, "", parseCitationFilter(url.Values{"names": {"named"}}).Shape())
 }
 
 func TestCitationQueryAddCase(t *testing.T) {
