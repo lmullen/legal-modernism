@@ -37,7 +37,7 @@ var tierVocabulary = []TierInfo{
 	{citations.TierCAPFreelawAltSpelling, citations.StatusLinkedCAP, "#75c79a", "matched the FreeLaw crosswalk under an alternate spelling"},
 	{citations.TierERDirect, citations.StatusLinkedEnglishReports, "#0a58ca", "matched an English Reports case"},
 	{citations.TierCodeDirect, citations.StatusLinkedCodeReporter, "#0dcaf0", "matched a code reporter entry"},
-	{citations.TierStubDirect, citations.StatusLinkedStub, "#6f42c1", "matched a stub case: a cite string no source holds, cited often enough to treat as a case (#248)"},
+	{citations.TierStubDirect, citations.StatusLinkedStub, "#ba02e8", "matched a stub case: a cite string no source holds, cited often enough to treat as a case (#248)"},
 	{citations.TierUSReporterAbsent, citations.StatusNoMatch, "#5c0a14", "no probed spelling of the reporter appears in any US source"},
 	{citations.TierUSDiffVolsMissing, citations.StatusNoMatch, "#8a1421", "the reporter renumbers in CAP, but no diffvols row covers this volume"},
 	{citations.TierUSVolumeAbsent, citations.StatusNoMatch, "#b02333", "reporter present, this volume never appears"},

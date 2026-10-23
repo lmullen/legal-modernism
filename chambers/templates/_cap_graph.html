@@ -17,7 +17,7 @@
     {{if .Available}}
     <div class="row g-3 mb-4">
         <div class="col-md">
-            <div class="stat-card" style="border-left-color:#6f42c1">
+            <div class="stat-card" style="border-left-color:#ba02e8">
                 <div class="big-number">{{num .Total.InBoth}}</div>
                 <div class="big-label">Edges in both graphs</div>
             </div>
@@ -193,7 +193,7 @@
         // One colour per side, the same in every chart and on the cards above.
         const SIDES = [
             { key: "oursOnly", label: "Only ours", color: "#0d9488" },
-            { key: "inBoth", label: "In both", color: "#6f42c1" },
+            { key: "inBoth", label: "In both", color: "#ba02e8" },
             { key: "theirsOnly", label: "Only CAP's", color: "#d97706" },
         ];
         const sideColor = { domain: SIDES.map(s => s.label), range: SIDES.map(s => s.color) };

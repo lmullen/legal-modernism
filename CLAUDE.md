@@ -36,7 +36,7 @@ Support directories:
 - Run: `go run ./cmd-name/`
 - Test: `go test ./...`
 - Tests use `stretchr/testify` with table-driven test patterns
-- Key dependencies: `jackc/pgx/v4` (PostgreSQL), `gammazero/workerpool` (concurrency), `schollz/progressbar` (CLI progress), `stretchr/testify` (testing)
+- Key dependencies: `jackc/pgx/v5` (PostgreSQL), `gammazero/workerpool` (concurrency), `schollz/progressbar` (CLI progress), `stretchr/testify` (testing)
 
 Write code in Go unless instructed otherwise.
 
@@ -67,7 +67,7 @@ slog.Error("batch failed", batch.LogID("error", err)...)
 
 ## Database
 
-- PostgreSQL 17.x, connected via `go/db/db.go` using pgx v4 connection pooling
+- PostgreSQL 17.x, connected via `go/db/db.go` using pgx v5 connection pooling
 - Connection string from `LAW_DBSTR` environment variable
 - Migrations managed by [dbmate](https://github.com/amacneil/dbmate) in `db/migrations/`
 - Migration naming: `YYYYMMDDHHMMSS_description.sql`
@@ -138,6 +138,8 @@ Internal web app for browsing and inspecting citation data. Located in `chambers
 - To add a new page: add query in `queries.go`, create template in `templates/`, add handler and register route in `main.go`, add nav link to `home.html`
 
 **Frontend:** Use the latest version of Bootstrap CSS via CDN (no Bootstrap JavaScript). Use Observable Plot (`@observablehq/plot`) for data visualizations when possible, and D3.js otherwise.
+
+**Public visualizations:** visualizations meant for readers outside the project (articles, talks, eventually the website) follow `chambers/VISUALIZATIONS.md`: anatomy, typography, colour, interactivity, accessibility, sizing, and how they consume JSON. Read it before building one, ask whether it is full screen or in the viewport before starting, and record every colour assigned to a category in its colour registry.
 
 ## Branches and worktrees
 

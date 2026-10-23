@@ -129,6 +129,43 @@
         </tbody>
     </table>
     {{template "pagination" .Nav}}
+
+    <h2 class="section">Cited by CAP opinions</h2>
+    <p class="small text-secondary">
+        The CAP cases whose opinions cite this case, as <code>cite-linker-cap</code> linked them, with the citations
+        each makes and the opinions they are in. An opinion's citations of its own case are left out.
+        {{with .CitedByOpinions}}{{if .Total}}{{num .Total}} cases make {{num .TotalCites}} citations{{if .More}}; the {{len .Cases}} that make the most are shown{{end}}.{{end}}{{end}}
+    </p>
+    {{template "opinion_cases" .CitedByOpinions}}
+
+    {{if eq .Source "cap"}}
+    <h2 class="section">Cited in its opinions</h2>
+    <p class="small text-secondary">
+        The cases this case's opinions cite, in any source, with the citations to each.
+        {{with .OpinionsCite}}{{if .Total}}{{num .Total}} cases, {{num .TotalCites}} citations{{if .More}}; the {{len .Cases}} cited most are shown{{end}}.{{end}}{{end}}
+        <a href="{{.CAPGraphURL}}">Every citation in its opinions, against CAP's graph.</a>
+    </p>
+    {{template "opinion_cases" .OpinionsCite}}
+    {{end}}
+{{end}}
+
+{{define "opinion_cases"}}
+    <table class="table table-sm table-hover align-middle" style="max-width: 60rem;">
+        <thead><tr><th class="num">Year</th><th>Case</th><th>Cite</th><th class="num">Opinions</th><th class="num">Citations</th></tr></thead>
+        <tbody>
+        {{range .Cases}}
+            <tr>
+                <td class="num">{{if .Year}}{{deref .Year}}{{else}}&mdash;{{end}}</td>
+                <td>{{template "case" .CaseRef}}</td>
+                <td class="small text-secondary">{{if .Cite}}{{derefStr .Cite}}{{end}}</td>
+                <td class="num">{{num .Opinions}}</td>
+                <td class="num">{{num .Cites}}</td>
+            </tr>
+        {{else}}
+            <tr><td colspan="5" class="text-secondary">None.</td></tr>
+        {{end}}
+        </tbody>
+    </table>
 {{end}}
 
 {{define "scripts"}}
@@ -143,7 +180,7 @@
             marginLeft: 50,
             x: { label: "Decade of the citing edition", tickFormat: d => String(d), interval: 10 },
             y: { label: "Citing editions", grid: true },
-            color: { domain: ["US", "UK"], range: ["#6f42c1", "#0d9488"], legend: true },
+            color: { domain: ["US", "UK"], range: ["#ba02e8", "#0d9488"], legend: true },
             marks: [
                 Plot.rectY(rows, { x: "decade", y: "editions", fill: "jurisdiction", interval: 10,
                     title: d => `${d.decade}s, ${d.jurisdiction}: ${d.editions.toLocaleString()} editions` }),
