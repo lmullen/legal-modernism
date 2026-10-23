@@ -88,8 +88,8 @@ On the workstation:
 - An ssh config entry named `hopper` that authenticates without a prompt (a
   key in an agent). The script runs ssh with `BatchMode=yes`, so a password
   prompt is a failure, not a pause. `make sync-hopper` uses the same alias.
-- No pending migrations: `make db-up`, then `make db-schema`, and commit
-  `db/schema.sql`. The preflight refuses to start otherwise.
+- No pending migrations: `make db-up`, which also dumps `db/schema.sql`, and
+  commit `db/schema.sql`. The preflight refuses to start otherwise.
 
 Before the first CAP run, the migrations that give `cap.opinions` a primary
 key and create the `opinion_citations` schema must be applied, in this order:
@@ -101,7 +101,7 @@ key and create the `opinion_citations` schema must be applied, in this order:
 2. By hand, `VACUUM (ANALYZE, PROCESS_TOAST false) cap.opinions;` against
    `LAW_DBSTR`, to make the space the backfill left reusable and refresh the
    statistics without reading the 36 GB of TOASTed text.
-3. `make db-schema` and commit `db/schema.sql`.
+3. Commit the `db/schema.sql` that `make db-up` dumped.
 4. `caffeinate -i ./scripts/pipeline.sh --corpus cap`.
 
 On hopper:
@@ -244,7 +244,7 @@ Refusals in preflight, and what to do:
 |---|---|
 | missing local tools | Install them; `dbmate` and `psql` come from Homebrew. |
 | cannot connect to the database | Check `LAW_DBSTR`, the VPN, and the database host. |
-| migrations are pending | `make db-up`, `make db-schema`, commit `db/schema.sql`. |
+| migrations are pending | `make db-up`, then commit the `db/schema.sql` it dumps. |
 | cannot ssh to hopper | Check the `hopper` ssh alias and that a key is loaded. |
 | `LAW_DBSTR` is not exported in the login shell on hopper | Export it from `~/.bash_profile` on hopper. |
 | a pipeline job is already queued or running | Wait for it, cancel it, or attach to it with `--from PHASE --job ID`. The check covers the jobs of both corpora, because a CAP job and a MOML job together exceed the database's connections. |
