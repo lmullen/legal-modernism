@@ -30,6 +30,15 @@ type WhitelistEntry struct {
 	// lets one reporter row hold a volume-cited series and its year-cited
 	// continuation (issue #314).
 	CitedByYearFrom int
+	// Fallback is the reporter a spelling means when it does not mean its own
+	// (legalhist.whitelist.fallback_standard), or nil. Some spellings name one
+	// reporter in one jurisdiction or run of volumes and another elsewhere:
+	// "Porter" is Porter's Indiana Reports, but in Alabama Porter's Alabama
+	// Reports (issue #358). The linker tries the fallback only once the
+	// spelling's own reading has failed in a way that says it was the wrong
+	// reporter. Its fields describe the fallback reporter; it never has a
+	// Fallback of its own.
+	Fallback *WhitelistEntry
 }
 
 // DiffVolEntry maps an original volume number to the corresponding CAP volume
@@ -55,6 +64,19 @@ type ERCase struct {
 	ID        string // the case; empty when Ambiguous
 	Ambiguous bool   // the cite string belongs to more than one case
 	Cases     int    // how many cases share the cite string; 1 when unambiguous
+}
+
+// SharedCase is one of the CAP cases that share a first-page cite string, with
+// how many pages it occupies (issue #359). The cases that begin on one page are
+// nearly always a decision of some length and one or more memorandum decisions
+// of a page or less, printed in the space the longer one leaves, so the pages
+// are what tell them apart. Pages is CAP's last_page - first_page + 1, or 0 when
+// CAP records no page range or an inverted one; as in CaseSpan it is a length,
+// not an end page, because the scanned pagination can be offset from the cited
+// one.
+type SharedCase struct {
+	ID    int64
+	Pages int
 }
 
 // CaseSpan is one first-page cite string, the case it names, and how many pages
@@ -182,6 +204,7 @@ const (
 
 	// linked_*: which probe produced the link.
 	TierCAPDirect             = "cap_direct"               // cap.citations, under the normalized cite
+	TierCAPSharedLongest      = "cap_shared_longest"       // a cite several CAP cases share, linked to the longest of them (#359)
 	TierCAPFreelaw            = "cap_freelaw"              // freelaw.cite_to_cap, under the normalized cite
 	TierCAPAltSpelling        = "cap_alt_spelling"         // cap.citations, under a reporters_abbreviations alternate
 	TierCAPFreelawAltSpelling = "cap_freelaw_alt_spelling" // freelaw.cite_to_cap, under an alternate

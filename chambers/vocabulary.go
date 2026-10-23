@@ -31,6 +31,7 @@ type TierInfo struct {
 // shade of its route's hue.
 var tierVocabulary = []TierInfo{
 	{citations.TierCAPDirect, citations.StatusLinkedCAP, "#0f5132", "matched a first-page cite in cap.citations"},
+	{citations.TierCAPSharedLongest, citations.StatusLinkedCAP, "#146c43", "matched a first-page cite several CAP cases share, to the longest of them (#359)"},
 	{citations.TierCAPFreelaw, citations.StatusLinkedCAP, "#198754", "matched through the FreeLaw crosswalk"},
 	{citations.TierCAPAltSpelling, citations.StatusLinkedCAP, "#3fa76f", "matched cap.citations under an alternate spelling"},
 	{citations.TierCAPFreelawAltSpelling, citations.StatusLinkedCAP, "#75c79a", "matched the FreeLaw crosswalk under an alternate spelling"},

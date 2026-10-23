@@ -23,6 +23,13 @@ type LinkerStore interface {
 	// to an arbitrary case.
 	LoadCAPCitations(ctx context.Context) (map[string]int64, error)
 
+	// LoadCAPSharedCitations loads the cites LoadCAPCitations drops, those
+	// belonging to more than one CAP case, as cite -> those cases with their
+	// page counts, longest first. The linker links such a cite to the longest
+	// of the cases, and reports an ambiguity rather than an absence when the
+	// longest is not unique (issue #359).
+	LoadCAPSharedCitations(ctx context.Context) (map[string][]SharedCase, error)
+
 	// LoadFreelawCites loads the FreeLaw parallel-citation crosswalk
 	// (freelaw.cite_to_cap) into memory as cite -> cap_case_id. The linker uses
 	// it as a fallback after the exact cap.citations lookup misses.

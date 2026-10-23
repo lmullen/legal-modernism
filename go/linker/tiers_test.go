@@ -113,12 +113,13 @@ func TestUSTier(t *testing.T) {
 		name            string
 		probes          []string
 		diffvolsMissing bool
+		ambiguous       bool
 		span            rangeOutcome
 		want            string
 	}{
-		{"unknown reporter", []string{"1 Nonesuch 5"}, false, rangeMiss, citations.TierUSReporterAbsent},
-		{"unknown volume", []string{"22 Mass. 5"}, false, rangeMiss, citations.TierUSVolumeAbsent},
-		{"known volume, unknown page", []string{"17 Mass. 5"}, false, rangeMiss, citations.TierUSPageAbsent},
+		{"unknown reporter", []string{"1 Nonesuch 5"}, false, false, rangeMiss, citations.TierUSReporterAbsent},
+		{"unknown volume", []string{"22 Mass. 5"}, false, false, rangeMiss, citations.TierUSVolumeAbsent},
+		{"known volume, unknown page", []string{"17 Mass. 5"}, false, false, rangeMiss, citations.TierUSPageAbsent},
 		{
 			// #261: the citation carried no volume, so the cascade never had
 			// one to look up. That is not evidence about coverage.
@@ -193,11 +194,31 @@ func TestUSTier(t *testing.T) {
 			probes: []string{"17 Mass. 5"}, diffvolsMissing: true, span: rangeGap,
 			want: citations.TierUSDiffVolsMissing,
 		},
+		{
+			// #359: an exact cite several cases share is an ambiguity, not a page
+			// no case begins on.
+			name:   "a shared exact cite is page_ambiguous",
+			probes: []string{"17 Mass. 5"}, ambiguous: true,
+			want: citations.TierUSPageAmbiguous,
+		},
+		{
+			// The shared cites are kept out of the cite index, so a volume whose
+			// cites are all shared is unknown to it; the flag proves the volume.
+			name:   "a shared exact cite proves the reporter and volume were reached",
+			probes: []string{"9 Nonesuch 5"}, ambiguous: true,
+			want: citations.TierUSPageAmbiguous,
+		},
+		{
+			// ...and an exact ambiguity outranks a range gap, as on the UK route.
+			name:   "a shared exact cite outranks a gap span",
+			probes: []string{"17 Mass. 5"}, ambiguous: true, span: rangeGap,
+			want: citations.TierUSPageAmbiguous,
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			assert.Equal(t, tt.want, usTier(tt.probes, ix, tt.diffvolsMissing, tt.span))
+			assert.Equal(t, tt.want, usTier(tt.probes, ix, tt.diffvolsMissing, tt.ambiguous, tt.span))
 		})
 	}
 }

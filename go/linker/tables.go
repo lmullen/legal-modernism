@@ -19,9 +19,15 @@ import (
 // built once at startup and never written to afterwards, which is what makes it
 // safe to share across the insert workers.
 type Tables struct {
-	whitelist    map[string]*citations.WhitelistEntry
-	diffvols     map[string]map[int]*citations.DiffVolEntry
-	capCites     map[string]int64
+	whitelist map[string]*citations.WhitelistEntry
+	diffvols  map[string]map[int]*citations.DiffVolEntry
+	capCites  map[string]int64
+	// capShared holds the cites capCites leaves out because several CAP cases
+	// share them, each with those cases and their page counts. It is kept out
+	// of the us cite index, as the dropped cites always were; a probe that
+	// reaches it is itself proof of the reporter and volume, which the cascade
+	// carries to usTier.
+	capShared    map[string][]citations.SharedCase
 	freelawCites map[string]int64
 	altAbbrs     map[string][]string
 	codeCites    map[string]int64
@@ -60,6 +66,7 @@ func NewTables(
 	whitelist map[string]*citations.WhitelistEntry,
 	diffvols map[string]map[int]*citations.DiffVolEntry,
 	capCites map[string]int64,
+	capShared map[string][]citations.SharedCase,
 	freelawCites map[string]int64,
 	altAbbrs map[string][]string,
 	codeCites map[string]int64,
@@ -73,6 +80,7 @@ func NewTables(
 		whitelist:    whitelist,
 		diffvols:     diffvols,
 		capCites:     capCites,
+		capShared:    capShared,
 		freelawCites: freelawCites,
 		altAbbrs:     altAbbrs,
 		codeCites:    codeCites,
