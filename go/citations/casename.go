@@ -492,9 +492,10 @@ func cleanName(s string) string {
 	s = strings.TrimSpace(s)
 	s = reLeadingStop.ReplaceAllString(s, "")
 	s = strings.TrimLeft(s, "'\"*([ ,.;:-")
-	s = strings.TrimRight(s, " ,;:(")
-	s = strings.TrimSpace(s)
+	s = trimTrailingJunk(s)
 	s = trimTrailingPeriod(s)
+	// Again, for the comma the period hid: "Moore v. Thompson,. 69 N. C. 121".
+	s = trimTrailingJunk(s)
 	letters := 0
 	for _, r := range s {
 		if isAlphaByte(byte(r)) {
@@ -505,6 +506,33 @@ func cleanName(s string) string {
 		return ""
 	}
 	return s
+}
+
+// trailingJunk is what no name ends with: the punctuation the scan stops
+// beside and the OCR's stray marks, which the dropped-space rule in scanBack
+// takes in when they touch the cite ("Darnell v. State, *18 Ark. 321" is 48
+// Ark. 321, issue #396).
+const trailingJunk = " ,;:(*°$§£!?~#<>/\\\"|^_=+&-"
+
+// reTrailingNumber is a number after a comma, the head of a split volume or
+// a year: "Cole v. Cassidy, 1 38 Mass. 437", "Whyte v. Robertsoni, 1891".
+var reTrailingNumber = regexp.MustCompile(`,\s*\d+$`)
+
+// trimTrailingJunk drops trailingJunk, a trailing number after a comma, and
+// an apostrophe that does not follow a letter ("Lade v. Shepherd,'") from
+// the end of a name, keeping a possessive ("Smiths'").
+func trimTrailingJunk(s string) string {
+	for {
+		t := strings.TrimRight(s, trailingJunk)
+		t = reTrailingNumber.ReplaceAllString(t, "")
+		if n := len(t); n > 0 && t[n-1] == '\'' && (n == 1 || !isAlphaByte(t[n-2])) {
+			t = t[:n-1]
+		}
+		if t == s {
+			return s
+		}
+		s = t
+	}
 }
 
 // trimTrailingPeriod drops the sentence period the scan keeps on a name
