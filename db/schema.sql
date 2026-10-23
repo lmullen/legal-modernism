@@ -1212,6 +1212,8 @@ CREATE TABLE legalhist.whitelist (
     reporter_found text NOT NULL,
     reporter_standard text,
     junk boolean NOT NULL,
+    fallback_standard text,
+    CONSTRAINT chk_whitelist_fallback CHECK (((fallback_standard IS NULL) OR ((reporter_standard IS NOT NULL) AND (fallback_standard <> reporter_standard)))),
     CONSTRAINT chk_whitelist_junk_no_standard CHECK ((NOT (junk AND (reporter_standard IS NOT NULL)))),
     CONSTRAINT chk_whitelist_nonjunk_has_standard CHECK ((junk OR (reporter_standard IS NOT NULL)))
 );
@@ -1916,7 +1918,7 @@ CREATE TABLE moml_citations.citation_links (
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     match_tier text,
     stub_cite text,
-    CONSTRAINT chk_citation_links_match_tier CHECK (((match_tier IS NULL) OR (match_tier = ANY (ARRAY['us_reporter_absent'::text, 'us_diffvols_missing'::text, 'us_volume_absent'::text, 'us_volume_missing'::text, 'us_page_absent'::text, 'us_page_ambiguous'::text, 'us_page_gap'::text, 'us_anachronistic'::text, 'uk_reporter_absent'::text, 'uk_volume_absent'::text, 'uk_volume_missing'::text, 'uk_page_absent'::text, 'uk_page_ambiguous'::text, 'uk_page_gap'::text, 'uk_anachronistic'::text, 'cap_direct'::text, 'cap_freelaw'::text, 'cap_alt_spelling'::text, 'cap_freelaw_alt_spelling'::text, 'cap_page_interior'::text, 'code_direct'::text, 'er_direct'::text, 'er_page_interior'::text, 'stub_direct'::text]))))
+    CONSTRAINT chk_citation_links_match_tier CHECK (((match_tier IS NULL) OR (match_tier = ANY (ARRAY['us_reporter_absent'::text, 'us_diffvols_missing'::text, 'us_volume_absent'::text, 'us_volume_missing'::text, 'us_page_absent'::text, 'us_page_ambiguous'::text, 'us_page_gap'::text, 'us_anachronistic'::text, 'uk_reporter_absent'::text, 'uk_volume_absent'::text, 'uk_volume_missing'::text, 'uk_page_absent'::text, 'uk_page_ambiguous'::text, 'uk_page_gap'::text, 'uk_anachronistic'::text, 'cap_direct'::text, 'cap_shared_longest'::text, 'cap_freelaw'::text, 'cap_alt_spelling'::text, 'cap_freelaw_alt_spelling'::text, 'cap_page_interior'::text, 'code_direct'::text, 'er_direct'::text, 'er_page_interior'::text, 'stub_direct'::text]))))
 );
 
 
@@ -2399,7 +2401,7 @@ CREATE TABLE opinion_citations.citation_links (
     cite_normalized text,
     cite_linked text,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
-    CONSTRAINT chk_citation_links_match_tier CHECK (((match_tier IS NULL) OR (match_tier = ANY (ARRAY['us_reporter_absent'::text, 'us_diffvols_missing'::text, 'us_volume_absent'::text, 'us_volume_missing'::text, 'us_page_absent'::text, 'us_page_ambiguous'::text, 'us_page_gap'::text, 'us_anachronistic'::text, 'uk_reporter_absent'::text, 'uk_volume_absent'::text, 'uk_volume_missing'::text, 'uk_page_absent'::text, 'uk_page_ambiguous'::text, 'uk_page_gap'::text, 'uk_anachronistic'::text, 'cap_direct'::text, 'cap_freelaw'::text, 'cap_alt_spelling'::text, 'cap_freelaw_alt_spelling'::text, 'cap_page_interior'::text, 'code_direct'::text, 'er_direct'::text, 'er_page_interior'::text, 'stub_direct'::text]))))
+    CONSTRAINT chk_citation_links_match_tier CHECK (((match_tier IS NULL) OR (match_tier = ANY (ARRAY['us_reporter_absent'::text, 'us_diffvols_missing'::text, 'us_volume_absent'::text, 'us_volume_missing'::text, 'us_page_absent'::text, 'us_page_ambiguous'::text, 'us_page_gap'::text, 'us_anachronistic'::text, 'uk_reporter_absent'::text, 'uk_volume_absent'::text, 'uk_volume_missing'::text, 'uk_page_absent'::text, 'uk_page_ambiguous'::text, 'uk_page_gap'::text, 'uk_anachronistic'::text, 'cap_direct'::text, 'cap_shared_longest'::text, 'cap_freelaw'::text, 'cap_alt_spelling'::text, 'cap_freelaw_alt_spelling'::text, 'cap_page_interior'::text, 'code_direct'::text, 'er_direct'::text, 'er_page_interior'::text, 'stub_direct'::text]))))
 );
 
 
@@ -4218,6 +4220,14 @@ ALTER TABLE ONLY legalhist.reporters_diffvols
 
 
 --
+-- Name: whitelist fk_whitelist_fallback_standard; Type: FK CONSTRAINT; Schema: legalhist; Owner: -
+--
+
+ALTER TABLE ONLY legalhist.whitelist
+    ADD CONSTRAINT fk_whitelist_fallback_standard FOREIGN KEY (fallback_standard) REFERENCES legalhist.reporters(reporter_standard);
+
+
+--
 -- Name: whitelist fk_whitelist_reporter_standard; Type: FK CONSTRAINT; Schema: legalhist; Owner: -
 --
 
@@ -4544,4 +4554,6 @@ INSERT INTO sys_admin.migrations_dbmate (version) VALUES
     ('20261020120000'),
     ('20261020120100'),
     ('20261021120000'),
+    ('20261021130000'),
+    ('20261021140000'),
     ('20261023120000');
