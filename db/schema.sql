@@ -1918,7 +1918,7 @@ CREATE TABLE moml_citations.citation_links (
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     match_tier text,
     stub_cite text,
-    CONSTRAINT chk_citation_links_match_tier CHECK (((match_tier IS NULL) OR (match_tier = ANY (ARRAY['us_reporter_absent'::text, 'us_diffvols_missing'::text, 'us_volume_absent'::text, 'us_volume_missing'::text, 'us_page_absent'::text, 'us_page_ambiguous'::text, 'us_page_gap'::text, 'us_anachronistic'::text, 'uk_reporter_absent'::text, 'uk_volume_absent'::text, 'uk_volume_missing'::text, 'uk_page_absent'::text, 'uk_page_ambiguous'::text, 'uk_page_gap'::text, 'uk_anachronistic'::text, 'cap_direct'::text, 'cap_shared_longest'::text, 'cap_freelaw'::text, 'cap_alt_spelling'::text, 'cap_freelaw_alt_spelling'::text, 'cap_page_interior'::text, 'code_direct'::text, 'er_direct'::text, 'er_page_interior'::text, 'stub_direct'::text]))))
+    CONSTRAINT chk_citation_links_match_tier CHECK (((match_tier IS NULL) OR (match_tier = ANY (ARRAY['us_reporter_absent'::text, 'us_diffvols_missing'::text, 'us_volume_absent'::text, 'us_volume_missing'::text, 'us_page_absent'::text, 'us_page_ambiguous'::text, 'us_anachronistic'::text, 'uk_reporter_absent'::text, 'uk_volume_absent'::text, 'uk_volume_missing'::text, 'uk_page_absent'::text, 'uk_page_ambiguous'::text, 'uk_anachronistic'::text, 'cap_direct'::text, 'cap_shared_longest'::text, 'cap_freelaw'::text, 'cap_alt_spelling'::text, 'cap_freelaw_alt_spelling'::text, 'code_direct'::text, 'er_direct'::text, 'stub_direct'::text]))))
 );
 
 
@@ -1938,8 +1938,7 @@ CREATE MATERIALIZED VIEW moml_citations.edition_case_citations AS
     cl.er_case_id,
     cl.code_reporter_id,
     cl.stub_cite,
-    count(*) AS cite_count,
-    (count(*) FILTER (WHERE (cl.match_tier = ANY (ARRAY['cap_page_interior'::text, 'er_page_interior'::text]))) = count(*)) AS pincite_only
+    count(*) AS cite_count
    FROM ((moml_citations.citation_links cl
      JOIN moml_citations.citations_unlinked cu ON ((cu.id = cl.citation_id)))
      JOIN moml.volumes v ON ((v.psmid = cu.moml_treatise)))
@@ -1967,13 +1966,6 @@ COMMENT ON COLUMN moml_citations.edition_case_citations.source IS 'Which column 
 --
 
 COMMENT ON COLUMN moml_citations.edition_case_citations.cite_count IS 'Number of linked citations from the edition to the case.';
-
-
---
--- Name: COLUMN edition_case_citations.pincite_only; Type: COMMENT; Schema: moml_citations; Owner: -
---
-
-COMMENT ON COLUMN moml_citations.edition_case_citations.pincite_only IS 'True when every citation from the edition to the case was linked through an interior page (cap_page_interior or er_page_interior), so the link exists only because of a pin cite.';
 
 
 --
@@ -2007,8 +1999,7 @@ CREATE MATERIALIZED VIEW moml_citations.edition_citation_counts AS
           GROUP BY v.bibliographicid
         ), cases AS (
          SELECT edition_case_citations.bibliographicid,
-            count(*) AS cases,
-            count(*) FILTER (WHERE (NOT edition_case_citations.pincite_only)) AS cases_not_pincite_only
+            count(*) AS cases
            FROM moml_citations.edition_case_citations
           GROUP BY edition_case_citations.bibliographicid
         )
@@ -2024,8 +2015,7 @@ CREATE MATERIALIZED VIEW moml_citations.edition_citation_counts AS
     e.derivative,
     vols.cites,
     vols.linked,
-    COALESCE(cases.cases, (0)::bigint) AS cases,
-    COALESCE(cases.cases_not_pincite_only, (0)::bigint) AS cases_not_pincite_only
+    COALESCE(cases.cases, (0)::bigint) AS cases
    FROM (((moml.treatises t
      JOIN moml.editions e ON ((e.bibliographicid = t.bibliographicid)))
      JOIN vols ON ((vols.bibliographicid = t.bibliographicid)))
@@ -2041,13 +2031,6 @@ COMMENT ON MATERIALIZED VIEW moml_citations.edition_citation_counts IS 'One row 
 
 
 --
--- Name: COLUMN edition_citation_counts.cases_not_pincite_only; Type: COMMENT; Schema: moml_citations; Owner: -
---
-
-COMMENT ON COLUMN moml_citations.edition_citation_counts.cases_not_pincite_only IS 'Cases the edition reaches other than only through pin cites (edition_case_citations.pincite_only is false).';
-
-
---
 -- Name: case_edition_counts; Type: MATERIALIZED VIEW; Schema: moml_citations; Owner: -
 --
 
@@ -2059,7 +2042,6 @@ CREATE MATERIALIZED VIEW moml_citations.case_edition_counts AS
             c.code_reporter_id,
             c.stub_cite,
             count(*) AS editions,
-            count(*) FILTER (WHERE (NOT c.pincite_only)) AS editions_not_pincite_only,
             count(DISTINCT ecc.work_id) AS works,
             (sum(c.cite_count))::bigint AS cites,
             count(*) FILTER (WHERE (ecc.jurisdiction = 'US'::text)) AS us_editions,
@@ -2079,7 +2061,6 @@ CREATE MATERIALIZED VIEW moml_citations.case_edition_counts AS
     COALESCE(cc.decision_year, er.murrell_year, er.er_year, code.decision_year, sm.year_decided) AS year,
     COALESCE(capcite.cite, er.er_cite, code.official_citation, a.stub_cite) AS cite,
     a.editions,
-    a.editions_not_pincite_only,
     a.works,
     a.cites,
     a.us_editions,
@@ -2103,13 +2084,6 @@ CREATE MATERIALIZED VIEW moml_citations.case_edition_counts AS
 --
 
 COMMENT ON MATERIALIZED VIEW moml_citations.case_edition_counts IS 'One row per case cited by treatise editions, with the case''s name, year and citation copied from its source, and the treatise editions, works and citations behind it (issue #305). case_key is source:id. Refreshed by make db-maintenance.';
-
-
---
--- Name: COLUMN case_edition_counts.editions_not_pincite_only; Type: COMMENT; Schema: moml_citations; Owner: -
---
-
-COMMENT ON COLUMN moml_citations.case_edition_counts.editions_not_pincite_only IS 'Citing editions that reach the case other than only through pin cites.';
 
 
 --
@@ -2423,7 +2397,7 @@ CREATE TABLE opinion_citations.citation_links (
     cite_normalized text,
     cite_linked text,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
-    CONSTRAINT chk_citation_links_match_tier CHECK (((match_tier IS NULL) OR (match_tier = ANY (ARRAY['us_reporter_absent'::text, 'us_diffvols_missing'::text, 'us_volume_absent'::text, 'us_volume_missing'::text, 'us_page_absent'::text, 'us_page_ambiguous'::text, 'us_page_gap'::text, 'us_anachronistic'::text, 'uk_reporter_absent'::text, 'uk_volume_absent'::text, 'uk_volume_missing'::text, 'uk_page_absent'::text, 'uk_page_ambiguous'::text, 'uk_page_gap'::text, 'uk_anachronistic'::text, 'cap_direct'::text, 'cap_shared_longest'::text, 'cap_freelaw'::text, 'cap_alt_spelling'::text, 'cap_freelaw_alt_spelling'::text, 'cap_page_interior'::text, 'code_direct'::text, 'er_direct'::text, 'er_page_interior'::text, 'stub_direct'::text]))))
+    CONSTRAINT chk_citation_links_match_tier CHECK (((match_tier IS NULL) OR (match_tier = ANY (ARRAY['us_reporter_absent'::text, 'us_diffvols_missing'::text, 'us_volume_absent'::text, 'us_volume_missing'::text, 'us_page_absent'::text, 'us_page_ambiguous'::text, 'us_anachronistic'::text, 'uk_reporter_absent'::text, 'uk_volume_absent'::text, 'uk_volume_missing'::text, 'uk_page_absent'::text, 'uk_page_ambiguous'::text, 'uk_anachronistic'::text, 'cap_direct'::text, 'cap_shared_longest'::text, 'cap_freelaw'::text, 'cap_alt_spelling'::text, 'cap_freelaw_alt_spelling'::text, 'code_direct'::text, 'er_direct'::text, 'stub_direct'::text]))))
 );
 
 
@@ -2494,7 +2468,6 @@ CREATE MATERIALIZED VIEW opinion_citations.case_case_citations AS
     cl.stub_cite,
     count(*) AS cite_count,
     count(DISTINCT cu.cap_opinion) AS opinion_count,
-    (count(*) FILTER (WHERE (cl.match_tier = ANY (ARRAY['cap_page_interior'::text, 'er_page_interior'::text]))) = count(*)) AS pincite_only,
     COALESCE((cl.cap_case_id = cu.cap_case), false) AS self_cite
    FROM (opinion_citations.citation_links cl
      JOIN opinion_citations.citations_unlinked cu ON ((cu.id = cl.citation_id)))
@@ -2539,13 +2512,6 @@ COMMENT ON COLUMN opinion_citations.case_case_citations.opinion_count IS 'Number
 
 
 --
--- Name: COLUMN case_case_citations.pincite_only; Type: COMMENT; Schema: opinion_citations; Owner: -
---
-
-COMMENT ON COLUMN opinion_citations.case_case_citations.pincite_only IS 'True when every citation from the citing case to the case was linked through an interior page (cap_page_interior or er_page_interior), so the link exists only because of a pin cite.';
-
-
---
 -- Name: COLUMN case_case_citations.self_cite; Type: COMMENT; Schema: opinion_citations; Owner: -
 --
 
@@ -2560,8 +2526,7 @@ CREATE MATERIALIZED VIEW opinion_citations.cap_graph_edges AS
  WITH ours AS (
          SELECT ccc.citing_case_id AS citing,
             ccc.cap_case_id AS cited,
-            ccc.cite_count,
-            ccc.pincite_only
+            ccc.cite_count
            FROM (opinion_citations.case_case_citations ccc
              JOIN opinion_citations.cap_graph_scope s_1 ON ((s_1.id = ccc.citing_case_id)))
           WHERE ((ccc.source = 'cap'::text) AND (NOT ccc.self_cite))
@@ -2577,7 +2542,6 @@ CREATE MATERIALIZED VIEW opinion_citations.cap_graph_edges AS
     (o.citing IS NOT NULL) AS in_ours,
     (t.citing IS NOT NULL) AS in_theirs,
     o.cite_count,
-    o.pincite_only,
     s.decision_year AS citing_year,
     s.jurisdiction AS citing_jurisdiction,
     k.decision_year AS cited_year,
@@ -2594,7 +2558,7 @@ CREATE MATERIALIZED VIEW opinion_citations.cap_graph_edges AS
 -- Name: MATERIALIZED VIEW cap_graph_edges; Type: COMMENT; Schema: opinion_citations; Owner: -
 --
 
-COMMENT ON MATERIALIZED VIEW opinion_citations.cap_graph_edges IS 'One row per edge from a citing case in cap_graph_scope to a CAP case, in our links (case_case_citations, self-cites left out), in CAP''s graph (cap_citations.citations), or both (issue #349). cite_count and pincite_only are NULL on an edge we lack. Refreshed by make db-maintenance.';
+COMMENT ON MATERIALIZED VIEW opinion_citations.cap_graph_edges IS 'One row per edge from a citing case in cap_graph_scope to a CAP case, in our links (case_case_citations, self-cites left out), in CAP''s graph (cap_citations.citations), or both (issue #349). cite_count is NULL on an edge we lack. Refreshed by make db-maintenance.';
 
 
 --
@@ -2609,13 +2573,6 @@ COMMENT ON COLUMN opinion_citations.cap_graph_edges.in_ours IS 'True when our li
 --
 
 COMMENT ON COLUMN opinion_citations.cap_graph_edges.in_theirs IS 'True when CAP''s graph has the edge.';
-
-
---
--- Name: COLUMN cap_graph_edges.pincite_only; Type: COMMENT; Schema: opinion_citations; Owner: -
---
-
-COMMENT ON COLUMN opinion_citations.cap_graph_edges.pincite_only IS 'True when every one of our citations behind the edge linked through an interior page; NULL when we lack the edge.';
 
 
 --
@@ -2636,8 +2593,7 @@ CREATE MATERIALIZED VIEW opinion_citations.cap_graph_agreement AS
     cited_reporter,
     count(*) FILTER (WHERE (in_ours AND in_theirs)) AS in_both,
     count(*) FILTER (WHERE (in_ours AND (NOT in_theirs))) AS ours_only,
-    count(*) FILTER (WHERE (in_theirs AND (NOT in_ours))) AS theirs_only,
-    count(*) FILTER (WHERE (in_ours AND (NOT in_theirs) AND pincite_only)) AS ours_only_pincite
+    count(*) FILTER (WHERE (in_theirs AND (NOT in_ours))) AS theirs_only
    FROM opinion_citations.cap_graph_edges
   GROUP BY citing_year, citing_jurisdiction, cited_jurisdiction, cited_reporter
   WITH NO DATA;
@@ -2660,8 +2616,7 @@ CREATE MATERIALIZED VIEW opinion_citations.cap_graph_case_agreement AS
     s.jurisdiction AS citing_jurisdiction,
     count(e.citing_case_id) FILTER (WHERE (e.in_ours AND e.in_theirs)) AS in_both,
     count(e.citing_case_id) FILTER (WHERE (e.in_ours AND (NOT e.in_theirs))) AS ours_only,
-    count(e.citing_case_id) FILTER (WHERE (e.in_theirs AND (NOT e.in_ours))) AS theirs_only,
-    count(e.citing_case_id) FILTER (WHERE (e.in_ours AND (NOT e.in_theirs) AND e.pincite_only)) AS ours_only_pincite
+    count(e.citing_case_id) FILTER (WHERE (e.in_theirs AND (NOT e.in_ours))) AS theirs_only
    FROM (opinion_citations.cap_graph_scope s
      LEFT JOIN opinion_citations.cap_graph_edges e ON ((e.citing_case_id = s.id)))
   GROUP BY s.id, s.decision_year, s.jurisdiction
@@ -3697,13 +3652,6 @@ CREATE INDEX case_edition_counts_name_trgm_idx ON moml_citations.case_edition_co
 
 
 --
--- Name: case_edition_counts_not_pincite_idx; Type: INDEX; Schema: moml_citations; Owner: -
---
-
-CREATE INDEX case_edition_counts_not_pincite_idx ON moml_citations.case_edition_counts USING btree (editions_not_pincite_only DESC, case_key);
-
-
---
 -- Name: case_edition_counts_source_editions_idx; Type: INDEX; Schema: moml_citations; Owner: -
 --
 
@@ -4615,4 +4563,5 @@ INSERT INTO sys_admin.migrations_dbmate (version) VALUES
     ('20261021130000'),
     ('20261021140000'),
     ('20261023120000'),
-    ('20261023150000');
+    ('20261023150000'),
+    ('20261023180000');
