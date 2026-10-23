@@ -143,7 +143,7 @@
             marginLeft: 50,
             x: { label: "Decade of the citing edition", tickFormat: d => String(d), interval: 10 },
             y: { label: "Citing editions", grid: true },
-            color: { domain: ["US", "UK"], range: ["#6f42c1", "#0d9488"], legend: true },
+            color: { domain: ["US", "UK"], range: ["#ba02e8", "#0d9488"], legend: true },
             marks: [
                 Plot.rectY(rows, { x: "decade", y: "editions", fill: "jurisdiction", interval: 10,
                     title: d => `${d.decade}s, ${d.jurisdiction}: ${d.editions.toLocaleString()} editions` }),

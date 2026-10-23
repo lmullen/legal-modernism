@@ -139,6 +139,8 @@ Internal web app for browsing and inspecting citation data. Located in `chambers
 
 **Frontend:** Use the latest version of Bootstrap CSS via CDN (no Bootstrap JavaScript). Use Observable Plot (`@observablehq/plot`) for data visualizations when possible, and D3.js otherwise.
 
+**Public visualizations:** visualizations meant for readers outside the project (articles, talks, eventually the website) follow `chambers/VISUALIZATIONS.md`: anatomy, typography, colour, interactivity, accessibility, sizing, and how they consume JSON. Read it before building one, ask whether it is full screen or in the viewport before starting, and record every colour assigned to a category in its colour registry.
+
 ## Branches and worktrees
 
 Whenever the user asks you to work on a separate branch, use a git worktree instead of switching branches in the current checkout.
