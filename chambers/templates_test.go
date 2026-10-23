@@ -78,7 +78,7 @@ func TestRenderPages(t *testing.T) {
 		data := newLinkingPage(capCorpus, "dashboard", "Linking dashboard: CAP opinions", "Dashboard")
 		data.Graph = &capGraph{
 			Available:     true,
-			Total:         newGraphRow(0, "All years", "", agreement{InBoth: 3884023, OursOnly: 1153832, TheirsOnly: 2376036, OursOnlyPincite: 602759}),
+			Total:         newGraphRow(0, "All years", "", agreement{InBoth: 3884023, OursOnly: 1153832, TheirsOnly: 2376036}),
 			Years:         []graphRow{newGraphRow(1905, "1905", "", agreement{InBoth: 10, OursOnly: 2, TheirsOnly: 5})},
 			Reporters:     []graphRow{{Key: 7, Label: "Mo.", OursURL: capGraphReporterURL(7, "ours"), TheirsURL: capGraphReporterURL(7, "theirs")}},
 			ReporterCount: 226,
@@ -249,7 +249,7 @@ func TestRenderPages(t *testing.T) {
 		data := WorkDetail{
 			Page: Page{Title: "W", Section: "works"}, WorkID: 103, Title: "Commentaries",
 			TopCases: TopCasesView{
-				Rows:          []TopCase{{CaseRef: CaseRef{Source: "cap", ID: "6754004", Name: &name, Year: &year, Cite: &cite}, Editions: 12, Cites: 40, PincitesOnly: true}},
+				Rows:          []TopCase{{CaseRef: CaseRef{Source: "cap", ID: "6754004", Name: &name, Year: &year, Cite: &cite}, Editions: 12, Cites: 40}},
 				ShowEditions:  true,
 				TotalEditions: 119,
 			},
@@ -257,6 +257,5 @@ func TestRenderPages(t *testing.T) {
 		out := render(t, "work.html", data)
 		require.Contains(t, out, `href="/cases/cap/6754004"`)
 		require.Contains(t, out, "of 119")
-		require.Contains(t, out, `title="Every citation was a pin cite`)
 	})
 }

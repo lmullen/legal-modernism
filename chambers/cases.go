@@ -21,39 +21,34 @@ import (
 // CaseListItem is one case on the ranking.
 type CaseListItem struct {
 	CaseRef
-	Editions       int
-	EditionsDirect int // editions that reach the case other than only through pin cites
-	Works          int
-	Cites          int
+	Editions int
+	Works    int
+	Cites    int
 }
 
 // caseSorts maps a sort key to its ORDER BY over case_edition_counts. Fixed
 // literals, never user input.
 var caseSorts = map[string]string{
 	"editions": "editions DESC, case_key",
-	"direct":   "editions_not_pincite_only DESC, case_key",
 	"works":    "works DESC, case_key",
 	"cites":    "cites DESC, case_key",
 }
 
-func normalizeCaseSort(sort string, excludePincite bool) string {
-	if _, ok := caseSorts[sort]; ok && sort != "direct" {
+func normalizeCaseSort(sort string) string {
+	if _, ok := caseSorts[sort]; ok {
 		return sort
-	}
-	if excludePincite {
-		return "direct"
 	}
 	return "editions"
 }
 
 const casesPageSize = 100
 
-const caseListColumns = `source, case_key, name, year, cite, editions, editions_not_pincite_only, works, cites`
+const caseListColumns = `source, case_key, name, year, cite, editions, works, cites`
 
 func scanCaseListItem(rows pgx.Rows, total *int) (CaseListItem, error) {
 	var c CaseListItem
 	var key string
-	dest := []any{&c.Source, &key, &c.Name, &c.Year, &c.Cite, &c.Editions, &c.EditionsDirect, &c.Works, &c.Cites}
+	dest := []any{&c.Source, &key, &c.Name, &c.Year, &c.Cite, &c.Editions, &c.Works, &c.Cites}
 	if total != nil {
 		dest = append(dest, total)
 	}
@@ -67,15 +62,15 @@ func scanCaseListItem(rows pgx.Rows, total *int) (CaseListItem, error) {
 // getTopCases returns a page of the ranking, optionally limited to one
 // source. The total is not counted: a ranking's last page is not worth a scan
 // of the whole view.
-func (s *server) getTopCases(ctx context.Context, source, sort string, excludePincite bool, limit, offset int) ([]CaseListItem, error) {
-	slog.Debug("querying top cases", "source", source, "sort", sort, "exclude_pincite", excludePincite, "limit", limit, "offset", offset)
+func (s *server) getTopCases(ctx context.Context, source, sort string, limit, offset int) ([]CaseListItem, error) {
+	slog.Debug("querying top cases", "source", source, "sort", sort, "limit", limit, "offset", offset)
 	query := `
 	SELECT ` + caseListColumns + `
 	FROM moml_citations.case_edition_counts
-	WHERE ($1 = '' OR source = $1) AND (NOT $2::bool OR editions_not_pincite_only > 0)
-	ORDER BY ` + caseSorts[normalizeCaseSort(sort, excludePincite)] + `
-	LIMIT $3 OFFSET $4`
-	items, err := collect(ctx, s.db, query, []any{source, excludePincite, limit, offset}, func(rows pgx.Rows) (CaseListItem, error) {
+	WHERE ($1 = '' OR source = $1)
+	ORDER BY ` + caseSorts[normalizeCaseSort(sort)] + `
+	LIMIT $2 OFFSET $3`
+	items, err := collect(ctx, s.db, query, []any{source, limit, offset}, func(rows pgx.Rows) (CaseListItem, error) {
 		return scanCaseListItem(rows, nil)
 	})
 	if err != nil {
@@ -154,8 +149,7 @@ func (s *server) handleCases(w http.ResponseWriter, r *http.Request) {
 	if !validCaseSource(source) {
 		source = ""
 	}
-	excludePincite := r.URL.Query().Get("pincite") == "exclude"
-	sort := normalizeCaseSort(r.URL.Query().Get("sort"), excludePincite)
+	sort := normalizeCaseSort(r.URL.Query().Get("sort"))
 	page := parsePage(r.URL.Query().Get("page"))
 
 	ctx, cancel := s.ctx(r, 60*time.Second)
@@ -163,14 +157,13 @@ func (s *server) handleCases(w http.ResponseWriter, r *http.Request) {
 
 	data := struct {
 		Page
-		Q              string
-		Source         string
-		Sort           string
-		ExcludePincite bool
-		ByCite         bool
-		Items          []CaseListItem
-		Nav            Pagination
-	}{Page: Page{Title: "Cases", Section: "cases"}, Q: q, Source: source, Sort: sort, ExcludePincite: excludePincite}
+		Q      string
+		Source string
+		Sort   string
+		ByCite bool
+		Items  []CaseListItem
+		Nav    Pagination
+	}{Page: Page{Title: "Cases", Section: "cases"}, Q: q, Source: source, Sort: sort}
 
 	var items []CaseListItem
 	total := -1
@@ -178,7 +171,7 @@ func (s *server) handleCases(w http.ResponseWriter, r *http.Request) {
 	if q != "" {
 		items, total, data.ByCite, err = s.searchCases(ctx, q, source, casesPageSize, (page-1)*casesPageSize)
 	} else {
-		items, err = s.getTopCases(ctx, source, sort, excludePincite, casesPageSize, (page-1)*casesPageSize)
+		items, err = s.getTopCases(ctx, source, sort, casesPageSize, (page-1)*casesPageSize)
 	}
 	if err := optional(err, &data.Page, "moml_citations.case_edition_counts"); err != nil {
 		s.serverError(w, r, err, "listing cases")
@@ -283,13 +276,12 @@ type NamedAs struct {
 
 // CaseSummary is the case's row of case_edition_counts.
 type CaseSummary struct {
-	Editions       int
-	EditionsDirect int
-	Works          int
-	Cites          int
-	USEditions     int
-	FirstCited     *int
-	LastCited      *int
+	Editions   int
+	Works      int
+	Cites      int
+	USEditions int
+	FirstCited *int
+	LastCited  *int
 }
 
 func (c CaseSummary) UKEditions() int { return c.Editions - c.USEditions }
@@ -327,7 +319,6 @@ type CitingEdition struct {
 	WorkID       int
 	WorkTitle    string
 	Cites        int
-	PincitesOnly bool
 	PagesURL     string
 }
 
@@ -406,9 +397,9 @@ func (s *server) getCaseMeta(ctx context.Context, d *CaseDetail) (bool, error) {
 func (s *server) getCaseSummary(ctx context.Context, key string) (*CaseSummary, error) {
 	var c CaseSummary
 	err := s.db.QueryRow(ctx, `
-		SELECT editions, editions_not_pincite_only, works, cites, us_editions, first_cited, last_cited
+		SELECT editions, works, cites, us_editions, first_cited, last_cited
 		FROM moml_citations.case_edition_counts WHERE case_key = $1`, key).Scan(
-		&c.Editions, &c.EditionsDirect, &c.Works, &c.Cites, &c.USEditions, &c.FirstCited, &c.LastCited)
+		&c.Editions, &c.Works, &c.Cites, &c.USEditions, &c.FirstCited, &c.LastCited)
 	if isNoRows(err) {
 		return nil, nil
 	}
@@ -439,7 +430,7 @@ const citingPageSize = 100
 func (s *server) getCitingEditions(ctx context.Context, source, id, sort string, limit, offset int) ([]CitingEdition, int, error) {
 	col, placeholder := caseIDColumn(source, 1)
 	query := `
-	SELECT c.bibliographicid, ec.title, ec.year, ec.jurisdiction, ec.work_id, w.title, c.cite_count, c.pincite_only,
+	SELECT c.bibliographicid, ec.title, ec.year, ec.jurisdiction, ec.work_id, w.title, c.cite_count,
 	       count(*) OVER()
 	FROM moml_citations.edition_case_citations c
 	JOIN moml_citations.edition_citation_counts ec ON ec.bibliographicid = c.bibliographicid
@@ -450,7 +441,7 @@ func (s *server) getCitingEditions(ctx context.Context, source, id, sort string,
 	total := 0
 	items, err := collect(ctx, s.db, query, []any{id, limit, offset}, func(rows pgx.Rows) (CitingEdition, error) {
 		var e CitingEdition
-		err := rows.Scan(&e.BiblioID, &e.Title, &e.Year, &e.Jurisdiction, &e.WorkID, &e.WorkTitle, &e.Cites, &e.PincitesOnly, &total)
+		err := rows.Scan(&e.BiblioID, &e.Title, &e.Year, &e.Jurisdiction, &e.WorkID, &e.WorkTitle, &e.Cites, &total)
 		e.PagesURL = citationsURL(url.Values{"edition": {e.BiblioID}, "case": {source + ":" + id}})
 		return e, err
 	})

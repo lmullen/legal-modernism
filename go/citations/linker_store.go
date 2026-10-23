@@ -5,8 +5,8 @@ import (
 )
 
 // LinkerStore is the lookup tables every linker loads before it links anything:
-// the whitelist, the cite strings of every source, the page spans, the stub
-// registry and the years. None of them belongs to a corpus, which is why
+// the whitelist, the cite strings of every source, the stub registry and the
+// years. None of them belongs to a corpus, which is why
 // cite-linker and cite-linker-cap share one implementation. The corpus's own
 // tables, where the citations come from and the results go, are a CorpusStore.
 type LinkerStore interface {
@@ -57,19 +57,6 @@ type LinkerStore interface {
 	// than one case is kept as a key and marked ambiguous rather than dropped, so
 	// the linker can distinguish a cite it cannot resolve from one it never saw.
 	LoadEnglishReportsCitations(ctx context.Context) (map[string]ERCase, error)
-
-	// LoadCAPCaseSpans loads every CAP first-page cite together with the page
-	// length of the case it names, for the page-range index that resolves pin
-	// cites. Unlike LoadCAPCitations this keeps ambiguous cites: two cases sharing
-	// a first page is exactly what the index has to detect in order to refuse the
-	// match, so dropping them here would turn a knowable ambiguity into a silent
-	// wrong answer.
-	LoadCAPCaseSpans(ctx context.Context) ([]CaseSpan[int64], error)
-
-	// LoadERCaseSpans loads every English Reports first-page cite — both er_cite
-	// and er_parallel_cite — for the same purpose. Length is always 0: the table
-	// records no page range, so spans there can only be bounded by the next cite.
-	LoadERCaseSpans(ctx context.Context) ([]CaseSpan[string], error)
 
 	// LoadStubCases loads the keys of legalhist.stub_cases as a set: the cite
 	// strings of cases no source holds but that the corpus cites often enough

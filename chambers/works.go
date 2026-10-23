@@ -198,10 +198,9 @@ func (s *server) getWorkEditions(ctx context.Context, workID int, withCounts boo
 // in question cite it.
 type TopCase struct {
 	CaseRef
-	Editions     int  // citing editions, where the table spans several
-	Cites        int  // citations behind the row
-	PincitesOnly bool // every citation was a pin cite
-	PagesURL     string
+	Editions int // citing editions, where the table spans several
+	Cites    int // citations behind the row
+	PagesURL string
 }
 
 // TopCasesView is what the top-cases partial renders.
@@ -216,28 +215,28 @@ type TopCasesView struct {
 // many of them cite each and how often. The edition ids come from the caller
 // (a work's treatise editions, or one edition), so the query is bound by the
 // unique-index prefix on edition_case_citations.
-func (s *server) getTopCasesForEditions(ctx context.Context, biblioIDs []string, excludePincite bool, limit int) ([]TopCase, error) {
+func (s *server) getTopCasesForEditions(ctx context.Context, biblioIDs []string, limit int) ([]TopCase, error) {
 	if len(biblioIDs) == 0 {
 		return nil, nil
 	}
-	slog.Debug("querying top cases for editions", "editions", len(biblioIDs), "exclude_pincite", excludePincite, "limit", limit)
+	slog.Debug("querying top cases for editions", "editions", len(biblioIDs), "limit", limit)
 	query := `
 	WITH a AS (
 	  SELECT c.cap_case_id, c.er_case_id, c.code_reporter_id, c.stub_cite,
-	         count(*) AS editions, sum(c.cite_count)::bigint AS cites, bool_and(c.pincite_only) AS pincite_only
+	         count(*) AS editions, sum(c.cite_count)::bigint AS cites
 	  FROM moml_citations.edition_case_citations c
-	  WHERE c.bibliographicid = ANY($1::text[]) AND (NOT $2::bool OR NOT c.pincite_only)
+	  WHERE c.bibliographicid = ANY($1::text[])
 	  GROUP BY 1, 2, 3, 4
-	  ORDER BY editions DESC, cites DESC LIMIT $3
+	  ORDER BY editions DESC, cites DESC LIMIT $2
 	)
-	SELECT a.editions, a.cites, a.pincite_only, ` + caseMetaColumns("a") + `
+	SELECT a.editions, a.cites, ` + caseMetaColumns("a") + `
 	FROM a ` + caseMetaJoins("a") + `
 	ORDER BY a.editions DESC, a.cites DESC`
-	items, err := collect(ctx, s.db, query, []any{biblioIDs, excludePincite, limit}, func(rows pgx.Rows) (TopCase, error) {
+	items, err := collect(ctx, s.db, query, []any{biblioIDs, limit}, func(rows pgx.Rows) (TopCase, error) {
 		var t TopCase
 		var source, id, name, cite *string
 		var year *int
-		err := rows.Scan(&t.Editions, &t.Cites, &t.PincitesOnly, &source, &id, &name, &year, &cite)
+		err := rows.Scan(&t.Editions, &t.Cites, &source, &id, &name, &year, &cite)
 		if ref := caseRefFrom(source, id, name, year, cite); ref != nil {
 			t.CaseRef = *ref
 		}
@@ -252,15 +251,14 @@ func (s *server) getTopCasesForEditions(ctx context.Context, biblioIDs []string,
 // WorkDetail is the work page.
 type WorkDetail struct {
 	Page
-	WorkID         int
-	Title          string
-	Author         *string
-	Counts         *WorkListItem
-	Editions       []WorkEdition
-	Outside        int // editions outside the treatise view
-	TopCases       TopCasesView
-	ExcludePincite bool
-	Chart          []workChartRow
+	WorkID   int
+	Title    string
+	Author   *string
+	Counts   *WorkListItem
+	Editions []WorkEdition
+	Outside  int // editions outside the treatise view
+	TopCases TopCasesView
+	Chart    []workChartRow
 }
 
 func (d WorkDetail) URL() string { return workURL(d.WorkID) }
@@ -307,12 +305,10 @@ func (s *server) handleWork(w http.ResponseWriter, r *http.Request) {
 		s.notFound(w, r, "There is no work with that id.")
 		return
 	}
-	excludePincite := r.URL.Query().Get("pincite") == "exclude"
-
 	ctx, cancel := s.ctx(r, 60*time.Second)
 	defer cancel()
 
-	d := WorkDetail{WorkID: id, ExcludePincite: excludePincite}
+	d := WorkDetail{WorkID: id}
 	err = s.db.QueryRow(ctx, `SELECT title, author FROM moml.works WHERE work_id = $1`, id).Scan(&d.Title, &d.Author)
 	if isNoRows(err) {
 		s.notFound(w, r, "There is no work with that id.")
@@ -360,7 +356,7 @@ func (s *server) handleWork(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	top, err := s.getTopCasesForEditions(ctx, treatiseIDs, excludePincite, 50)
+	top, err := s.getTopCasesForEditions(ctx, treatiseIDs, 50)
 	if err := optional(err, &d.Page, "moml_citations.edition_case_citations"); err != nil {
 		s.serverError(w, r, err, "ranking the work's cases", "work_id", id)
 		return

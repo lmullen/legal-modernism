@@ -44,7 +44,7 @@ func TestLinkCitation_AltSpellingCarriesTheYear(t *testing.T) {
 	whitelist := map[string]*citations.WhitelistEntry{"K.B.": {ReporterStandard: &std, CitedByYearFrom: 1901}}
 	capCites := map[string]int64{"[1905] 2 KB 1": 111}
 	altAbbrs := map[string][]string{"K.B.": {"KB"}}
-	tables := NewTables(whitelist, nil, capCites, nil, nil, altAbbrs, nil, nil, nil, nil, nil, Years{})
+	tables := NewTables(whitelist, nil, capCites, nil, nil, altAbbrs, nil, nil, nil, Years{})
 
 	c := citations.UnlinkedCitation{ID: uuid.New(), Volume: ptr(2), ReporterAbbr: "K.B.", Page: 1, Year: ptr(1905)}
 	got := tables.Link(&c)

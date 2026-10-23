@@ -15,7 +15,7 @@
     {{with .Totals}}
     <div class="row g-3 mb-3">
         <div class="col-6 col-md"><div class="stat" style="border-left-color:#6f42c1"><div class="n">{{num .InBoth}}</div><div class="l">Edges in both</div></div></div>
-        <div class="col-6 col-md"><div class="stat" style="border-left-color:#0d9488"><div class="n">{{num .OursOnly}}</div><div class="l">Only ours, {{num .OursOnlyPincite}} only through pin cites</div></div></div>
+        <div class="col-6 col-md"><div class="stat" style="border-left-color:#0d9488"><div class="n">{{num .OursOnly}}</div><div class="l">Only ours</div></div></div>
         <div class="col-6 col-md"><div class="stat" style="border-left-color:#d97706"><div class="n">{{num .TheirsOnly}}</div><div class="l">Only CAP's</div></div></div>
         <div class="col-6 col-md"><div class="stat"><div class="n">{{.RecallPct}}</div><div class="l">Recall</div></div></div>
         <div class="col-6 col-md"><div class="stat"><div class="n">{{.PrecisionPct}}</div><div class="l">Precision</div></div></div>
@@ -67,7 +67,7 @@
                 <td class="num">{{if .Citing.Year}}{{deref .Citing.Year}}{{else}}&mdash;{{end}}</td>
                 <td class="title-col">{{template "case" .Cited}}{{if .Cited.Cite}} <span class="text-secondary">{{deref .Cited.Cite}}</span>{{end}}</td>
                 <td class="num">{{if .Cited.Year}}{{deref .Cited.Year}}{{else}}&mdash;{{end}}</td>
-                {{if $ours}}<td>{{range .Raws}}<code class="me-2">{{cleanRaw .}}</code>{{end}}{{if .PinciteOnly}} <span class="badge text-bg-light" title="Every citation was a pin cite to an interior page of the case.">pin</span>{{end}}</td>{{end}}
+                {{if $ours}}<td>{{range .Raws}}<code class="me-2">{{cleanRaw .}}</code>{{end}}</td>{{end}}
             </tr>
         {{end}}
         </tbody>

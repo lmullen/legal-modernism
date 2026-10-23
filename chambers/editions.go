@@ -43,7 +43,6 @@ type EditionDetail struct {
 	UKCites          int
 	Volumes          []EditionVolume
 	TopCases         TopCasesView
-	ExcludePincite   bool
 }
 
 func (e *EditionDetail) URL() string         { return editionURL(e.BiblioID) }
@@ -66,10 +65,9 @@ func (e *EditionDetail) ReporterCites() int {
 
 // EditionCounts is the edition's row of edition_citation_counts.
 type EditionCounts struct {
-	Cites       int
-	Linked      int
-	Cases       int
-	CasesDirect int
+	Cites  int
+	Linked int
+	Cases  int
 }
 
 func (c EditionCounts) LinkedPct() string { return pct(c.Linked, c.Cites) }
@@ -181,9 +179,9 @@ func (s *server) getEditionHeader(ctx context.Context, id string) (*EditionDetai
 func (s *server) getEditionCounts(ctx context.Context, id string) (*EditionCounts, error) {
 	var c EditionCounts
 	err := s.db.QueryRow(ctx, `
-		SELECT cites, linked, cases, cases_not_pincite_only
+		SELECT cites, linked, cases
 		FROM moml_citations.edition_citation_counts WHERE bibliographicid = $1`, id).Scan(
-		&c.Cites, &c.Linked, &c.Cases, &c.CasesDirect)
+		&c.Cites, &c.Linked, &c.Cases)
 	if isNoRows(err) {
 		return nil, nil
 	}
@@ -329,8 +327,8 @@ func (s *server) getEditionVolumes(ctx context.Context, id string) ([]EditionVol
 }
 
 // editionTopCases ranks the cases one edition cites.
-func (s *server) editionTopCases(ctx context.Context, id string, excludePincite bool, limit int) (TopCasesView, error) {
-	rows, err := s.getTopCasesForEditions(ctx, []string{id}, excludePincite, limit)
+func (s *server) editionTopCases(ctx context.Context, id string, limit int) (TopCasesView, error) {
+	rows, err := s.getTopCasesForEditions(ctx, []string{id}, limit)
 	for i := range rows {
 		rows[i].PagesURL = citationsURL(url.Values{"edition": {id}, "case": {rows[i].Key()}})
 	}
@@ -339,7 +337,6 @@ func (s *server) editionTopCases(ctx context.Context, id string, excludePincite 
 
 func (s *server) handleEdition(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
-	excludePincite := r.URL.Query().Get("pincite") == "exclude"
 
 	ctx, cancel := s.ctx(r, 60*time.Second)
 	defer cancel()
@@ -353,7 +350,6 @@ func (s *server) handleEdition(w http.ResponseWriter, r *http.Request) {
 		s.notFound(w, r, "There is no edition with the bibliographic id "+id+".")
 		return
 	}
-	d.ExcludePincite = excludePincite
 	d.Page = Page{
 		Title:   d.Title,
 		Section: "works",
@@ -395,7 +391,7 @@ func (s *server) handleEdition(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	top, err := s.editionTopCases(ctx, id, excludePincite, 25)
+	top, err := s.editionTopCases(ctx, id, 25)
 	if err := optional(err, &d.Page, "moml_citations.edition_case_citations"); err != nil {
 		s.serverError(w, r, err, "ranking the edition's cases", "bibliographicid", id)
 		return
@@ -428,11 +424,10 @@ func editionCrumb(d *EditionDetail) string {
 // EditionCasesPage lists every case an edition cites.
 type EditionCasesPage struct {
 	Page
-	Edition        *EditionDetail
-	Cases          TopCasesView
-	Nav            Pagination
-	ExcludePincite bool
-	Sort           string
+	Edition *EditionDetail
+	Cases   TopCasesView
+	Nav     Pagination
+	Sort    string
 }
 
 const editionCasesPageSize = 100
@@ -455,11 +450,11 @@ func normalizeEditionCaseSort(sort string) string {
 // before the case tables are joined, so the largest edition (82K cases) pages
 // in milliseconds; sorted by name or year the join has to come first, since
 // those columns belong to the case tables.
-func (s *server) getEditionCases(ctx context.Context, id, sort string, excludePincite bool, limit, offset int) ([]TopCase, int, error) {
+func (s *server) getEditionCases(ctx context.Context, id, sort string, limit, offset int) ([]TopCase, int, error) {
 	var total int
 	if err := s.db.QueryRow(ctx, `
 		SELECT count(*) FROM moml_citations.edition_case_citations
-		WHERE bibliographicid = $1 AND (NOT $2::bool OR NOT pincite_only)`, id, excludePincite).Scan(&total); err != nil {
+		WHERE bibliographicid = $1`, id).Scan(&total); err != nil {
 		return nil, 0, fmt.Errorf("edition cases: counting: %w", err)
 	}
 	sort = normalizeEditionCaseSort(sort)
@@ -468,20 +463,20 @@ func (s *server) getEditionCases(ctx context.Context, id, sort string, excludePi
 		query = `
 		WITH c AS (
 		  SELECT * FROM moml_citations.edition_case_citations
-		  WHERE bibliographicid = $1 AND (NOT $2::bool OR NOT pincite_only)
+		  WHERE bibliographicid = $1
 		  ORDER BY cite_count DESC, cap_case_id, er_case_id, code_reporter_id, stub_cite
-		  LIMIT $3 OFFSET $4
+		  LIMIT $2 OFFSET $3
 		)
-		SELECT c.cite_count, c.pincite_only, ` + caseMetaColumns("c") + `
+		SELECT c.cite_count, ` + caseMetaColumns("c") + `
 		FROM c ` + caseMetaJoins("c") + `
 		ORDER BY c.cite_count DESC, c.cap_case_id, c.er_case_id, c.code_reporter_id, c.stub_cite`
 	} else {
 		query = `
-		SELECT c.cite_count, c.pincite_only, ` + caseMetaColumns("c") + `
+		SELECT c.cite_count, ` + caseMetaColumns("c") + `
 		FROM moml_citations.edition_case_citations c ` + caseMetaJoins("c") + `
-		WHERE c.bibliographicid = $1 AND (NOT $2::bool OR NOT c.pincite_only)
+		WHERE c.bibliographicid = $1
 		ORDER BY ` + editionCaseSorts[sort] + `
-		LIMIT $3 OFFSET $4`
+		LIMIT $2 OFFSET $3`
 		// The ORDER BY names the name and year columns of caseMetaColumns, which
 		// the fragment leaves unaliased, so alias them here.
 		query = strings.Replace(query, "COALESCE(cc.name_abbreviation, er.murrell_title, er.er_name, code.name, sm.party_names),",
@@ -489,11 +484,11 @@ func (s *server) getEditionCases(ctx context.Context, id, sort string, excludePi
 		query = strings.Replace(query, "COALESCE(cc.decision_year, er.murrell_year, er.er_year, code.decision_year, sm.year_decided),",
 			"COALESCE(cc.decision_year, er.murrell_year, er.er_year, code.decision_year, sm.year_decided) AS year,", 1)
 	}
-	items, err := collect(ctx, s.db, query, []any{id, excludePincite, limit, offset}, func(rows pgx.Rows) (TopCase, error) {
+	items, err := collect(ctx, s.db, query, []any{id, limit, offset}, func(rows pgx.Rows) (TopCase, error) {
 		var t TopCase
 		var source, cid, name, cite *string
 		var year *int
-		err := rows.Scan(&t.Cites, &t.PincitesOnly, &source, &cid, &name, &year, &cite)
+		err := rows.Scan(&t.Cites, &source, &cid, &name, &year, &cite)
 		if ref := caseRefFrom(source, cid, name, year, cite); ref != nil {
 			t.CaseRef = *ref
 			t.PagesURL = citationsURL(url.Values{"edition": {id}, "case": {ref.Key()}})
@@ -508,7 +503,6 @@ func (s *server) getEditionCases(ctx context.Context, id, sort string, excludePi
 
 func (s *server) handleEditionCases(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
-	excludePincite := r.URL.Query().Get("pincite") == "exclude"
 	sort := normalizeEditionCaseSort(r.URL.Query().Get("sort"))
 	page := parsePage(r.URL.Query().Get("page"))
 
@@ -524,7 +518,7 @@ func (s *server) handleEditionCases(w http.ResponseWriter, r *http.Request) {
 		s.notFound(w, r, "There is no edition with the bibliographic id "+id+".")
 		return
 	}
-	d := EditionCasesPage{Edition: ed, ExcludePincite: excludePincite, Sort: sort}
+	d := EditionCasesPage{Edition: ed, Sort: sort}
 	d.Page = Page{
 		Title:   "Cases cited by " + ed.Title,
 		Section: "works",
@@ -535,7 +529,7 @@ func (s *server) handleEditionCases(w http.ResponseWriter, r *http.Request) {
 			{Label: "Cases cited"},
 		},
 	}
-	rows, total, err := s.getEditionCases(ctx, id, sort, excludePincite, editionCasesPageSize, (page-1)*editionCasesPageSize)
+	rows, total, err := s.getEditionCases(ctx, id, sort, editionCasesPageSize, (page-1)*editionCasesPageSize)
 	if err := optional(err, &d.Page, "moml_citations.edition_case_citations"); err != nil {
 		s.serverError(w, r, err, "listing the edition's cases", "bibliographicid", id)
 		return

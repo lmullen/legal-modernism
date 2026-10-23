@@ -57,8 +57,6 @@ func TestLinkCitation(t *testing.T) {
 		altAbbrs     map[string][]string
 		codeCites    map[string]int64
 		erCites      map[string]citations.ERCase
-		capSpans     []citations.CaseSpan[int64]
-		erSpans      []citations.CaseSpan[string]
 		stubs        map[string]struct{}
 		years        Years
 		wantStatus   string
@@ -548,9 +546,8 @@ func TestLinkCitation(t *testing.T) {
 			wantStatus: citations.StatusSkippedStatute,
 		},
 		{
-			// The volume is in CAP and only the page missed, which is the
-			// pin-cite pool #242 is about — the tier is what makes it countable
-			// without a per-reporter query.
+			// The volume is in CAP and only the page missed — the tier is what
+			// makes it countable without a per-reporter query.
 			name:       "reporter and volume present, page missed, is us_page_absent",
 			cite:       citations.UnlinkedCitation{ID: uuid.New(), Volume: ptr(5), ReporterAbbr: "U.S.", Page: 10},
 			whitelist:  map[string]*citations.WhitelistEntry{"U.S.": {ReporterStandard: &usStd}},
@@ -854,141 +851,61 @@ func TestLinkCitation(t *testing.T) {
 			wantTier:   citations.TierUKPageAbsent,
 		},
 		{
-			// The whole point of #242: a citation to an interior page of a case,
-			// which no first-page cite string can ever equal.
-			name:       "CAP pin cite links by page range",
+			// Issue #393. A citation to an interior page of a case -- a pin cite
+			// -- is a miss, not a link: page-range matching once resolved it to
+			// the case whose span covers the page (#242), and most of those links
+			// were to the wrong case. 17 Mass. 479 is inside Foster, Executors,
+			// which begins at 478, and it stays us_page_absent.
+			name:       "CAP pin cite to an interior page is us_page_absent, not a link",
 			cite:       citations.UnlinkedCitation{ID: uuid.New(), Volume: ptr(17), ReporterAbbr: "Mass.", Page: 479},
 			whitelist:  map[string]*citations.WhitelistEntry{"Mass.": {ReporterStandard: &massStd}},
 			capCites:   map[string]int64{"17 Mass. 478": 478, "17 Mass. 591": 591},
-			capSpans:   span17Mass,
-			wantStatus: citations.StatusLinkedCAP,
-			wantTier:   citations.TierCAPPageInterior,
-			wantCAPID:  ptr(int64(478)),
-			// No cite string matched, so there is nothing to record as the cite
-			// that linked.
-			wantLinked: nil,
-		},
-		{
-			name:       "CAP page in a coverage hole is us_page_gap, not a link",
-			cite:       citations.UnlinkedCitation{ID: uuid.New(), Volume: ptr(17), ReporterAbbr: "Mass.", Page: 507},
-			whitelist:  map[string]*citations.WhitelistEntry{"Mass.": {ReporterStandard: &massStd}},
-			capCites:   map[string]int64{"17 Mass. 478": 478},
-			capSpans:   span17Mass,
 			wantStatus: citations.StatusNoMatch,
-			wantTier:   citations.TierUSPageGap,
+			wantTier:   citations.TierUSPageAbsent,
 		},
 		{
-			name:      "CAP page owned by two cases is us_page_ambiguous, not a link",
-			cite:      citations.UnlinkedCitation{ID: uuid.New(), Volume: ptr(1), ReporterAbbr: "Mass.", Page: 12},
-			whitelist: map[string]*citations.WhitelistEntry{"Mass.": {ReporterStandard: &massStd}},
-			capSpans: []citations.CaseSpan[int64]{
-				{Cite: "1 Mass. 10", ID: 101, Length: 5},
-				{Cite: "1 Mass. 10", ID: 102, Length: 5},
-			},
-			wantStatus: citations.StatusNoMatch,
-			wantTier:   citations.TierUSPageAmbiguous,
-		},
-		{
-			// Range matching runs only after every exact form has missed, so it can
-			// never rewire a link the exact cascade already made.
-			name:       "exact CAP hit is not preempted by an available page range",
-			cite:       citations.UnlinkedCitation{ID: uuid.New(), Volume: ptr(17), ReporterAbbr: "Mass.", Page: 478},
-			whitelist:  map[string]*citations.WhitelistEntry{"Mass.": {ReporterStandard: &massStd}},
-			capCites:   map[string]int64{"17 Mass. 478": 999},
-			capSpans:   span17Mass,
-			wantStatus: citations.StatusLinkedCAP,
-			wantTier:   citations.TierCAPDirect,
-			wantCAPID:  ptr(int64(999)),
-			wantLinked: ptr("17 Mass. 478"),
-		},
-		{
-			name:       "English Reports pin cite links by page range",
+			name:       "English Reports pin cite to an interior page is uk_page_absent, not a link",
 			cite:       citations.UnlinkedCitation{ID: uuid.New(), Volume: ptr(1), ReporterAbbr: "Q.B.", Page: 23},
 			whitelist:  map[string]*citations.WhitelistEntry{"Q.B.": {ReporterStandard: &qbStd, UK: true}},
-			erCites:    map[string]citations.ERCase{"1 Q.B. 20": {ID: "er-20", Cases: 1}},
-			erSpans:    []citations.CaseSpan[string]{{Cite: "1 Q.B. 20", ID: "er-20"}, {Cite: "1 Q.B. 30", ID: "er-30"}},
-			wantStatus: citations.StatusLinkedEnglishReports,
-			wantTier:   citations.TierERPageInterior,
-			wantERID:   ptr("er-20"),
-		},
-		{
-			name:       "English Reports page owned by two cases is uk_page_ambiguous",
-			cite:       citations.UnlinkedCitation{ID: uuid.New(), Volume: ptr(1), ReporterAbbr: "Q.B.", Page: 23},
-			whitelist:  map[string]*citations.WhitelistEntry{"Q.B.": {ReporterStandard: &qbStd, UK: true}},
-			erSpans:    []citations.CaseSpan[string]{{Cite: "1 Q.B. 20", ID: "er-a"}, {Cite: "1 Q.B. 20", ID: "er-b"}},
+			erCites:    map[string]citations.ERCase{"1 Q.B. 20": {ID: "er-20", Cases: 1}, "1 Q.B. 30": {ID: "er-30", Cases: 1}},
 			wantStatus: citations.StatusNoMatch,
-			wantTier:   citations.TierUKPageAmbiguous,
-		},
-		{
-			// A single-volume reporter cited without its redundant volume 1 has to
-			// reach the range index under the variant form too, since CAP always
-			// keys on a volume.
-			name:       "single-volume reporter pin cite reaches the range index as volume 1",
-			cite:       citations.UnlinkedCitation{ID: uuid.New(), Volume: nil, ReporterAbbr: "Toth", Page: 125},
-			whitelist:  map[string]*citations.WhitelistEntry{"Toth": {ReporterStandard: &tothStd, SingleVol: true}},
-			capSpans:   []citations.CaseSpan[int64]{{Cite: "1 Toth 123", ID: 777, Length: 10}},
-			wantStatus: citations.StatusLinkedCAP,
-			wantTier:   citations.TierCAPPageInterior,
-			wantCAPID:  ptr(int64(777)),
+			wantTier:   citations.TierUKPageAbsent,
 		},
 		{
 			// A reporter that is not single_vol must NOT have a volume guessed for
 			// it: 2.9M no_match citations carry no volume at all (#261), and
-			// resolving those against volume 1 would be a fabricated link. Volume
-			// 1 of Mass. is in the span index and holds a case covering page 479,
-			// so the only thing keeping this from linking is the refusal to guess.
-			// The tier is volume_missing rather than volume_absent because no
-			// probe carried a volume at all, which is #261's distinction.
+			// resolving those against volume 1 would be a fabricated link. The
+			// tier is volume_missing rather than volume_absent because no probe
+			// carried a volume at all, which is #261's distinction.
 			name:       "volume-less cite to a multi-volume reporter is not resolved against volume 1",
 			cite:       citations.UnlinkedCitation{ID: uuid.New(), Volume: nil, ReporterAbbr: "Mass.", Page: 479},
 			whitelist:  map[string]*citations.WhitelistEntry{"Mass.": {ReporterStandard: &massStd}},
 			capCites:   map[string]int64{"1 Mass. 470": 1470},
-			capSpans:   []citations.CaseSpan[int64]{{Cite: "1 Mass. 470", ID: 1470, Length: 40}},
 			wantStatus: citations.StatusNoMatch,
 			wantTier:   citations.TierUSVolumeMissing,
 		},
 		{
 			// The reporter renumbers in CAP but no diffvols row covers volume 7, so
 			// every probe carries an untranslated volume. Volume 7 of the CAP
-			// reporter exists and has a case spanning the page, but linking to it
-			// would be inventing a citation the treatise never made.
-			name:      "diffvols gap suppresses range matching rather than linking the wrong volume",
-			cite:      citations.UnlinkedCitation{ID: uuid.New(), Volume: ptr(7), ReporterAbbr: "Stat.", Page: 33},
-			whitelist: map[string]*citations.WhitelistEntry{"Stat.": {ReporterStandard: &statStd, CAPDifferent: true}},
-			diffvols:  map[string]map[int]*citations.DiffVolEntry{"Stat.": {2: {CAPVol: 81, CAPReporter: "Stat."}}},
-			capCites:  map[string]int64{"7 Stat. 30": 111},
-			capSpans:  []citations.CaseSpan[int64]{{Cite: "7 Stat. 30", ID: 111, Length: 10}},
-			// Without the guard this would be a confident TierCAPPageInterior link
-			// to case 111.
+			// reporter exists, but the miss is reported as the diffvols gap rather
+			// than as a page tier, because how far the untranslated probes got says
+			// nothing about the citation.
+			name:       "diffvols gap is reported ahead of the page tiers",
+			cite:       citations.UnlinkedCitation{ID: uuid.New(), Volume: ptr(7), ReporterAbbr: "Stat.", Page: 33},
+			whitelist:  map[string]*citations.WhitelistEntry{"Stat.": {ReporterStandard: &statStd, CAPDifferent: true}},
+			diffvols:   map[string]map[int]*citations.DiffVolEntry{"Stat.": {2: {CAPVol: 81, CAPReporter: "Stat."}}},
+			capCites:   map[string]int64{"7 Stat. 30": 111},
 			wantStatus: citations.StatusNoMatch,
 			wantTier:   citations.TierUSDiffVolsMissing,
 		},
 		{
-			// Issue #290. "Am. Dec." carried the alternate "A.D.", which is
-			// itself another reporter. CAP holds a span index key for the
-			// alternate and none for the reporter itself, so before the fix the
-			// range probe reached into A.D.'s volume and returned a case from
-			// it as a cap_page_interior link. Alternates no longer reach the
-			// range index, so this is an honest miss. The loader has excluded
-			// this pair since issue #289; it is fed directly here because
-			// linkCitation must stay correct whatever map it is handed.
-			name:      "alternate spelling is not range-probed",
-			cite:      citations.UnlinkedCitation{ID: uuid.New(), Volume: ptr(10), ReporterAbbr: "Am. Dec.", Page: 105},
-			whitelist: map[string]*citations.WhitelistEntry{"Am. Dec.": {ReporterStandard: &amDecStd}},
-			altAbbrs:  map[string][]string{"Am. Dec.": {"A.D."}},
-			capSpans: []citations.CaseSpan[int64]{
-				{Cite: "10 A.D. 100", ID: 900, Length: 20},
-			},
-			wantStatus: citations.StatusNoMatch,
-			wantTier:   citations.TierUSReporterAbsent,
-		},
-		{
-			// The same split applied to the tier ladder: an alternate's reporter
-			// and volume are not this citation's, so they must not be counted as
-			// how far the cascade got. This was us_page_absent before the fix,
-			// which claimed CAP holds volume 10 of Am. Dec. when what it holds is
-			// volume 10 of A.D. As above, the colliding pair is fed directly; the
-			// loader itself no longer produces it (issue #289).
+			// Issue #290. "Am. Dec." carried the alternate "A.D.", which is itself
+			// another reporter. An alternate's reporter and volume are not this
+			// citation's, so they must not be counted as how far the cascade got.
+			// This was us_page_absent before the fix, which claimed CAP holds
+			// volume 10 of Am. Dec. when what it holds is volume 10 of A.D. The
+			// colliding pair is fed directly; the loader itself no longer
+			// produces it (issue #289).
 			name:       "tier does not credit an alternate spelling's reporter",
 			cite:       citations.UnlinkedCitation{ID: uuid.New(), Volume: ptr(10), ReporterAbbr: "Am. Dec.", Page: 999},
 			whitelist:  map[string]*citations.WhitelistEntry{"Am. Dec.": {ReporterStandard: &amDecStd}},
@@ -1000,8 +917,8 @@ func TestLinkCitation(t *testing.T) {
 		{
 			// An alternate that is a spelling of this reporter, not another
 			// reporter's name (issue #289), is still probed against the exact
-			// maps, which is the whole point of keeping alternates: only
-			// containment and the tier ladder were withdrawn.
+			// maps, which is the whole point of keeping alternates: only the
+			// tier ladder was withdrawn.
 			name:       "alternate spelling still links on an exact hit",
 			cite:       citations.UnlinkedCitation{ID: uuid.New(), Volume: ptr(10), ReporterAbbr: "Serg. & Rawl.", Page: 100},
 			whitelist:  map[string]*citations.WhitelistEntry{"Serg. & Rawl.": {ReporterStandard: &sergStd}},
@@ -1011,19 +928,6 @@ func TestLinkCitation(t *testing.T) {
 			wantTier:   citations.TierCAPAltSpelling,
 			wantCAPID:  ptr(int64(900)),
 			wantLinked: ptr("10 Serg. & Rawle 100"),
-		},
-		{
-			// A page-interior link under the citation's own reporter is
-			// unaffected.
-			name:      "canonical form still range-probes",
-			cite:      citations.UnlinkedCitation{ID: uuid.New(), Volume: ptr(10), ReporterAbbr: "Am. Dec.", Page: 105},
-			whitelist: map[string]*citations.WhitelistEntry{"Am. Dec.": {ReporterStandard: &amDecStd}},
-			capSpans: []citations.CaseSpan[int64]{
-				{Cite: "10 Am. Dec. 100", ID: 901, Length: 20},
-			},
-			wantStatus: citations.StatusLinkedCAP,
-			wantTier:   citations.TierCAPPageInterior,
-			wantCAPID:  ptr(int64(901)),
 		},
 		{
 			// Issue #248. No US source holds the American Bankruptcy Reports, so
@@ -1151,16 +1055,12 @@ func TestLinkCitation(t *testing.T) {
 			// (1841-1852, volume-cited) and the Law Reports' Q.B. (1891 on,
 			// cited by year), on one row with cited_by_year_from = 1891. A
 			// year-bearing citation must not reach the 1842 volume: the year
-			// stays on the reporter, so the index knows no such reporter, the
-			// range index no such volume, and the citation is reporter_absent
-			// and free to take a stub.
-			name:      "year-cited continuation does not reach the volume-cited series",
-			cite:      citations.UnlinkedCitation{ID: uuid.New(), Year: ptr(1895), Volume: ptr(2), ReporterAbbr: "Q. B.", Page: 1},
-			whitelist: map[string]*citations.WhitelistEntry{"Q. B.": {ReporterStandard: &qbStd, UK: true, CitedByYearFrom: 1891}},
-			erCites:   map[string]citations.ERCase{"2 Q.B. 1": {ID: "er-1842", Cases: 1}},
-			erSpans: []citations.CaseSpan[string]{
-				{Cite: "2 Q.B. 1", ID: "er-1842"}, {Cite: "2 Q.B. 40", ID: "er-1842b"},
-			},
+			// stays on the reporter, so the index knows no such reporter, and
+			// the citation is reporter_absent and free to take a stub.
+			name:       "year-cited continuation does not reach the volume-cited series",
+			cite:       citations.UnlinkedCitation{ID: uuid.New(), Year: ptr(1895), Volume: ptr(2), ReporterAbbr: "Q. B.", Page: 1},
+			whitelist:  map[string]*citations.WhitelistEntry{"Q. B.": {ReporterStandard: &qbStd, UK: true, CitedByYearFrom: 1891}},
+			erCites:    map[string]citations.ERCase{"2 Q.B. 1": {ID: "er-1842", Cases: 1}},
 			stubs:      map[string]struct{}{"[1895] 2 Q.B. 1": {}},
 			wantStatus: citations.StatusLinkedStub,
 			wantTier:   citations.TierStubDirect,
@@ -1276,16 +1176,6 @@ func TestLinkCitation(t *testing.T) {
 			wantLinked: ptr("1 Toth 123"),
 		},
 		{
-			name:       "CAP pin cite into a case decided after the treatise is us_anachronistic",
-			cite:       citations.UnlinkedCitation{ID: uuid.New(), SourceYear: ptr(1850), Volume: ptr(17), ReporterAbbr: "Mass.", Page: 479},
-			whitelist:  map[string]*citations.WhitelistEntry{"Mass.": {ReporterStandard: &massStd}},
-			capCites:   map[string]int64{"17 Mass. 478": 478},
-			capSpans:   span17Mass,
-			years:      Years{CAP: map[int64]int{478: 1900}},
-			wantStatus: citations.StatusNoMatch,
-			wantTier:   citations.TierUSAnachronistic,
-		},
-		{
 			name:       "code reporter hit on a later case is us_anachronistic",
 			cite:       citations.UnlinkedCitation{ID: uuid.New(), SourceYear: ptr(1850), Volume: ptr(2), ReporterAbbr: "Stat.", Page: 30},
 			whitelist:  map[string]*citations.WhitelistEntry{"Stat.": {ReporterStandard: &statStd}},
@@ -1295,35 +1185,11 @@ func TestLinkCitation(t *testing.T) {
 			wantTier:   citations.TierUSAnachronistic,
 		},
 		{
-			// The span index is built from cap.citations with ambiguous cites
-			// kept, so a range hit can land in a reporter the cite index never
-			// saw. Left to the failure ladder that would read as reporter_absent
-			// and reach the stub registry; the refusal comes first.
-			name:       "refused range hit does not fall through to a stub",
-			cite:       citations.UnlinkedCitation{ID: uuid.New(), SourceYear: ptr(1850), Volume: ptr(4), ReporterAbbr: "Am. B. R.", Page: 2},
-			whitelist:  map[string]*citations.WhitelistEntry{"Am. B. R.": {ReporterStandard: &abrStd}},
-			capSpans:   []citations.CaseSpan[int64]{{Cite: "4 A.B.R. 1", ID: 5, Length: 5}},
-			stubs:      map[string]struct{}{"4 A.B.R. 2": {}},
-			years:      Years{CAP: map[int64]int{5: 1900}},
-			wantStatus: citations.StatusNoMatch,
-			wantTier:   citations.TierUSAnachronistic,
-		},
-		{
 			name:       "English Reports hit on a later case is uk_anachronistic",
 			cite:       citations.UnlinkedCitation{ID: uuid.New(), SourceYear: ptr(1850), Volume: ptr(1), ReporterAbbr: "Q.B.", Page: 20},
 			whitelist:  map[string]*citations.WhitelistEntry{"Q.B.": {ReporterStandard: &qbStd, UK: true}},
 			erCites:    map[string]citations.ERCase{"1 Q.B. 20": {ID: "er-20", Cases: 1}},
 			years:      Years{ER: map[string]int{"er-20": 1851}},
-			wantStatus: citations.StatusNoMatch,
-			wantTier:   citations.TierUKAnachronistic,
-		},
-		{
-			name:       "English Reports pin cite into a later case is uk_anachronistic",
-			cite:       citations.UnlinkedCitation{ID: uuid.New(), SourceYear: ptr(1850), Volume: ptr(1), ReporterAbbr: "Q.B.", Page: 23},
-			whitelist:  map[string]*citations.WhitelistEntry{"Q.B.": {ReporterStandard: &qbStd, UK: true}},
-			erCites:    map[string]citations.ERCase{"1 Q.B. 20": {ID: "er-20", Cases: 1}},
-			erSpans:    []citations.CaseSpan[string]{{Cite: "1 Q.B. 20", ID: "er-20"}, {Cite: "1 Q.B. 30", ID: "er-30"}},
-			years:      Years{ER: map[string]int{"er-20": 1900}},
 			wantStatus: citations.StatusNoMatch,
 			wantTier:   citations.TierUKAnachronistic,
 		},
@@ -1345,7 +1211,7 @@ func TestLinkCitation(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tables := NewTables(tt.whitelist, tt.diffvols, tt.capCites, tt.capShared, tt.freelawCites, tt.altAbbrs, tt.codeCites, tt.erCites, tt.capSpans, tt.erSpans, tt.stubs, tt.years)
+			tables := NewTables(tt.whitelist, tt.diffvols, tt.capCites, tt.capShared, tt.freelawCites, tt.altAbbrs, tt.codeCites, tt.erCites, tt.stubs, tt.years)
 			got := linkCitation(&tt.cite, tables)
 
 			assert.Equal(t, tt.wantStatus, got.Status)
@@ -1445,7 +1311,7 @@ func TestVolumeVariantRecordsDetectedForm(t *testing.T) {
 	whitelist := map[string]*citations.WhitelistEntry{"Toth": {ReporterStandard: &std, SingleVol: true}}
 
 	tables := NewTables(whitelist, map[string]map[int]*citations.DiffVolEntry{},
-		map[string]int64{"1 Toth 123": 777}, nil, nil, nil, nil, nil, nil, nil, nil, Years{})
+		map[string]int64{"1 Toth 123": 777}, nil, nil, nil, nil, nil, nil, Years{})
 	got := linkCitation(c, tables)
 
 	assert.Equal(t, citations.StatusLinkedCAP, got.Status)

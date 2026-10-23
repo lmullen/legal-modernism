@@ -71,29 +71,13 @@ type ERCase struct {
 // nearly always a decision of some length and one or more memorandum decisions
 // of a page or less, printed in the space the longer one leaves, so the pages
 // are what tell them apart. Pages is CAP's last_page - first_page + 1, or 0 when
-// CAP records no page range or an inverted one; as in CaseSpan it is a length,
-// not an end page, because the scanned pagination can be offset from the cited
-// one.
+// CAP records no page range or an inverted one. It is a length, not an end
+// page, because the scanned pagination can be offset from the cited one: CAP's
+// first_page and last_page are the pagination of the scanned printing, which
+// for ~2,770 volumes is offset from the pagination the citation uses.
 type SharedCase struct {
 	ID    int64
 	Pages int
-}
-
-// CaseSpan is one first-page cite string, the case it names, and how many pages
-// that case occupies. It is the input to the page-range index that resolves pin
-// cites — citations to an interior page of a case, which can never match a
-// first-page cite string exactly.
-//
-// Length is the source's own page count for the case (last_page - first_page +
-// 1), or 0 when the source records no page range at all, as english_reports.cases
-// does. It is deliberately a length rather than an end page: CAP's first_page and
-// last_page are the pagination of the scanned printing, which for ~2,770 volumes
-// is offset from the pagination the citation uses, so an absolute end page cannot
-// be trusted while a difference between two pages in the same system can.
-type CaseSpan[ID comparable] struct {
-	Cite   string
-	ID     ID
-	Length int
 }
 
 // UnlinkedCitation is a raw citation fetched from the database for linking.
@@ -163,7 +147,8 @@ const (
 // FreeLaw crosswalk and the code reporter, so naming any one target would be a
 // half-truth. They report the closest approach across every target probed,
 // ordered reporter_absent (nothing to match against) through page_absent (right
-// reporter, right volume, wrong page — the pin-cite pool). volume_missing sits
+// reporter, right volume, wrong page: a pin cite into a case, or a case the
+// source lacks; the cascade no longer tells them apart, issue #393). volume_missing sits
 // beside volume_absent rather than below it: both mean the volume step failed,
 // but for a different reason — the citation carried no volume for the probes to
 // look up, so nothing is known about coverage (issue #261). anachronistic stands
@@ -180,9 +165,8 @@ const (
 	TierUSDiffVolsMissing = "us_diffvols_missing" // reporter renumbers in CAP, but no reporters_diffvols row covers this volume
 	TierUSVolumeAbsent    = "us_volume_absent"    // reporter present, this volume never appears
 	TierUSVolumeMissing   = "us_volume_missing"   // reporter present, but the citation carries no volume to look up
-	TierUSPageAbsent      = "us_page_absent"      // reporter and volume present, page is not a first-page cite and no case's page span covers it
-	TierUSPageAmbiguous   = "us_page_ambiguous"   // the page falls in a span, but more than one case begins on that span's first page
-	TierUSPageGap         = "us_page_gap"         // the page falls past the end of the preceding case, in a hole in CAP's coverage
+	TierUSPageAbsent      = "us_page_absent"      // reporter and volume present, page is not a first-page cite
+	TierUSPageAmbiguous   = "us_page_ambiguous"   // the cite is one several CAP cases share, none of them longest (#359)
 	TierUSAnachronistic   = "us_anachronistic"    // every case found was decided after the citing document
 
 	// no_match, UK route (English Reports).
@@ -190,14 +174,9 @@ const (
 	TierUKVolumeAbsent   = "uk_volume_absent"
 	TierUKVolumeMissing  = "uk_volume_missing"
 	TierUKPageAbsent     = "uk_page_absent"
-	// TierUKPageAmbiguous: the cite string, or the page span covering it, belongs
-	// to more than one English Reports case, so there is nothing to link to. #256
-	// emits it for the exact cite string; page-range matching also reaches it when
-	// several cases begin on the covering span's first page.
+	// TierUKPageAmbiguous: the cite string belongs to more than one English
+	// Reports case, so there is nothing to link to (#256).
 	TierUKPageAmbiguous = "uk_page_ambiguous"
-	// TierUKPageGap: the page falls past the end of the preceding case, in a hole
-	// in the corpus rather than inside a case.
-	TierUKPageGap = "uk_page_gap"
 	// TierUKAnachronistic: every case found was decided after the citing
 	// document, judged by murrell_year, or er_year where Murrell gives none.
 	TierUKAnachronistic = "uk_anachronistic"
@@ -208,9 +187,7 @@ const (
 	TierCAPFreelaw            = "cap_freelaw"              // freelaw.cite_to_cap, under the normalized cite
 	TierCAPAltSpelling        = "cap_alt_spelling"         // cap.citations, under a reporters_abbreviations alternate
 	TierCAPFreelawAltSpelling = "cap_freelaw_alt_spelling" // freelaw.cite_to_cap, under an alternate
-	TierCAPPageInterior       = "cap_page_interior"        // cap.citations page range, pin cite to an interior page
 	TierCodeDirect            = "code_direct"              // legalhist.code_reporter, under the cleaned cite
 	TierERDirect              = "er_direct"                // english_reports.cases
-	TierERPageInterior        = "er_page_interior"         // english_reports.cases page range, pin cite to an interior page
 	TierStubDirect            = "stub_direct"              // legalhist.stub_cases, under the cleaned cite (#248)
 )

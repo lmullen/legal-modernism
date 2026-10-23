@@ -67,7 +67,6 @@
     <p class="small text-secondary">
         Across the work's editions in the treatise view: how many of them cite each case, and how many
         citations they make to it. A case cited by many editions of one work is cited by one work.
-        {{if .ExcludePincite}}Editions that reach a case only through pin cites are left out. <a href="{{.URL}}">Count them.</a>{{else}}<a href="{{.URL}}?pincite=exclude">Leave out</a> editions that reach a case only through pin cites.{{end}}
     </p>
     {{template "top_cases" .TopCases}}
 {{end}}

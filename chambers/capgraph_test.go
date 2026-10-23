@@ -32,9 +32,9 @@ func TestAgreementRatios(t *testing.T) {
 	require.Nil(t, newGraphRow(1, "", "", agreement{}).Recall)
 
 	var total agreement
-	total.add(agreement{1, 2, 3, 1})
-	total.add(agreement{10, 20, 30, 4})
-	require.Equal(t, agreement{11, 22, 33, 5}, total)
+	total.add(agreement{1, 2, 3})
+	total.add(agreement{10, 20, 30})
+	require.Equal(t, agreement{11, 22, 33}, total)
 	require.Equal(t, 33, total.Ours())
 	require.Equal(t, 44, total.Theirs())
 	require.Equal(t, 66, total.Edges())
