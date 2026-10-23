@@ -118,7 +118,9 @@ func NewMOMLCorpusStore(db *pgxpool.Pool) *CorpusStore {
 // opinion belongs to, so its year is cap.cases.decision_year, joined into the
 // stream; a citation whose case has no year, or no row, streams with a nil
 // SourceYear and is never refused as anachronistic. A case is of the same
-// year as itself, so an opinion's citation of its own case links.
+// year as itself, so an opinion's citation of its own case links. The case's
+// state, as legalhist.cap_jurisdiction_codes spells it, is joined in the same
+// way as SourceJurisdiction (issue #401).
 //
 // Its Prepare has nothing to load; it checks that the ledger's tables exist,
 // which they do not until the migration that creates them is applied, so that
@@ -128,7 +130,7 @@ func NewOpinionCorpusStore(db *pgxpool.Pool) *CorpusStore {
 	return &CorpusStore{
 		DB: db,
 		prepare: func(ctx context.Context) error {
-			for _, table := range []string{"opinion_citations.citations_unlinked", "opinion_citations.citation_links"} {
+			for _, table := range []string{"opinion_citations.citations_unlinked", "opinion_citations.citation_links", "legalhist.cap_jurisdiction_codes"} {
 				if _, err := db.Exec(ctx, "SELECT 1 FROM "+table+" LIMIT 0"); err != nil {
 					return fmt.Errorf("the opinion_citations ledger is not available (run make db-up?): %w", err)
 				}
@@ -136,16 +138,18 @@ func NewOpinionCorpusStore(db *pgxpool.Pool) *CorpusStore {
 			return nil
 		},
 		stream: `
-		SELECT cu.id, cu.raw, cu.volume, cu.reporter_abbr, cu.page, cu.year, k.decision_year
+		SELECT cu.id, cu.raw, cu.volume, cu.reporter_abbr, cu.page, cu.year, k.decision_year,
+		       COALESCE(jc.jurisdiction, '')
 		FROM opinion_citations.citations_unlinked cu
 		LEFT JOIN cap.cases k ON k.id = cu.cap_case
+		LEFT JOIN legalhist.cap_jurisdiction_codes jc ON jc.cap_jurisdiction = k.jurisdiction
 		WHERE NOT EXISTS (
 			SELECT 1 FROM opinion_citations.citation_links cl WHERE cl.citation_id = cu.id
 		)
 		`,
 		insert: linksInsertSQL("opinion_citations.citation_links"),
 		scan: func(rows pgx.Rows, c *UnlinkedCitation) error {
-			return rows.Scan(&c.ID, &c.Raw, &c.Volume, &c.ReporterAbbr, &c.Page, &c.Year, &c.SourceYear)
+			return rows.Scan(&c.ID, &c.Raw, &c.Volume, &c.ReporterAbbr, &c.Page, &c.Year, &c.SourceYear, &c.SourceJurisdiction)
 		},
 	}
 }
