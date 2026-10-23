@@ -3,11 +3,12 @@
 --
 -- legalhist.stub_cases gives a record to cite strings in reporters no source
 -- covers. Nothing checks those strings against a case list, because there is
--- none, so the threshold has to be sized from the reporters where a case list
--- does exist: on those, the linker knows whether a heavily cited string is the
--- first page of a case or a pin cite into one. Query 2 is that calibration and
--- query 3 tests whether pin cites could be folded into their case by page
--- distance. Query 1 is the yield side of the trade.
+-- none, so the threshold was sized from the reporters where a case list does
+-- exist: on those, the linker then knew whether a heavily cited string was the
+-- first page of a case or a pin cite into one (the cap_page_interior and
+-- er_page_interior tiers, removed in issue #393; the calibration query is in
+-- this file's history). Query 2 tests whether pin cites could be folded into
+-- their case by page distance. Query 1 is the yield side of the trade.
 --
 -- Read-only; run with LAW_CLAUDE. Each query takes a few minutes over the full
 -- citation_links table. Numbers quoted in the migration and on #248 are from
@@ -58,36 +59,7 @@ FROM thresholds t CROSS JOIN strings s
 GROUP BY t.threshold
 ORDER BY t.threshold;
 
--- 2. Calibration on the covered reporters. For every distinct (reporter,
---    volume, page) that linked, the tier says whether the string was a case's
---    first page (cap_direct, er_direct, and the alternate/crosswalk hits) or an
---    interior page (cap_page_interior, er_page_interior). The share of first
---    pages among strings at or above each threshold is the best available
---    estimate of how many stubs at that threshold are distinct cases rather
---    than pin cites into a neighbour.
-WITH linked AS (
-  SELECT CASE WHEN r.jurisdiction LIKE 'uk%' THEN 'uk' ELSE 'us' END AS route,
-         wl.reporter_standard, cu.volume, cu.page,
-         count(*) AS n_citations,
-         bool_or(cl.match_tier IN ('cap_page_interior', 'er_page_interior')) AS interior
-  FROM moml_citations.citation_links cl
-  JOIN moml_citations.citations_unlinked cu ON cu.id = cl.citation_id
-  JOIN legalhist.whitelist wl ON wl.reporter_found = cu.reporter_abbr
-  JOIN legalhist.reporters r ON r.reporter_standard = wl.reporter_standard
-  WHERE cl.status IN ('linked_cap', 'linked_english_reports')
-    AND cu.volume IS NOT NULL
-  GROUP BY 1, 2, 3, 4
-),
-thresholds AS (SELECT unnest(ARRAY[3, 5, 10, 20, 50]) AS threshold)
-SELECT l.route, t.threshold,
-       count(*) FILTER (WHERE l.n_citations >= t.threshold) AS strings,
-       round(100.0 * count(*) FILTER (WHERE l.n_citations >= t.threshold AND NOT l.interior)
-             / count(*) FILTER (WHERE l.n_citations >= t.threshold), 1) AS pct_first_page
-FROM thresholds t CROSS JOIN linked l
-GROUP BY l.route, t.threshold
-ORDER BY l.route, t.threshold;
-
--- 3. Could pin cites be folded into their case by distance? Among heavily cited
+-- 2. Could pin cites be folded into their case by distance? Among heavily cited
 --    strings (>= 10) in the same covered volume, take each one with its nearest
 --    heavily cited predecessor and ask whether they linked to the same case.
 --    If proximity identified a pin cite, the share of same-case pairs at a gap

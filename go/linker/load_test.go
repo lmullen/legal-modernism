@@ -16,8 +16,6 @@ type fakeStore struct {
 	whitelist map[string]*citations.WhitelistEntry
 	capCites  map[string]int64
 	erCites   map[string]citations.ERCase
-	capSpans  []citations.CaseSpan[int64]
-	erSpans   []citations.CaseSpan[string]
 	failAt    string
 	fail      error
 }
@@ -53,12 +51,6 @@ func (f *fakeStore) LoadCodeReporterCitations(context.Context) (map[string]int64
 func (f *fakeStore) LoadEnglishReportsCitations(context.Context) (map[string]citations.ERCase, error) {
 	return f.erCites, f.step("er")
 }
-func (f *fakeStore) LoadCAPCaseSpans(context.Context) ([]citations.CaseSpan[int64], error) {
-	return f.capSpans, f.step("capspans")
-}
-func (f *fakeStore) LoadERCaseSpans(context.Context) ([]citations.CaseSpan[string], error) {
-	return f.erSpans, f.step("erspans")
-}
 func (f *fakeStore) LoadStubCases(context.Context) (map[string]struct{}, error) {
 	return nil, f.step("stubs")
 }
@@ -76,8 +68,6 @@ func TestLoad(t *testing.T) {
 		whitelist: map[string]*citations.WhitelistEntry{"Mass.": {ReporterStandard: &std}},
 		capCites:  map[string]int64{"17 Mass. 478": 478, "2 Mass. 1": 2},
 		erCites:   map[string]citations.ERCase{"1 Keb 5": {ID: "er-5", Cases: 1}},
-		capSpans:  span17Mass,
-		erSpans:   []citations.CaseSpan[string]{{Cite: "1 Keb 5", ID: "er-5"}},
 	}
 	tables, err := Load(context.Background(), store)
 	require.NoError(t, err)
@@ -87,10 +77,6 @@ func TestLoad(t *testing.T) {
 	assert.Equal(t, 2, stats.USVolumes)
 	assert.Equal(t, 1, stats.UKReporters)
 	assert.Equal(t, 1, stats.UKVolumes)
-	assert.Equal(t, 1, stats.CAPVolumes)
-	assert.Equal(t, len(span17Mass), stats.CAPSpans)
-	assert.Equal(t, 1, stats.ERVolumes)
-	assert.Equal(t, 1, stats.ERSpans)
 
 	// The tables link: the whitelist and the CAP map were both loaded.
 	got := tables.Link(&citations.UnlinkedCitation{Volume: ptr(2), ReporterAbbr: "Mass.", Page: 1})
@@ -101,7 +87,7 @@ func TestLoad(t *testing.T) {
 // with the step, so the driver's startup message says what did not load.
 func TestLoadNamesTheFailedStep(t *testing.T) {
 	sentinel := errors.New("boom")
-	for _, step := range []string{"whitelist", "diffvols", "cap", "capshared", "freelaw", "alts", "code", "er", "capspans", "erspans", "stubs", "years"} {
+	for _, step := range []string{"whitelist", "diffvols", "cap", "capshared", "freelaw", "alts", "code", "er", "stubs", "years"} {
 		_, err := Load(context.Background(), &fakeStore{failAt: step, fail: sentinel})
 		require.Error(t, err, step)
 		assert.True(t, errors.Is(err, sentinel), step)

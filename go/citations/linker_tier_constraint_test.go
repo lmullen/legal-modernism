@@ -27,7 +27,7 @@ import (
 // so that widening one CHECK and forgetting the other cannot pass. The test is
 // a text grep, not a parse of the constraint: a migration that names a table
 // for another reason and quotes a tier — a materialized view over
-// citation_links that filters on 'cap_page_interior', say — satisfies it for
+// citation_links that filters on 'cap_shared_longest', say — satisfies it for
 // that tier too. It catches the forgotten migration, not a mistyped one.
 func TestMatchTierConstantsAreAllowedBySQL(t *testing.T) {
 	tiers := stringConstants(t, "Tier")

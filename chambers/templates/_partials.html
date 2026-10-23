@@ -44,7 +44,7 @@
                 <td class="num">{{if .Year}}{{deref .Year}}{{else}}&mdash;{{end}}</td>
                 <td class="small text-secondary">{{ptrOr .Cite "&mdash;"}}</td>
                 {{if $.ShowEditions}}<td class="num">{{num .Editions}}{{if $.TotalEditions}} <span class="text-secondary small">of {{$.TotalEditions}}</span>{{end}}</td>{{end}}
-                <td class="num">{{num .Cites}}{{if .PincitesOnly}} <span class="badge text-bg-light" title="Every citation was a pin cite to an interior page of the case.">pin</span>{{end}}</td>
+                <td class="num">{{num .Cites}}</td>
                 <td>{{if .PagesURL}}<a href="{{.PagesURL}}" class="small">pages</a>{{end}}</td>
             </tr>
         {{end}}

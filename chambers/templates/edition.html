@@ -29,7 +29,7 @@
             <div class="d-flex flex-wrap gap-2 mb-2">
                 <div class="stat"><div class="n">{{num .Cites}}</div><div class="l">citations detected</div></div>
                 <div class="stat"><div class="n">{{.LinkedPct}}</div><div class="l">linked to a case</div></div>
-                <div class="stat"><div class="n">{{num .Cases}}</div><div class="l">cases cited{{if ne .Cases .CasesDirect}}, {{num .CasesDirect}} other than by pin cite only{{end}}</div></div>
+                <div class="stat"><div class="n">{{num .Cases}}</div><div class="l">cases cited</div></div>
             </div>
             {{end}}
             {{if .Reporters}}
@@ -51,7 +51,6 @@
         The cases this edition cites most often, over every volume.
         <a href="{{.AllCasesURL}}">All the cases it cites</a> &middot;
         <a href="{{.CitationsURL}}">Every citation in it</a>.
-        {{if .ExcludePincite}}Cases reached only through pin cites are left out. <a href="{{.URL}}">Include them.</a>{{else}}<a href="{{.URL}}?pincite=exclude">Leave out</a> cases reached only through pin cites.{{end}}
     </p>
     {{template "top_cases" .TopCases}}
 

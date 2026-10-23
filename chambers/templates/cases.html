@@ -24,22 +24,18 @@
             </select>
         </div>
         <input type="hidden" name="sort" value="{{.Sort}}">
-        {{if .ExcludePincite}}<input type="hidden" name="pincite" value="exclude">{{end}}
         <div class="col-auto"><button class="btn btn-sm btn-primary">Search</button></div>
         {{if .Q}}<div class="col-auto"><a href="/cases?source={{.Source}}&sort={{.Sort}}" class="small">clear</a></div>{{end}}
     </form>
 
     {{if not .Q}}
     <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
-        {{$src := .Source}}{{$pin := ""}}{{if .ExcludePincite}}{{$pin = "&pincite=exclude"}}{{end}}
+        {{$src := .Source}}
         <div class="btn-group btn-group-sm" role="group" aria-label="Sort">
-            <a href="/cases?sort=editions&source={{$src}}{{$pin}}" class="btn {{if eq .Sort "editions"}}btn-primary{{else}}btn-outline-secondary{{end}}">Most editions</a>
-            <a href="/cases?sort=works&source={{$src}}{{$pin}}" class="btn {{if eq .Sort "works"}}btn-primary{{else}}btn-outline-secondary{{end}}">Most works</a>
-            <a href="/cases?sort=cites&source={{$src}}{{$pin}}" class="btn {{if eq .Sort "cites"}}btn-primary{{else}}btn-outline-secondary{{end}}">Most citations</a>
+            <a href="/cases?sort=editions&source={{$src}}" class="btn {{if eq .Sort "editions"}}btn-primary{{else}}btn-outline-secondary{{end}}">Most editions</a>
+            <a href="/cases?sort=works&source={{$src}}" class="btn {{if eq .Sort "works"}}btn-primary{{else}}btn-outline-secondary{{end}}">Most works</a>
+            <a href="/cases?sort=cites&source={{$src}}" class="btn {{if eq .Sort "cites"}}btn-primary{{else}}btn-outline-secondary{{end}}">Most citations</a>
         </div>
-        <span class="small">
-            {{if .ExcludePincite}}Ranked by editions that reach the case other than only through pin cites. <a href="/cases?source={{$src}}">Count every edition.</a>{{else}}<a href="/cases?source={{$src}}&pincite=exclude">Leave out</a> editions that reach a case only through pin cites.{{end}}
-        </span>
     </div>
     {{else}}
     <p class="small text-secondary">
@@ -55,13 +51,12 @@
                 <th class="num">Year</th>
                 <th>Cite</th>
                 <th class="num">Editions</th>
-                {{if .ExcludePincite}}<th class="num" title="Editions that reach the case other than only through pin cites">Not by pin cite only</th>{{end}}
                 <th class="num">Works</th>
                 <th class="num">Citations</th>
             </tr>
         </thead>
         <tbody>
-        {{$from := .Nav.From}}{{$ex := .ExcludePincite}}
+        {{$from := .Nav.From}}
         {{range $i, $c := .Items}}
             <tr>
                 <td class="num text-secondary small">{{add $from $i}}</td>
@@ -69,7 +64,6 @@
                 <td class="num">{{if $c.Year}}{{deref $c.Year}}{{else}}&mdash;{{end}}</td>
                 <td class="small text-secondary">{{ptrOr $c.Cite "&mdash;"}}</td>
                 <td class="num">{{num $c.Editions}}</td>
-                {{if $ex}}<td class="num">{{num $c.EditionsDirect}}</td>{{end}}
                 <td class="num">{{num $c.Works}}</td>
                 <td class="num">{{num $c.Cites}}</td>
             </tr>

@@ -117,31 +117,16 @@ func linkCAPThenCode(
 	// Alternate spellings are deliberately NOT collected here, though they are
 	// probed against the exact maps below (issue #290). buildAltCites bypasses
 	// buildCAPCite's reporter_cap and diffvols handling, because an alternate is
-	// the other source's own spelling and remapping its volume would be wrong.
-	// That makes an alternate's volume number untranslated, which is harmless
-	// for an exact probe -- a miss costs nothing -- but not for containment, for
-	// exactly the reason diffvolsMissing already suppresses range matching: the
-	// wrong volume of the right reporter is densely populated, so containment
-	// would confidently return a case from it.
-	//
-	// The same split once guarded against a second failure. Until issue #289
-	// the loader also delivered alternates that were themselves another
-	// reporter's reporter_standard ("A.D." under "Am. Dec."; 75 such rows), so
-	// a probe under one asked the index about a different reporter. Feeding
-	// those to the range index turned them into links: CAP holds no official or
-	// nominative cite under "Am. Dec.", "P." or "Paine", so the span index had
-	// no key for them at all, and every one of their 281,132 cap_page_interior
-	// links came from an alternate; the same probes reaching citeIndex made the
-	// failure tiers claim a reporter and volume that belong to some other
-	// reporter. LoadReporterAltAbbrs now leaves those rows out, so every
-	// alternate that reaches this function is a spelling of this citation's own
-	// reporter. The range index and the tier ladder still see only the standard
-	// forms, because the volume argument stands on its own.
-	//
-	// Keeping the alternates out also makes a page-interior link auditable
-	// after the fact, which it was not: CiteLinked is nil on those rows, but the
-	// link can now only have come from cite_cleaned or cite_normalized, and both
-	// are recorded.
+	// the other source's own spelling and remapping its volume would be wrong,
+	// so a probe under one says nothing about which reporter and volume this
+	// citation's own spelling reached. Until issue #289 the loader also
+	// delivered alternates that were themselves another reporter's
+	// reporter_standard ("A.D." under "Am. Dec."; 75 such rows), and the same
+	// probes reaching citeIndex made the failure tiers claim a reporter and
+	// volume that belong to some other reporter. LoadReporterAltAbbrs now
+	// leaves those rows out, so every alternate that reaches this function is a
+	// spelling of this citation's own reporter; the tier ladder still sees only
+	// the standard forms.
 	probes := make([]string, 0, 4)
 
 	// The standard-form strings alone, for the stub registry, which is keyed on
@@ -149,7 +134,7 @@ func linkCAPThenCode(
 	// reporter's string as far as the registry is concerned.
 	standard := make([]string, 0, 2)
 
-	// Every hit, exact or by page range, must also pass the year test: a case
+	// Every hit must also pass the year test: a case
 	// decided after the citing document, a treatise volume or an opinion's
 	// case, cannot be the one it cites (issue #319). A refused hit is passed over rather than returned on, so
 	// the rest of the cascade still runs and can reach a case of the right date.
@@ -176,9 +161,8 @@ func linkCAPThenCode(
 		// was probed as "18 N.J.L." and linked to an 1841 New Jersey case. This
 		// made 24,708 CAP-ledger and 15,619 MOML links, and CAP's citation graph
 		// agreed with none of the largest groups. The CAP and FreeLaw probes on
-		// it are skipped, as range matching already is below; the alternate
-		// spellings and the Code Reporter still run, since they are probed in
-		// their own spellings.
+		// it are skipped; the alternate spellings and the Code Reporter still
+		// run, since they are probed in their own spellings.
 		untranslated := diffvolsMissing(f, entry, t.diffvols)
 
 		// Try CAP with the normalized cite
@@ -201,7 +185,7 @@ func linkCAPThenCode(
 		// in a table of one-page decisions (61 Kan. 859 holds eleven), nothing in
 		// the cite tells them apart: an honest ambiguity, and the cascade goes on
 		// in case another form or source resolves it. Skipped for an untranslated
-		// diffvols volume, for the same reason range matching is: the cite
+		// diffvols volume, for the same reason the direct probe is: the cite
 		// belongs to some other volume.
 		if shared, ok := t.capShared[normalized]; ok && !untranslated {
 			left := admitted(gate, t.years.CAP, shared)
@@ -233,8 +217,8 @@ func linkCAPThenCode(
 		// keys a case under its nominative cites as well as its official
 		// one -- "1 Allen 456" beside "83 Mass. 456" -- and spells those the
 		// way reporter_standard does, so this is the one spelling CAP shares
-		// with us; until now it was in probes, so the tier ladder and the
-		// range index counted it as tried, but no exact probe ever ran it
+		// with us; until now it was in probes, so the tier ladder counted it
+		// as tried, but no exact probe ever ran it
 		// (issue #371). It comes after the translated form, so a link that
 		// form makes is unchanged, and before the alternates, which are
 		// weaker evidence than the standard. A hit records cite_linked equal
@@ -299,36 +283,10 @@ func linkCAPThenCode(
 		}
 	}
 
-	// Every exact form missed. Before giving up, try page-range matching: the
-	// citation may be a pin cite to an interior page of a case, which no
-	// first-page cite string can ever equal. This runs last so it can only turn a
-	// no_match into a link, never rewire one the exact cascade already made.
-	//
-	// Skipped when diffvols is missing, for the same reason usTier reports that
-	// tier ahead of the volume and page ones: the reporter renumbers in CAP and no
-	// reporters_diffvols row covers this volume, so every probe carries a volume
-	// number known to be untranslated. An exact miss on such a probe is harmless,
-	// but a range hit is not — the wrong volume of the right reporter is densely
-	// populated, so containment would confidently return a case from it. Measured
-	// over the current no_match pool this suppresses 45,077 otherwise-plausible
-	// links that would all have been fabricated.
-	missingDiffvols := diffvolsMissing(c, entry, t.diffvols)
-	span := rangeMiss
-	if t.capRanges != nil && !missingDiffvols {
-		caseID, outcome := t.capRanges.probe(probes)
-		if outcome == rangeHit && admits(gate, t.years.CAP, caseID) {
-			result.Status = citations.StatusLinkedCAP
-			result.MatchTier = citations.TierCAPPageInterior
-			result.CAPCaseID = &caseID
-			// No cite string matched, so there is nothing to record as the cite
-			// that linked; CiteLinked stays nil and the tier is what identifies
-			// how this row was made.
-			return result
-		}
-		// A refusal is not a link but is still a finding, so it is carried to
-		// usTier to sharpen the page step rather than dropped.
-		span = outcome
-	}
+	// Every exact form missed. A citation to an interior page of a case -- a pin
+	// cite -- is left a miss on purpose: page-range matching once linked those
+	// (issues #242 and #243), and most of the links were to the wrong case, so
+	// it was removed (issue #393).
 
 	// A case was found but refused as anachronistic. That outranks every tier
 	// below, each of which says no case was there to be found, and it rules
@@ -346,7 +304,7 @@ func linkCAPThenCode(
 	// misses are coverage gaps or pin cites, which the registry is built to
 	// exclude -- checking the tier here rather than trusting the registry keeps
 	// that true even when the registry is stale.
-	tier := usTier(probes, t.us, missingDiffvols, ambiguous, span)
+	tier := usTier(probes, t.us, diffvolsMissing(c, entry, t.diffvols), ambiguous)
 	if tier == citations.TierUSReporterAbsent {
 		if cite, ok := t.stubs.lookup(standard); ok {
 			return linkStub(result, cite)
@@ -421,21 +379,6 @@ func linkEnglishReports(
 		return result
 	}
 
-	// As on the US route, fall back to page-range matching for pin cites. The
-	// English Reports record no page ranges of their own, so spans here are
-	// bounded only by the next cite and maxSpanPages.
-	span := rangeMiss
-	if t.erRanges != nil {
-		erID, outcome := t.erRanges.probe(probes)
-		if outcome == rangeHit && admits(gate, t.years.ER, erID) {
-			result.Status = citations.StatusLinkedEnglishReports
-			result.MatchTier = citations.TierERPageInterior
-			result.ERCaseID = &erID
-			return result
-		}
-		span = outcome
-	}
-
 	// A refused case outranks the failure ladder and the stub registry, as on
 	// the US route. It also outranks an ambiguous cite: one form found a single
 	// case, and only its date ruled it out.
@@ -447,7 +390,7 @@ func linkEnglishReports(
 
 	// The stub registry, under the same gate as the US route: the probes here
 	// are already the standard forms the registry is keyed on.
-	tier := ukTier(probes, t.uk, ambiguous, span)
+	tier := ukTier(probes, t.uk, ambiguous)
 	if tier == citations.TierUKReporterAbsent {
 		if cite, ok := t.stubs.lookup(probes); ok {
 			return linkStub(result, cite)

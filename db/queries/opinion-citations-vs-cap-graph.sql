@@ -38,7 +38,8 @@
 --
 -- The first --corpus cap run (2026-09-26, results on #74): 3,884,023 edges in
 -- both, 1,153,832 ours only, 2,376,036 theirs only; recall 62.0%, precision
--- 77.1%. Of the ours-only edges, 602,759 (52%) exist only through pin cites.
+-- 77.1%. Of the ours-only edges, 602,759 (52%) existed only through pin
+-- cites, which the linker no longer resolves (issue #393).
 -- Of the theirs-only edges, most cite a case none of whose cites occurs in the
 -- opinion text at all: 924 of 942 in a sample of 400 citing cases in scope
 -- (2026-10-20, the chambers page /linking/cap/cases/{id} sorts each one), so
@@ -69,12 +70,10 @@ ORDER BY citing_year NULLS FIRST;
 --    theirs_only edges is one our detector or the whitelist misses (a
 --    spelling the treatises never used, a renumbered series, a reporter cited
 --    by year); one with many ours_only edges is where we find what CAP's
---    extractor did not, or link a cite to the wrong case. ours_only_pincite
---    is the ours-only edges that exist only through pin cites.
+--    extractor did not, or link a cite to the wrong case.
 SELECT r.short_name AS reporter, r.id AS reporter_id,
        sum(a.in_both) AS in_both,
        sum(a.ours_only) AS ours_only,
-       sum(a.ours_only_pincite) AS ours_only_pincite,
        sum(a.theirs_only) AS theirs_only
 FROM opinion_citations.cap_graph_agreement a
 JOIN cap.reporters r ON r.id = a.cited_reporter

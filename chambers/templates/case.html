@@ -23,7 +23,7 @@
         <div class="col-lg-5">
             {{with .Summary}}
             <div class="d-flex flex-wrap gap-2 mb-2">
-                <div class="stat"><div class="n">{{num .Editions}}</div><div class="l">citing editions{{if ne .Editions .EditionsDirect}}, {{num .EditionsDirect}} other than by pin cite only{{end}}</div></div>
+                <div class="stat"><div class="n">{{num .Editions}}</div><div class="l">citing editions</div></div>
                 <div class="stat"><div class="n">{{num .Works}}</div><div class="l">works</div></div>
                 <div class="stat"><div class="n">{{num .Cites}}</div><div class="l">citations</div></div>
                 <div class="stat"><div class="n">{{.Span}}</div><div class="l">years of the citing editions</div></div>
@@ -75,7 +75,7 @@
         {{if .NamedTotal}}Of the {{num .CitedAsTotal}} citations, {{num .NamedTotal}} have a name{{if .CanCompare}}, and
         <strong>{{.NamedAgreePct}}</strong> of those name this case{{end}}{{if .Unnamed}}; {{num .Unnamed}} have none{{end}}.{{end}}
         {{if .CanCompare}}A name in <span class="cname name-disagree">red</span> names another case: the citation was probably
-        linked here by mistake, as a pin cite that lands inside the case's pages often is (#391).
+        linked here by mistake (#391).
         {{if ne .NamedAgree .NamedTotal}}<a href="{{.DisagreeURL}}">See those citations.</a>{{end}}{{else}}This case has
         no name of its own to compare them with{{if eq .Source "stub"}}: the names are what the treatises call the
         case behind the cite, and a curated <code>stub_case_metadata</code> row would give it one{{end}}.{{end}}
@@ -120,7 +120,7 @@
                 <td><span class="badge jur">{{.Jurisdiction}}</span></td>
                 <td class="title-col"><a href="{{.URL}}">{{.Title}}</a></td>
                 <td class="title-col small text-secondary"><a href="{{.WorkURL}}" class="text-secondary">{{.WorkTitle}}</a></td>
-                <td class="num">{{num .Cites}}{{if .PincitesOnly}} <span class="badge text-bg-light" title="Every citation from this edition was a pin cite to an interior page of the case.">pin</span>{{end}}</td>
+                <td class="num">{{num .Cites}}</td>
                 <td><a href="{{.PagesURL}}" class="small">pages</a></td>
             </tr>
         {{else}}

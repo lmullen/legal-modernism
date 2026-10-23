@@ -109,7 +109,7 @@ func TestLinkCitation_StandardSpellingProbe(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tables := NewTables(tt.whitelist, tt.diffvols, tt.capCites, nil, tt.freelaw, tt.altAbbrs, nil, nil, nil, nil, nil, tt.years)
+			tables := NewTables(tt.whitelist, tt.diffvols, tt.capCites, nil, tt.freelaw, tt.altAbbrs, nil, nil, nil, tt.years)
 			got := tables.Link(&tt.cite)
 			require.NotNil(t, got)
 			assert.Equal(t, tt.wantStatus, got.Status)

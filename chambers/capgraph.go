@@ -24,13 +24,11 @@ import (
 // works for a case outside the scope, and says whether the case is in it.
 
 // agreement is how two edge sets compare: the edges in both, in ours only and
-// in theirs only, and the ours-only edges that exist only through pin cites
-// (issue #242 found many such links to be OCR noise).
+// in theirs only.
 type agreement struct {
-	InBoth          int `json:"inBoth"`
-	OursOnly        int `json:"oursOnly"`
-	TheirsOnly      int `json:"theirsOnly"`
-	OursOnlyPincite int `json:"oursOnlyPincite"`
+	InBoth     int `json:"inBoth"`
+	OursOnly   int `json:"oursOnly"`
+	TheirsOnly int `json:"theirsOnly"`
 }
 
 // Ours and Theirs are the size of each edge set; Edges is their union.
@@ -47,7 +45,6 @@ func (a *agreement) add(b agreement) {
 	a.InBoth += b.InBoth
 	a.OursOnly += b.OursOnly
 	a.TheirsOnly += b.TheirsOnly
-	a.OursOnlyPincite += b.OursOnlyPincite
 }
 
 // ratio is part/whole, or nil when whole is zero, which the charts leave as a
@@ -176,10 +173,10 @@ func (s *server) getCAPGraph(ctx context.Context, page *Page) (*capGraph, error)
 // reporter and citing jurisdiction from cap_graph_agreement, about 213K rows,
 // so each roll-up is a scan of it.
 func (s *server) loadGraphAgreement(ctx context.Context, g *capGraph) error {
-	const sums = `sum(a.in_both)::bigint, sum(a.ours_only)::bigint, sum(a.theirs_only)::bigint, sum(a.ours_only_pincite)::bigint`
+	const sums = `sum(a.in_both)::bigint, sum(a.ours_only)::bigint, sum(a.theirs_only)::bigint`
 	scanAgreement := func(rows pgx.Rows, dest ...any) (agreement, error) {
 		var a agreement
-		err := rows.Scan(append(dest, &a.InBoth, &a.OursOnly, &a.TheirsOnly, &a.OursOnlyPincite)...)
+		err := rows.Scan(append(dest, &a.InBoth, &a.OursOnly, &a.TheirsOnly)...)
 		return a, err
 	}
 
@@ -274,7 +271,7 @@ func (s *server) loadGraphCases(ctx context.Context, g *capGraph) error {
 	top := func(column string) ([]graphCase, error) {
 		return collect(ctx, s.db, `
 			SELECT a.citing_case_id::text, c.name_abbreviation, a.citing_year, capcite.cite, j.name,
-			       a.in_both, a.ours_only, a.theirs_only, a.ours_only_pincite
+			       a.in_both, a.ours_only, a.theirs_only
 			FROM opinion_citations.cap_graph_case_agreement a
 			JOIN cap.cases c ON c.id = a.citing_case_id
 			LEFT JOIN cap.jurisdictions j ON j.id = a.citing_jurisdiction
@@ -287,7 +284,7 @@ func (s *server) loadGraphCases(ctx context.Context, g *capGraph) error {
 			func(rows pgx.Rows) (graphCase, error) {
 				c := graphCase{CaseRef: CaseRef{Source: "cap"}}
 				return c, rows.Scan(&c.ID, &c.Name, &c.Year, &c.Cite, &c.Jurisdiction,
-					&c.InBoth, &c.OursOnly, &c.TheirsOnly, &c.OursOnlyPincite)
+					&c.InBoth, &c.OursOnly, &c.TheirsOnly)
 			})
 	}
 	if g.TopOurs, err = top("ours_only"); err != nil {
@@ -394,7 +391,6 @@ type capEdge struct {
 	InOurs      bool
 	InTheirs    bool
 	CiteCount   int
-	PinciteOnly bool
 	Ours        []capCitation // our citations linked to the cited case
 	Explanation explanation   // for an edge only CAP's graph has
 }
@@ -403,8 +399,7 @@ type capEdge struct {
 // Reports, the code reporter, or a stub case.
 type capOtherLink struct {
 	CaseRef
-	CiteCount   int
-	PinciteOnly bool
+	CiteCount int
 }
 
 // capCasePage is one citing case: its record, whether the comparison covers
@@ -527,9 +522,6 @@ func (s *server) loadCAPCase(ctx context.Context, id int64, p *capCasePage) erro
 			p.Both = append(p.Both, *e)
 		case e.InOurs:
 			p.Counts.OursOnly++
-			if e.PinciteOnly {
-				p.Counts.OursOnlyPincite++
-			}
 			p.OursOnly = append(p.OursOnly, *e)
 		default:
 			p.Counts.TheirsOnly++
@@ -560,7 +552,7 @@ func (s *server) loadCAPCase(ctx context.Context, id int64, p *capCasePage) erro
 func (s *server) getCAPCaseEdges(ctx context.Context, id int64) ([]capEdge, error) {
 	edges, err := collect(ctx, s.db, `
 		WITH ours AS (
-		  SELECT cap_case_id AS cited, cite_count, pincite_only
+		  SELECT cap_case_id AS cited, cite_count
 		  FROM opinion_citations.case_case_citations
 		  WHERE citing_case_id = $1::bigint AND source = 'cap' AND NOT self_cite
 		),
@@ -570,7 +562,7 @@ func (s *server) getCAPCaseEdges(ctx context.Context, id int64) ([]capEdge, erro
 		  WHERE cites_from = $1::bigint AND cites_to <> cites_from
 		)
 		SELECT k.id::text, k.name_abbreviation, k.decision_year,
-		       o.cited IS NOT NULL, t.cited IS NOT NULL, coalesce(o.cite_count, 0), coalesce(o.pincite_only, false),
+		       o.cited IS NOT NULL, t.cited IS NOT NULL, coalesce(o.cite_count, 0),
 		       k.first_page, k.last_page,
 		       (SELECT array_agg(ci.cite ORDER BY (ci.type = 'official') DESC, ci.cite)
 		        FROM cap.citations ci WHERE ci."case" = k.id)
@@ -583,7 +575,7 @@ func (s *server) getCAPCaseEdges(ctx context.Context, id int64) ([]capEdge, erro
 		func(rows pgx.Rows) (capEdge, error) {
 			e := capEdge{Cited: CaseRef{Source: "cap"}}
 			err := rows.Scan(&e.Cited.ID, &e.Cited.Name, &e.Cited.Year,
-				&e.InOurs, &e.InTheirs, &e.CiteCount, &e.PinciteOnly,
+				&e.InOurs, &e.InTheirs, &e.CiteCount,
 				&e.FirstPage, &e.LastPage, &e.Cites)
 			if len(e.Cites) > 0 {
 				e.Cited.Cite = &e.Cites[0]
@@ -629,7 +621,7 @@ func (s *server) getCAPCaseCitations(ctx context.Context, id int64) ([]capCitati
 // graph cannot hold, and the citations behind its self-cites.
 func (s *server) getCAPCaseOtherLinks(ctx context.Context, id int64) ([]capOtherLink, int, error) {
 	other, err := collect(ctx, s.db, `
-		SELECT `+caseMetaColumns("x")+`, x.cite_count, x.pincite_only
+		SELECT `+caseMetaColumns("x")+`, x.cite_count
 		FROM opinion_citations.case_case_citations x
 		`+caseMetaJoins("x")+`
 		WHERE x.citing_case_id = $1::bigint AND x.source <> 'cap'
@@ -638,7 +630,7 @@ func (s *server) getCAPCaseOtherLinks(ctx context.Context, id int64) ([]capOther
 			var source, key, name, cite *string
 			var year *int
 			var l capOtherLink
-			if err := rows.Scan(&source, &key, &name, &year, &cite, &l.CiteCount, &l.PinciteOnly); err != nil {
+			if err := rows.Scan(&source, &key, &name, &year, &cite, &l.CiteCount); err != nil {
 				return l, err
 			}
 			if ref := caseRefFrom(source, key, name, year, cite); ref != nil {
@@ -670,8 +662,9 @@ func (s *server) getCAPCaseOtherLinks(ctx context.Context, id int64) ([]capOther
 //     CAP cites, a page in the case's span counted from that cite's page, and a
 //     spelling that begins as that cite's reporter does, spaces and periods
 //     aside (Mo. l. c. for Mo., Texas for Tex., 12 Wheat. 441 for 12 Wheat.
-//     419): the cite was found, often as a pin cite or under a spelling the
-//     linker did not resolve to this case.
+//     419): the cite was found, as a pin cite to an interior page, which the
+//     linker does not resolve (#393), or under a spelling it did not resolve
+//     to this case.
 //  3. in_text: one of the case's cites occurs in an opinion's text, so the
 //     detector missed it.
 //  4. not_in_text: none of them occurs in the opinions, so CAP's graph read
@@ -779,10 +772,9 @@ func citePattern(cite string) *regexp.Regexp {
 // capReporterEdge is one edge to the reporter that one graph has and the other
 // lacks.
 type capReporterEdge struct {
-	Citing      CaseRef
-	Cited       CaseRef
-	PinciteOnly bool
-	Raws        []string // ours side: the strings we linked
+	Citing CaseRef
+	Cited  CaseRef
+	Raws   []string // ours side: the strings we linked
 }
 
 // CitingGraphURL is the citing case's comparison page.
@@ -876,9 +868,9 @@ func (s *server) loadCAPReporter(ctx context.Context, p *capReporterPage, page i
 	var a agreement
 	err := s.db.QueryRow(ctx, `
 		SELECT coalesce(sum(in_both), 0)::bigint, coalesce(sum(ours_only), 0)::bigint,
-		       coalesce(sum(theirs_only), 0)::bigint, coalesce(sum(ours_only_pincite), 0)::bigint
+		       coalesce(sum(theirs_only), 0)::bigint
 		FROM opinion_citations.cap_graph_agreement WHERE cited_reporter = $1`, p.ID).
-		Scan(&a.InBoth, &a.OursOnly, &a.TheirsOnly, &a.OursOnlyPincite)
+		Scan(&a.InBoth, &a.OursOnly, &a.TheirsOnly)
 	if err != nil {
 		return fmt.Errorf("reporter totals: %w", err)
 	}
@@ -915,7 +907,7 @@ func (s *server) loadCAPReporter(ctx context.Context, p *capReporterPage, page i
 	// than from the cited case's links, which can run to thousands.
 	p.Edges, err = collect(ctx, s.db, `
 		WITH page AS (
-		  SELECT citing_case_id, cited_case_id, coalesce(pincite_only, false) AS pincite_only
+		  SELECT citing_case_id, cited_case_id
 		  FROM opinion_citations.cap_graph_edges
 		  WHERE cited_reporter = $1 AND in_ours = $2 AND in_ours <> in_theirs
 		  ORDER BY cited_case_id, citing_case_id
@@ -923,7 +915,6 @@ func (s *server) loadCAPReporter(ctx context.Context, p *capReporterPage, page i
 		)
 		SELECT c.id::text, c.name_abbreviation, c.decision_year, ccite.cite,
 		       k.id::text, k.name_abbreviation, k.decision_year, kcite.cite,
-		       p.pincite_only,
 		       CASE WHEN $2 THEN (
 		         SELECT array_agg(DISTINCT cu.raw ORDER BY cu.raw)
 		         FROM opinion_citations.citations_unlinked cu
@@ -946,7 +937,7 @@ func (s *server) loadCAPReporter(ctx context.Context, p *capReporterPage, page i
 		func(rows pgx.Rows) (capReporterEdge, error) {
 			e := capReporterEdge{Citing: CaseRef{Source: "cap"}, Cited: CaseRef{Source: "cap"}}
 			return e, rows.Scan(&e.Citing.ID, &e.Citing.Name, &e.Citing.Year, &e.Citing.Cite,
-				&e.Cited.ID, &e.Cited.Name, &e.Cited.Year, &e.Cited.Cite, &e.PinciteOnly, &e.Raws)
+				&e.Cited.ID, &e.Cited.Name, &e.Cited.Year, &e.Cited.Cite, &e.Raws)
 		})
 	if err != nil {
 		return fmt.Errorf("reporter's edges: %w", err)

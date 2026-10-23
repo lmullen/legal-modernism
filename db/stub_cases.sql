@@ -16,8 +16,8 @@
 --      A reporter with a single real link, or a single miss at a deeper tier
 --      (volume_absent, page_absent), is a coverage problem for that source,
 --      not a candidate for stubs; #248 restricts stubs to reporters we will
---      never have a dataset for, so that pin cites into cases we do hold are
---      never minted as new cases.
+--      never have a dataset for, so that a pin cite into a case we do hold
+--      (a page_absent miss since #393) is never minted as a new case.
 --
 --   2. It carries a volume and a page. A volume-less citation to a
 --      multi-volume reporter identifies nothing; for a single-volume reporter

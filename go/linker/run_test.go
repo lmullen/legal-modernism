@@ -60,7 +60,7 @@ func batchOf(n int) []citations.UnlinkedCitation {
 func TestRun(t *testing.T) {
 	std := "U.S."
 	tables := NewTables(map[string]*citations.WhitelistEntry{"U.S.": {ReporterStandard: &std}},
-		nil, map[string]int64{"5 U.S. 10": 111}, nil, nil, nil, nil, nil, nil, nil, nil, Years{})
+		nil, map[string]int64{"5 U.S. 10": 111}, nil, nil, nil, nil, nil, nil, Years{})
 
 	src := &memLedger{
 		batches:  [][]citations.UnlinkedCitation{batchOf(3), batchOf(2), batchOf(4)},
@@ -81,7 +81,7 @@ func TestRun(t *testing.T) {
 // TestRunClampsOptions pins that the zero Options still run: without the
 // clamp a Workers of 0 left the stream with nobody to receive from it.
 func TestRunClampsOptions(t *testing.T) {
-	tables := NewTables(map[string]*citations.WhitelistEntry{}, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, Years{})
+	tables := NewTables(map[string]*citations.WhitelistEntry{}, nil, nil, nil, nil, nil, nil, nil, nil, Years{})
 	src := &memLedger{batches: [][]citations.UnlinkedCitation{batchOf(3)}}
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -91,7 +91,7 @@ func TestRunClampsOptions(t *testing.T) {
 }
 
 func TestRunReturnsStreamError(t *testing.T) {
-	tables := NewTables(map[string]*citations.WhitelistEntry{}, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, Years{})
+	tables := NewTables(map[string]*citations.WhitelistEntry{}, nil, nil, nil, nil, nil, nil, nil, nil, Years{})
 	src := &memLedger{batches: [][]citations.UnlinkedCitation{batchOf(1)}, streamErr: errors.New("connection lost")}
 	sum, err := Run(context.Background(), tables, src, Options{BatchSize: 1, Workers: 1})
 	assert.EqualError(t, err, "connection lost")

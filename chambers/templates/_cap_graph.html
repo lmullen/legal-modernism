@@ -25,7 +25,7 @@
         <div class="col-md">
             <div class="stat-card" style="border-left-color:#0d9488">
                 <div class="big-number">{{num .Total.OursOnly}}</div>
-                <div class="big-label">Only ours: {{num .Total.OursOnlyPincite}} ({{pct .Total.OursOnlyPincite .Total.OursOnly}}) only through pin cites</div>
+                <div class="big-label">Only ours</div>
             </div>
         </div>
         <div class="col-md">
@@ -75,7 +75,6 @@
                     <th>Reporter</th>
                     <th class="num">In both</th>
                     <th class="num">Only ours</th>
-                    <th class="num">of which pin cites</th>
                     <th class="num">Only CAP's</th>
                     <th class="num">Recall</th>
                     <th class="num">Precision</th>
@@ -87,7 +86,6 @@
                     <td title="{{.Name}}">{{.Label}}</td>
                     <td class="num">{{num .InBoth}}</td>
                     <td class="num"><a href="{{.OursURL}}">{{num .OursOnly}}</a></td>
-                    <td class="num">{{num .OursOnlyPincite}}</td>
                     <td class="num"><a href="{{.TheirsURL}}">{{num .TheirsOnly}}</a></td>
                     <td class="num">{{.RecallPct}}</td>
                     <td class="num">{{.PrecisionPct}}</td>
@@ -313,7 +311,7 @@
                 <td class="title-col"><a href="{{.GraphURL}}">{{truncate .Display 60}}</a>{{if .Cite}} <span class="text-secondary">{{deref .Cite}}</span>{{end}}</td>
                 <td class="num">{{if .Year}}{{deref .Year}}{{else}}&mdash;{{end}}</td>
                 <td>{{ptrOr .Jurisdiction "&mdash;"}}</td>
-                <td class="num">{{if eq $side "ours"}}{{num .OursOnly}}{{if .OursOnlyPincite}} <span class="text-secondary" title="only through pin cites">({{num .OursOnlyPincite}} pin)</span>{{end}}{{else}}{{num .TheirsOnly}}{{end}}</td>
+                <td class="num">{{if eq $side "ours"}}{{num .OursOnly}}{{else}}{{num .TheirsOnly}}{{end}}</td>
                 <td class="num">{{num .InBoth}}</td>
             </tr>
         {{end}}

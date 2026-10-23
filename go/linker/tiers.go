@@ -81,9 +81,9 @@ func volumeKey(vol, reporter string) string {
 //
 // The volume stays a string because it is only ever compared with other cite
 // strings built the same way, and parsing it to int would add failure modes for
-// no gain. The page is parsed, because the range index orders and compares pages
-// numerically. A page that does not fit an int yields ok false rather than a
-// wrapped value.
+// no gain. The page is parsed so that a string whose last word is not a number
+// is refused as a cite; a page that does not fit an int yields ok false rather
+// than a wrapped value.
 func splitCite(cite string) (vol, reporter string, page int, ok bool) {
 	// A citation to a reporter cited by year leads with the year in brackets,
 	// "[1905] 2 K.B. 1". The year is carried on the reporter -- "[1905] K.B."
@@ -91,9 +91,8 @@ func splitCite(cite string) (vol, reporter string, page int, ok bool) {
 	// year-cited series is a different reporter from a volume-cited series of
 	// the same name. That is not hypothetical: "Q. B." is the English Reports'
 	// Queen's Bench of 1841-1852 and the Law Reports' Q.B. of 1891 on, and
-	// with the year stripped "[1895] 2 Q.B. 1" would reach the 1842 volume,
-	// count as present, and be range-matched to a case fifty years off
-	// (issue #314). No source holds a year-cited series, so a year-bearing
+	// with the year stripped "[1895] 2 Q.B. 1" would reach the 1842 volume and
+	// count as present (issue #314). No source holds a year-cited series, so a year-bearing
 	// probe finds no reporter and the cascade reports reporter_absent, which
 	// is the truth and is what lets the stub registry take the citation.
 	var year string
@@ -158,19 +157,18 @@ func carriesVolume(probes []string) bool {
 // and volume_absent otherwise. The reporter must be known first: a volume-less
 // citation to a reporter no source holds is still reporter_absent.
 //
-// span is what page-range matching concluded after every exact probe missed
-// (issue #242). It refines the page step rather than replacing the ladder, so
-// that every tier decision stays here instead of being scattered through the
-// cascade as early returns.
-//
 // ambiguous reports that an exact probe reached a cite several CAP cases share,
 // with more than one of them a possible match (issue #359). It is the US twin of
 // ukTier's flag and ranks with it, but it needs folding into what the index
 // found: the shared cites are kept out of the maps citeIndex is built from, so a
-// volume whose cites are all shared is unknown to it, as in spanReached.
-func usTier(probes []string, ix *citeIndex, diffvolsMissing, ambiguous bool, span rangeOutcome) string {
+// volume whose cites are all shared is unknown to it, and a probe that reached
+// one is itself proof of the reporter and the volume.
+//
+// The page step has no finer grain than page_absent: a page that is not a
+// first-page cite may be a pin cite into a case or a case the source lacks, and
+// the cascade no longer tries to tell them apart (issue #393).
+func usTier(probes []string, ix *citeIndex, diffvolsMissing, ambiguous bool) string {
 	reporter, volume := ix.reached(probes)
-	reporter, volume = spanReached(reporter, volume, span)
 	if ambiguous {
 		reporter, volume = true, true
 	}
@@ -183,10 +181,8 @@ func usTier(probes []string, ix *citeIndex, diffvolsMissing, ambiguous bool, spa
 		return citations.TierUSVolumeMissing
 	case !volume:
 		return citations.TierUSVolumeAbsent
-	case ambiguous || span == rangeAmbiguous:
+	case ambiguous:
 		return citations.TierUSPageAmbiguous
-	case span == rangeGap:
-		return citations.TierUSPageGap
 	default:
 		return citations.TierUSPageAbsent
 	}
@@ -202,13 +198,8 @@ func usTier(probes []string, ix *citeIndex, diffvolsMissing, ambiguous bool, spa
 // a probe that matched a key exactly, and every such key is in the index — but
 // the ladder is written in full so it stays correct if the index is ever built
 // from something other than the map the cascade probes.
-//
-// span is the page-range outcome, as in usTier. An exact ambiguity outranks a
-// range gap: a cite string the corpus actually holds says more about the citation
-// than a page falling in a hole under some other volume form of it.
-func ukTier(probes []string, ix *citeIndex, ambiguous bool, span rangeOutcome) string {
+func ukTier(probes []string, ix *citeIndex, ambiguous bool) string {
 	reporter, volume := ix.reached(probes)
-	reporter, volume = spanReached(reporter, volume, span)
 	switch {
 	case !reporter:
 		return citations.TierUKReporterAbsent
@@ -216,35 +207,9 @@ func ukTier(probes []string, ix *citeIndex, ambiguous bool, span rangeOutcome) s
 		return citations.TierUKVolumeMissing
 	case !volume:
 		return citations.TierUKVolumeAbsent
-	case ambiguous || span == rangeAmbiguous:
+	case ambiguous:
 		return citations.TierUKPageAmbiguous
-	case span == rangeGap:
-		return citations.TierUKPageGap
 	default:
 		return citations.TierUKPageAbsent
 	}
-}
-
-// spanReached folds a page-range outcome into what the cite index found. Any
-// outcome but rangeMiss is itself proof that the reporter and the volume were
-// reached: the span index is keyed on reporter and volume, so nothing short of a
-// matching key can produce one.
-//
-// The two can legitimately disagree, which is why this is needed at all. They are
-// built from different loads: citeIndex from the maps the exact cascade probes,
-// where LoadCAPCitations drops every cite belonging to more than one case, and
-// the span index from cap.citations directly, where those cites are deliberately
-// kept. A volume whose cites are all ambiguous is therefore absent from the first
-// and present in the second, and reporting it as volume_absent would be false.
-// (Measured on the live data this is 52 of 51,480 reporter-volume keys, so it
-// changes almost nothing in aggregate — but "almost nothing" is not a reason to
-// record a tier that is wrong.)
-//
-// The UK route's ambiguous flag needs no equivalent, because it is set by a hit
-// in the very map citeIndex is built from: if it is set, the index already agrees.
-func spanReached(reporter, volume bool, span rangeOutcome) (bool, bool) {
-	if span == rangeMiss {
-		return reporter, volume
-	}
-	return true, true
 }

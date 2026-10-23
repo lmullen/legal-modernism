@@ -9,8 +9,7 @@ import (
 )
 
 // Load reads every lookup table the cascade needs from store and assembles the
-// Tables, checking the page-range indexes before returning them. It logs each
-// step at INFO, as the drivers always have, because the loads take the first
+// Tables. It logs each step at INFO, as the drivers always have, because the loads take the first
 // minutes of a run and a log that goes quiet there cannot be told from a hang.
 // The error names the step that failed.
 //
@@ -94,20 +93,6 @@ func Load(ctx context.Context, store citations.LinkerStore) (*Tables, error) {
 		"unambiguous", erUnambiguous,
 		"ambiguous", len(erCites)-erUnambiguous)
 
-	slog.Info("loading CAP case page spans")
-	capSpans, err := store.LoadCAPCaseSpans(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("could not load CAP case page spans: %w", err)
-	}
-	slog.Info("loaded CAP case page spans", "entries", len(capSpans))
-
-	slog.Info("loading English Reports case page spans")
-	erSpans, err := store.LoadERCaseSpans(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("could not load English Reports case page spans: %w", err)
-	}
-	slog.Info("loaded English Reports case page spans", "entries", len(erSpans))
-
 	// The stub registry is built from the MOML linker's misses (make db-stubs),
 	// so on the first run after a re-detection it is empty or stale; that is
 	// expected, and the truncate-and-relink that follows db-stubs is what links
@@ -137,23 +122,12 @@ func Load(ctx context.Context, store citations.LinkerStore) (*Tables, error) {
 		"cap_cases", len(years.CAP), "code_cases", len(years.Code), "er_cases", len(years.ER))
 
 	// Assemble the lookup tables, which also walks every loaded cite string once
-	// to build the reporter/volume indexes a no_match is attributed with, and the
-	// page-range indexes that resolve pin cites.
+	// to build the reporter/volume indexes a no_match is attributed with.
 	slog.Info("indexing cite strings by reporter and volume")
-	t := NewTables(whitelist, diffvols, capCites, capShared, freelawCites, altAbbrs, codeCites, erCites, capSpans, erSpans, stubs, years)
+	t := NewTables(whitelist, diffvols, capCites, capShared, freelawCites, altAbbrs, codeCites, erCites, stubs, years)
 	stats := t.Stats()
 	slog.Info("indexed cite strings",
 		"us_reporters", stats.USReporters, "us_volumes", stats.USVolumes,
 		"uk_reporters", stats.UKReporters, "uk_volumes", stats.UKVolumes)
-
-	slog.Info("indexed case page spans",
-		"cap_volumes", stats.CAPVolumes, "cap_spans", stats.CAPSpans,
-		"er_volumes", stats.ERVolumes, "er_spans", stats.ERSpans)
-
-	// A malformed span index mislinks silently and at scale, so verify the
-	// invariant that has to hold by construction before any citation is linked.
-	if err := t.Check(); err != nil {
-		return nil, err
-	}
 	return t, nil
 }
