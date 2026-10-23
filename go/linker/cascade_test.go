@@ -27,6 +27,10 @@ func TestLinkCitation(t *testing.T) {
 	abrStd := "A.B.R."
 	ltStd := "L.T."
 	kbStd := "K.B."
+	southStd := "South."
+	njlCAP := "N.J.L."
+	hunStd := "Hun"
+	nyscCAP := "N.Y. Sup. Ct."
 
 	tests := []struct {
 		name         string
@@ -551,6 +555,65 @@ func TestLinkCitation(t *testing.T) {
 			capCites:   map[string]int64{"7 Stat. 31": 111},
 			wantStatus: citations.StatusNoMatch,
 			wantTier:   citations.TierUSDiffVolsMissing,
+		},
+		{
+			// Issue #357. Southard's Reports renumbers into N.J.L. and diffvols
+			// covers only its two volumes, so "18 South. 251" (in fact the
+			// Southern Reporter) has no translation. Probing it as "18 N.J.L.
+			// 251" reaches an unrelated New Jersey case, which must not link.
+			name:      "unmapped diffvols volume does not probe CAP under reporter_cap",
+			cite:      citations.UnlinkedCitation{ID: uuid.New(), Volume: ptr(18), ReporterAbbr: "South.", Page: 251},
+			whitelist: map[string]*citations.WhitelistEntry{"South.": {ReporterStandard: &southStd, ReporterCAP: &njlCAP, CAPDifferent: true}},
+			diffvols: map[string]map[int]*citations.DiffVolEntry{"South.": {
+				1: {CAPVol: 4, CAPReporter: "N.J.L."},
+				2: {CAPVol: 5, CAPReporter: "N.J.L."},
+			}},
+			capCites:     map[string]int64{"18 N.J.L. 251": 111},
+			freelawCites: map[string]int64{"18 N.J.L. 251": 222},
+			wantStatus:   citations.StatusNoMatch,
+			wantTier:     citations.TierUSDiffVolsMissing,
+		},
+		{
+			// A covered volume still links through the translated cite.
+			name:      "mapped diffvols volume links through the translated cite",
+			cite:      citations.UnlinkedCitation{ID: uuid.New(), Volume: ptr(1), ReporterAbbr: "South.", Page: 100},
+			whitelist: map[string]*citations.WhitelistEntry{"South.": {ReporterStandard: &southStd, ReporterCAP: &njlCAP, CAPDifferent: true}},
+			diffvols: map[string]map[int]*citations.DiffVolEntry{"South.": {
+				1: {CAPVol: 4, CAPReporter: "N.J.L."},
+			}},
+			capCites:   map[string]int64{"4 N.J.L. 100": 111, "1 N.J.L. 100": 333},
+			wantStatus: citations.StatusLinkedCAP,
+			wantTier:   citations.TierCAPDirect,
+			wantCAPID:  ptr(int64(111)),
+			wantLinked: ptr("4 N.J.L. 100"),
+		},
+		{
+			// An alternate spelling is probed in its own spelling, so it can still
+			// reach the case when the volume has no translation.
+			name:      "unmapped diffvols volume still links through an alternate spelling",
+			cite:      citations.UnlinkedCitation{ID: uuid.New(), Volume: ptr(18), ReporterAbbr: "South.", Page: 251},
+			whitelist: map[string]*citations.WhitelistEntry{"South.": {ReporterStandard: &southStd, ReporterCAP: &njlCAP, CAPDifferent: true}},
+			diffvols: map[string]map[int]*citations.DiffVolEntry{"South.": {
+				1: {CAPVol: 4, CAPReporter: "N.J.L."},
+			}},
+			altAbbrs:   map[string][]string{"South.": {"Southard"}},
+			capCites:   map[string]int64{"18 N.J.L. 251": 111, "18 Southard 251": 444},
+			wantStatus: citations.StatusLinkedCAP,
+			wantTier:   citations.TierCAPAltSpelling,
+			wantCAPID:  ptr(int64(444)),
+			wantLinked: ptr("18 Southard 251"),
+		},
+		{
+			// A reporter that renumbers nowhere is untouched: no diffvols rows, so
+			// its reporter_cap probe runs as before.
+			name:       "reporter without diffvols still probes reporter_cap",
+			cite:       citations.UnlinkedCitation{ID: uuid.New(), Volume: ptr(18), ReporterAbbr: "Hun", Page: 251},
+			whitelist:  map[string]*citations.WhitelistEntry{"Hun": {ReporterStandard: &hunStd, ReporterCAP: &nyscCAP}},
+			capCites:   map[string]int64{"18 N.Y. Sup. Ct. 251": 555},
+			wantStatus: citations.StatusLinkedCAP,
+			wantTier:   citations.TierCAPDirect,
+			wantCAPID:  ptr(int64(555)),
+			wantLinked: ptr("18 N.Y. Sup. Ct. 251"),
 		},
 		{
 			name:       "UK reporter at another volume is uk_volume_absent",

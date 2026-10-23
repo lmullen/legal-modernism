@@ -117,8 +117,20 @@ func linkCAPThenCode(
 		probes = append(probes, normalized, cleaned)
 		standard = append(standard, cleaned)
 
+		// When the reporter renumbers in CAP and no diffvols row covers this
+		// volume, normalized carries the untranslated volume under the CAP
+		// spelling, so a hit on it is some other case of that reporter rather
+		// than the one cited (issue #357): "18 South." (the Southern Reporter)
+		// was probed as "18 N.J.L." and linked to an 1841 New Jersey case. This
+		// made 24,708 CAP-ledger and 15,619 MOML links, and CAP's citation graph
+		// agreed with none of the largest groups. The CAP and FreeLaw probes on
+		// it are skipped, as range matching already is below; the alternate
+		// spellings and the Code Reporter still run, since they are probed in
+		// their own spellings.
+		untranslated := diffvolsMissing(f, entry, t.diffvols)
+
 		// Try CAP with the normalized cite
-		if caseID, ok := t.capCites[normalized]; ok && admits(gate, t.years.CAP, caseID) {
+		if caseID, ok := t.capCites[normalized]; ok && !untranslated && admits(gate, t.years.CAP, caseID) {
 			result.Status = citations.StatusLinkedCAP
 			result.MatchTier = citations.TierCAPDirect
 			result.CAPCaseID = &caseID
@@ -130,7 +142,7 @@ func linkCAPThenCode(
 		// is in our CAP data, this reaches the CAP case from the form we detected.
 		// The result is still a CAP link (status linked_cap), distinguished from a
 		// direct hit only by the tier.
-		if caseID, ok := t.freelawCites[normalized]; ok && admits(gate, t.years.CAP, caseID) {
+		if caseID, ok := t.freelawCites[normalized]; ok && !untranslated && admits(gate, t.years.CAP, caseID) {
 			result.Status = citations.StatusLinkedCAP
 			result.MatchTier = citations.TierCAPFreelaw
 			result.CAPCaseID = &caseID
