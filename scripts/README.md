@@ -54,17 +54,23 @@ For the CAP opinions, `--corpus cap`, the phases keep their names so that
 | `sync` | As above | local | a minute |
 | `truncate-citations` | `TRUNCATE opinion_citations.citations_unlinked CASCADE`, which also empties `opinion_citations.citation_links` | local psql | seconds |
 | `detect` | `sbatch` `cite-detector-cap`, wait, fetch its log | hopper | a few minutes of scanning (3m10s on 2026-09-26) plus the wait for a bigmem node |
-| `truncate-links` | `TRUNCATE opinion_citations.citation_links`; a no-op in a full run after the CASCADE, kept so that `--from truncate-links` relinks | local psql | seconds |
 | `link` | `sbatch` `cite-linker-cap`, wait, fetch its log | hopper | minutes: about 6.5M citations at 100K+ rows a second, after the lookup tables load |
+| `stubs` | `make db-stubs`, the same script | local psql | a few minutes |
+| `truncate-links` | `TRUNCATE opinion_citations.citation_links` | local psql | seconds |
+| `relink` | `sbatch` `cite-linker-cap` again | hopper | minutes |
 | `maintenance` | `make db-maintenance`, the same script: it vacuums the churned tables and refreshes every materialized view in the database, MOML's included | local psql | about 12 minutes |
 
-There is no `stubs` or `relink` phase for CAP. `make db-stubs` builds
-`legalhist.stub_cases` from the MOML linker's misses only, so the registry is
-read-only for this corpus: `cite-linker-cap` links to the stubs that exist and
-CAP misses never add any. The dependency runs the other way: a MOML `stubs`
-phase can prune stubs that CAP `linked_stub` rows point at (nothing enforces
-the reference), so a MOML run that rebuilds the stubs should be followed by
-`./scripts/pipeline.sh --corpus cap --from truncate-links`.
+The stub registry, `legalhist.stub_cases`, is built from the misses of both
+corpora (issue #346): `make db-stubs` judges a reporter's eligibility across
+both ledgers and counts a string's citations across both corpora. So the
+`stubs` phase of either corpus's run changes the registry the other corpus
+links to. It can prune a stub the other corpus's `linked_stub` rows point at
+(nothing enforces the reference), and it can mint stubs the other corpus's
+misses could link to. `make db-stubs` ends by printing the stale stub links in
+each ledger, and the phase logs the command that relinks the other corpus:
+follow a MOML rebuild with `./scripts/pipeline.sh --corpus cap --from
+truncate-links`, and a CAP one with `./scripts/pipeline.sh --from
+truncate-links`.
 
 A CAP job and a MOML job must never run at the same time. The database
 allows 97 non-superuser connections (`max_connections` 100, 3 reserved); a
@@ -130,7 +136,7 @@ On hopper:
 
 `STUB_THRESHOLD` in the environment passes through to `make db-stubs`
 (default 5). `--from` and `--job` are checked against the phases of the
-corpus chosen, so `--corpus cap --from stubs` is an unknown phase.
+corpus chosen.
 
 ### Recipes
 
@@ -153,7 +159,8 @@ A routine incremental link of new citations, then maintenance:
 ```
 
 The CAP corpus end to end, and a CAP relink after a whitelist or linker
-change or after a MOML run rebuilt the stubs:
+change or after a MOML run rebuilt the stubs (after a CAP run rebuilt them,
+relink MOML with `--from truncate-links`):
 
 ```
 caffeinate -i ./scripts/pipeline.sh --corpus cap
