@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jackc/pgx/v4"
+	"github.com/jackc/pgx/v5"
 )
 
 // Cases are ranked by the treatise editions that cite them (case_edition_counts)
