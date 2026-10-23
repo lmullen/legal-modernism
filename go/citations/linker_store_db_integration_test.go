@@ -383,6 +383,59 @@ func TestLoadReporterAltAbbrsIntegration(t *testing.T) {
 	}
 }
 
+// TestGetReporterWhitelistFallbackIntegration checks that a whitelist row's
+// fallback_standard arrives as a Fallback entry describing the fallback
+// reporter, not the spelling's own (issue #358).
+func TestGetReporterWhitelistFallbackIntegration(t *testing.T) {
+	s := newTestStore(t)
+	ctx := context.Background()
+
+	setup := []string{
+		`DROP SCHEMA IF EXISTS legalhist CASCADE`,
+		`CREATE SCHEMA legalhist`,
+		`CREATE TABLE legalhist.reporters (
+			reporter_standard text PRIMARY KEY, jurisdiction text, single_vol boolean,
+			type text, reporter_cap text, cited_by_year_from integer
+		)`,
+		`CREATE TABLE legalhist.reporters_diffvols (reporter_standard text NOT NULL, vol integer, cap_vol integer, cap_reporter text)`,
+		`CREATE TABLE legalhist.whitelist (
+			reporter_found text PRIMARY KEY,
+			reporter_standard text REFERENCES legalhist.reporters(reporter_standard),
+			junk boolean NOT NULL,
+			fallback_standard text REFERENCES legalhist.reporters(reporter_standard)
+		)`,
+		`INSERT INTO legalhist.reporters (reporter_standard, jurisdiction, reporter_cap) VALUES
+			('Den', 'uk:cr', NULL), ('Denio', 'us:ny', NULL), ('Howard', 'us:ms', NULL), ('How.', 'us:us', NULL)`,
+		`INSERT INTO legalhist.reporters_diffvols VALUES ('How.', 1, 42, 'U.S.')`,
+		`INSERT INTO legalhist.whitelist (reporter_found, reporter_standard, junk, fallback_standard) VALUES
+			('Den.', 'Den', false, 'Denio'),
+			('Howard', 'Howard', false, 'How.'),
+			('Denio', 'Denio', false, NULL)`,
+	}
+	for _, stmt := range setup {
+		_, err := s.DB.Exec(ctx, stmt)
+		require.NoError(t, err, "setup: %s", stmt)
+	}
+
+	got, err := s.GetReporterWhitelist(ctx)
+	require.NoError(t, err)
+
+	den := got["Den."]
+	require.NotNil(t, den)
+	assert.True(t, den.UK, "the spelling's own reporter is English")
+	require.NotNil(t, den.Fallback)
+	assert.Equal(t, "Denio", *den.Fallback.ReporterStandard)
+	assert.False(t, den.Fallback.UK, "the fallback describes its own reporter")
+
+	howard := got["Howard"]
+	require.NotNil(t, howard)
+	assert.False(t, howard.CAPDifferent)
+	require.NotNil(t, howard.Fallback)
+	assert.True(t, howard.Fallback.CAPDifferent, "the fallback's diffvols are its own")
+
+	assert.Nil(t, got["Denio"].Fallback, "a row without a fallback has none")
+}
+
 func TestLoadCAPCitationsIntegration(t *testing.T) {
 	s := newTestStore(t)
 	ctx := context.Background()

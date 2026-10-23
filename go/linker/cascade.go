@@ -37,10 +37,55 @@ func linkCitation(c *citations.UnlinkedCitation, t *Tables) *citations.LinkResul
 	// derefs below rather than silently producing no_match.
 
 	// Step 2: route by UK flag
+	result = route(c, entry, t, result)
+
+	// Step 3: a spelling that can mean another reporter tries that one, but
+	// only after a miss that says this was the wrong reporter (issue #358).
+	if entry.Fallback != nil && result.Status == citations.StatusNoMatch && fallsBack(result.MatchTier) {
+		fb := route(c, entry.Fallback, t, &citations.LinkResult{CitationID: c.ID})
+		if linkedToSource(fb.Status) {
+			return fb
+		}
+	}
+	return result
+}
+
+// route sends a citation down the English Reports or the US cascade by its
+// reporter's jurisdiction.
+func route(c *citations.UnlinkedCitation, entry *citations.WhitelistEntry, t *Tables, result *citations.LinkResult) *citations.LinkResult {
 	if entry.UK {
 		return linkEnglishReports(c, entry, t, result)
 	}
 	return linkCAPThenCode(c, entry, t, result)
+}
+
+// fallsBack reports whether a no_match tier says the citation probably names
+// some other reporter, so that a spelling's fallback reading is worth trying.
+// The volume is not one the reporter has, or its numbering has no row for it,
+// or the case found was decided after the citing document: "10 Howard" cannot
+// be Howard's seven volumes of Mississippi Reports, and "1 Stew." in an 1850
+// Alabama opinion cannot be Stewart's New Jersey Equity Reports of 1877. A page
+// tier is no such evidence, since the reporter and volume were found, and
+// probing another reporter at that volume and page would be a guess.
+func fallsBack(tier string) bool {
+	switch tier {
+	case citations.TierUSDiffVolsMissing, citations.TierUSVolumeAbsent, citations.TierUSAnachronistic,
+		citations.TierUKVolumeAbsent, citations.TierUKAnachronistic:
+		return true
+	}
+	return false
+}
+
+// linkedToSource reports whether a status is a link to a case some source holds.
+// A fallback reading's stub link does not count: the registry is built from
+// the misses of each spelling's own reading, so a stub reached through the
+// fallback is not evidence that the fallback is what the citation meant.
+func linkedToSource(status string) bool {
+	switch status {
+	case citations.StatusLinkedCAP, citations.StatusLinkedEnglishReports, citations.StatusLinkedCodeReporter:
+		return true
+	}
+	return false
 }
 
 // linkCAPThenCode tries CAP first, then the FreeLaw parallel-citation crosswalk
