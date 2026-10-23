@@ -162,9 +162,18 @@ func carriesVolume(probes []string) bool {
 // (issue #242). It refines the page step rather than replacing the ladder, so
 // that every tier decision stays here instead of being scattered through the
 // cascade as early returns.
-func usTier(probes []string, ix *citeIndex, diffvolsMissing bool, span rangeOutcome) string {
+//
+// ambiguous reports that an exact probe reached a cite several CAP cases share,
+// with more than one of them a possible match (issue #359). It is the US twin of
+// ukTier's flag and ranks with it, but it needs folding into what the index
+// found: the shared cites are kept out of the maps citeIndex is built from, so a
+// volume whose cites are all shared is unknown to it, as in spanReached.
+func usTier(probes []string, ix *citeIndex, diffvolsMissing, ambiguous bool, span rangeOutcome) string {
 	reporter, volume := ix.reached(probes)
 	reporter, volume = spanReached(reporter, volume, span)
+	if ambiguous {
+		reporter, volume = true, true
+	}
 	switch {
 	case !reporter:
 		return citations.TierUSReporterAbsent
@@ -174,7 +183,7 @@ func usTier(probes []string, ix *citeIndex, diffvolsMissing bool, span rangeOutc
 		return citations.TierUSVolumeMissing
 	case !volume:
 		return citations.TierUSVolumeAbsent
-	case span == rangeAmbiguous:
+	case ambiguous || span == rangeAmbiguous:
 		return citations.TierUSPageAmbiguous
 	case span == rangeGap:
 		return citations.TierUSPageGap

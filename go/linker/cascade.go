@@ -37,10 +37,55 @@ func linkCitation(c *citations.UnlinkedCitation, t *Tables) *citations.LinkResul
 	// derefs below rather than silently producing no_match.
 
 	// Step 2: route by UK flag
+	result = route(c, entry, t, result)
+
+	// Step 3: a spelling that can mean another reporter tries that one, but
+	// only after a miss that says this was the wrong reporter (issue #358).
+	if entry.Fallback != nil && result.Status == citations.StatusNoMatch && fallsBack(result.MatchTier) {
+		fb := route(c, entry.Fallback, t, &citations.LinkResult{CitationID: c.ID})
+		if linkedToSource(fb.Status) {
+			return fb
+		}
+	}
+	return result
+}
+
+// route sends a citation down the English Reports or the US cascade by its
+// reporter's jurisdiction.
+func route(c *citations.UnlinkedCitation, entry *citations.WhitelistEntry, t *Tables, result *citations.LinkResult) *citations.LinkResult {
 	if entry.UK {
 		return linkEnglishReports(c, entry, t, result)
 	}
 	return linkCAPThenCode(c, entry, t, result)
+}
+
+// fallsBack reports whether a no_match tier says the citation probably names
+// some other reporter, so that a spelling's fallback reading is worth trying.
+// The volume is not one the reporter has, or its numbering has no row for it,
+// or the case found was decided after the citing document: "10 Howard" cannot
+// be Howard's seven volumes of Mississippi Reports, and "1 Stew." in an 1850
+// Alabama opinion cannot be Stewart's New Jersey Equity Reports of 1877. A page
+// tier is no such evidence, since the reporter and volume were found, and
+// probing another reporter at that volume and page would be a guess.
+func fallsBack(tier string) bool {
+	switch tier {
+	case citations.TierUSDiffVolsMissing, citations.TierUSVolumeAbsent, citations.TierUSAnachronistic,
+		citations.TierUKVolumeAbsent, citations.TierUKAnachronistic:
+		return true
+	}
+	return false
+}
+
+// linkedToSource reports whether a status is a link to a case some source holds.
+// A fallback reading's stub link does not count: the registry is built from
+// the misses of each spelling's own reading, so a stub reached through the
+// fallback is not evidence that the fallback is what the citation meant.
+func linkedToSource(status string) bool {
+	switch status {
+	case citations.StatusLinkedCAP, citations.StatusLinkedEnglishReports, citations.StatusLinkedCodeReporter:
+		return true
+	}
+	return false
 }
 
 // linkCAPThenCode tries CAP first, then the FreeLaw parallel-citation crosswalk
@@ -108,6 +153,11 @@ func linkCAPThenCode(
 	// the rest of the cascade still runs and can reach a case of the right date.
 	gate := newYearGate(c)
 
+	// Set when an exact probe reached a cite several CAP cases share and more
+	// than one of them could be the case cited, so the miss is reported as an
+	// ambiguity rather than as a page no case begins on (issue #359).
+	ambiguous := false
+
 	// Run the whole cascade for the form we detected before trying the volume
 	// variant, so an existing link can never be rewired: the variant only ever
 	// turns a no_match into a link.
@@ -117,8 +167,20 @@ func linkCAPThenCode(
 		probes = append(probes, normalized, cleaned)
 		standard = append(standard, cleaned)
 
+		// When the reporter renumbers in CAP and no diffvols row covers this
+		// volume, normalized carries the untranslated volume under the CAP
+		// spelling, so a hit on it is some other case of that reporter rather
+		// than the one cited (issue #357): "18 South." (the Southern Reporter)
+		// was probed as "18 N.J.L." and linked to an 1841 New Jersey case. This
+		// made 24,708 CAP-ledger and 15,619 MOML links, and CAP's citation graph
+		// agreed with none of the largest groups. The CAP and FreeLaw probes on
+		// it are skipped, as range matching already is below; the alternate
+		// spellings and the Code Reporter still run, since they are probed in
+		// their own spellings.
+		untranslated := diffvolsMissing(f, entry, t.diffvols)
+
 		// Try CAP with the normalized cite
-		if caseID, ok := t.capCites[normalized]; ok && admits(gate, t.years.CAP, caseID) {
+		if caseID, ok := t.capCites[normalized]; ok && !untranslated && admits(gate, t.years.CAP, caseID) {
 			result.Status = citations.StatusLinkedCAP
 			result.MatchTier = citations.TierCAPDirect
 			result.CAPCaseID = &caseID
@@ -126,11 +188,37 @@ func linkCAPThenCode(
 			return result
 		}
 
+		// A cite several CAP cases share, which capCites leaves out (issue #359).
+		// The cases that begin on one page are nearly always a decision of some
+		// length and one or more memorandum decisions of a page or less, printed
+		// in the space the longer one leaves: 89 Ga. 645 is Reese v. Reese, nine
+		// pages, beside Summers v. State, one. A citation to the page means the
+		// decision that fills it, so the citation links to the longest of the
+		// cases the year gate admits; the gate is applied here as it is to every
+		// other hit, not as the tie-breaker. When the longest is not unique, as
+		// in a table of one-page decisions (61 Kan. 859 holds eleven), nothing in
+		// the cite tells them apart: an honest ambiguity, and the cascade goes on
+		// in case another form or source resolves it. Skipped for an untranslated
+		// diffvols volume, for the same reason range matching is: the cite
+		// belongs to some other volume.
+		if shared, ok := t.capShared[normalized]; ok && !untranslated {
+			left := admitted(gate, t.years.CAP, shared)
+			if caseID, ok := longest(left); ok {
+				result.Status = citations.StatusLinkedCAP
+				result.MatchTier = citations.TierCAPSharedLongest
+				result.CAPCaseID = &caseID
+				result.CiteLinked = &normalized
+				return result
+			} else if len(left) > 1 {
+				ambiguous = true
+			}
+		}
+
 		// Fall back to the FreeLaw crosswalk: if any parallel form of this decision
 		// is in our CAP data, this reaches the CAP case from the form we detected.
 		// The result is still a CAP link (status linked_cap), distinguished from a
 		// direct hit only by the tier.
-		if caseID, ok := t.freelawCites[normalized]; ok && admits(gate, t.years.CAP, caseID) {
+		if caseID, ok := t.freelawCites[normalized]; ok && !untranslated && admits(gate, t.years.CAP, caseID) {
 			result.Status = citations.StatusLinkedCAP
 			result.MatchTier = citations.TierCAPFreelaw
 			result.CAPCaseID = &caseID
@@ -225,7 +313,7 @@ func linkCAPThenCode(
 	// misses are coverage gaps or pin cites, which the registry is built to
 	// exclude -- checking the tier here rather than trusting the registry keeps
 	// that true even when the registry is stale.
-	tier := usTier(probes, t.us, missingDiffvols, span)
+	tier := usTier(probes, t.us, missingDiffvols, ambiguous, span)
 	if tier == citations.TierUSReporterAbsent {
 		if cite, ok := t.stubs.lookup(standard); ok {
 			return linkStub(result, cite)

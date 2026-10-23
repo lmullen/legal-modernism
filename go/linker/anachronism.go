@@ -71,3 +71,48 @@ func admits[K comparable](g *yearGate, years map[K]int, id K) bool {
 	}
 	return true
 }
+
+// admitted returns the cases among those sharing a cite that the gate admits
+// (issue #359). Only a refusal of every one of them counts as a refusal on the
+// gate: when some are admitted the cite was not answered by cases too late to
+// be cited but by several that could be, and recording a refusal would
+// misreport that as anachronistic.
+func admitted(g *yearGate, years map[int64]int, cases []citations.SharedCase) []citations.SharedCase {
+	probe := *g
+	var out []citations.SharedCase
+	for _, sc := range cases {
+		if admits(&probe, years, sc.ID) {
+			out = append(out, sc)
+		}
+	}
+	if len(out) == 0 && probe.refused {
+		g.refused = true
+	}
+	return out
+}
+
+// longest returns the case among cases that occupies the most pages, and
+// whether there is exactly one such case (issue #359). The cases that begin on
+// one page are a decision of some length and the memorandum decisions printed
+// in the space it leaves, so the longest is the one a citation to the page
+// means. Two cases of equal length, as in a table of one-page decisions, cannot
+// be told apart this way, and neither can cases whose length CAP does not
+// record, which all count as 0 pages; a lone case is the longest trivially.
+func longest(cases []citations.SharedCase) (int64, bool) {
+	if len(cases) == 0 {
+		return 0, false
+	}
+	best, tie := cases[0], false
+	for _, sc := range cases[1:] {
+		switch {
+		case sc.Pages > best.Pages:
+			best, tie = sc, false
+		case sc.Pages == best.Pages:
+			tie = true
+		}
+	}
+	if tie {
+		return 0, false
+	}
+	return best.ID, true
+}

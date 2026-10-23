@@ -41,7 +41,11 @@ func newTestOpinionDBStore(t *testing.T) *DBStore {
 			reporter_abbr text NOT NULL,
 			page integer NOT NULL,
 			year integer,
-			created_at timestamp without time zone NOT NULL
+			created_at timestamp without time zone NOT NULL,
+			case_name text,
+			case_name_source text,
+			CONSTRAINT chk_citations_unlinked_case_name_source CHECK (case_name_source IS NULL OR case_name_source IN ('direct', 'parallel', 'table')),
+			CONSTRAINT chk_citations_unlinked_case_name_pair CHECK ((case_name IS NULL) = (case_name_source IS NULL))
 		)`,
 		`CREATE UNIQUE INDEX citations_unlinked_uq
 			ON opinion_citations.citations_unlinked

@@ -31,9 +31,19 @@ func (s *LinkerDBStore) GetReporterWhitelist(ctx context.Context) (map[string]*W
 		) AS cap_different,
 		COALESCE(r.single_vol, false) AS single_vol,
 		COALESCE(r.type = 'statute', false) AS statute,
-		COALESCE(r.cited_by_year_from, 0) AS cited_by_year_from
+		COALESCE(r.cited_by_year_from, 0) AS cited_by_year_from,
+		w.fallback_standard,
+		f.reporter_cap AS fallback_cap,
+		COALESCE(f.jurisdiction LIKE 'uk%', false) AS fallback_uk,
+		EXISTS (
+			SELECT 1 FROM legalhist.reporters_diffvols d
+			WHERE d.reporter_standard = w.fallback_standard
+		) AS fallback_cap_different,
+		COALESCE(f.single_vol, false) AS fallback_single_vol,
+		COALESCE(f.cited_by_year_from, 0) AS fallback_cited_by_year_from
 	FROM legalhist.whitelist w
 	LEFT JOIN legalhist.reporters r ON r.reporter_standard = w.reporter_standard
+	LEFT JOIN legalhist.reporters f ON f.reporter_standard = w.fallback_standard
 	`
 	rows, err := s.DB.Query(ctx, query)
 	if err != nil {
@@ -44,10 +54,14 @@ func (s *LinkerDBStore) GetReporterWhitelist(ctx context.Context) (map[string]*W
 	whitelist := make(map[string]*WhitelistEntry)
 	for rows.Next() {
 		var found string
-		var e WhitelistEntry
-		err := rows.Scan(&found, &e.ReporterStandard, &e.ReporterCAP, &e.Junk, &e.UK, &e.CAPDifferent, &e.SingleVol, &e.Statute, &e.CitedByYearFrom)
+		var e, fb WhitelistEntry
+		err := rows.Scan(&found, &e.ReporterStandard, &e.ReporterCAP, &e.Junk, &e.UK, &e.CAPDifferent, &e.SingleVol, &e.Statute, &e.CitedByYearFrom,
+			&fb.ReporterStandard, &fb.ReporterCAP, &fb.UK, &fb.CAPDifferent, &fb.SingleVol, &fb.CitedByYearFrom)
 		if err != nil {
 			return nil, fmt.Errorf("scanning reporter whitelist row: %w", err)
+		}
+		if fb.ReporterStandard != nil {
+			e.Fallback = &fb
 		}
 		whitelist[found] = &e
 	}
@@ -139,6 +153,65 @@ func (s *LinkerDBStore) LoadCAPCitations(ctx context.Context) (map[string]int64,
 	}
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("iterating CAP citations: %w", err)
+	}
+	return m, nil
+}
+
+// LoadCAPSharedCitations loads the cites LoadCAPCitations drops: each cite that
+// belongs to more than one CAP case, with the distinct cases it belongs to and
+// how many pages each occupies, longest first and then by ID. Measured
+// 2026-10-20, these sit behind 108,357 CAP-ledger misses that were reported as
+// us_page_absent, and 304,943 MOML misses (2026-10-23), nearly all of them a
+// case and one or more one-page memorandum decisions beginning on the same page
+// (issue #359). The page count is CAP's own, last_page - first_page + 1, taken
+// as 0 when either page is missing or the range is inverted, so a case CAP
+// knows nothing about the length of ranks below every case it does.
+func (s *LinkerDBStore) LoadCAPSharedCitations(ctx context.Context) (map[string][]SharedCase, error) {
+	query := `
+	WITH shared AS (
+		SELECT DISTINCT cite, "case"
+		FROM cap.citations
+		WHERE cite IN (
+			SELECT cite FROM cap.citations GROUP BY cite HAVING count(DISTINCT "case") > 1
+		)
+	),
+	sized AS (
+		SELECT sh.cite, sh."case" AS case_id,
+		       CASE WHEN c.last_page >= c.first_page THEN c.last_page - c.first_page + 1 ELSE 0 END AS pages
+		FROM shared sh
+		LEFT JOIN cap.cases c ON c.id = sh."case"
+	)
+	SELECT cite,
+	       array_agg(case_id ORDER BY pages DESC, case_id) AS case_ids,
+	       array_agg(pages ORDER BY pages DESC, case_id) AS pages
+	FROM sized
+	GROUP BY cite
+	`
+	rows, err := s.DB.Query(ctx, query)
+	if err != nil {
+		return nil, fmt.Errorf("loading shared CAP citations: %w", err)
+	}
+	defer rows.Close()
+
+	m := make(map[string][]SharedCase)
+	for rows.Next() {
+		var cite string
+		var caseIDs []int64
+		var pages []int32
+		if err := rows.Scan(&cite, &caseIDs, &pages); err != nil {
+			return nil, fmt.Errorf("scanning shared CAP citation: %w", err)
+		}
+		if len(pages) != len(caseIDs) {
+			return nil, fmt.Errorf("scanning shared CAP citation %q: %d cases but %d page counts", cite, len(caseIDs), len(pages))
+		}
+		cases := make([]SharedCase, len(caseIDs))
+		for i := range caseIDs {
+			cases[i] = SharedCase{ID: caseIDs[i], Pages: int(pages[i])}
+		}
+		m[cite] = cases
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("iterating shared CAP citations: %w", err)
 	}
 	return m, nil
 }
