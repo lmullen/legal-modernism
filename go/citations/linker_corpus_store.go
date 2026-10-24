@@ -167,6 +167,10 @@ func linksInsertSQL(table string) string {
 	ON CONFLICT (citation_id) DO NOTHING`
 }
 
+// streamPlanSQL is run before the stream query, in its transaction; see
+// StreamUnprocessedCitations.
+const streamPlanSQL = `SET LOCAL enable_nestloop = off`
+
 // StreamUnprocessedCitations runs a single anti-join over the whole
 // citations_unlinked table, streaming every citation not yet in citation_links
 // to fn in batches of at most batchSize.
@@ -183,11 +187,31 @@ func linksInsertSQL(table string) string {
 // were unprocessed when the query began — concurrent inserts by the worker
 // connections are invisible to it. Callers MUST apply backpressure inside fn;
 // the whole table is read as fast as fn accepts batches.
+//
+// The query runs in a read-only transaction with nested loops turned off
+// (streamPlanSQL), so the planner must use the hash anti-join that reads
+// citation_links once. The stream is planned once, when it starts, and in a
+// relink that is seconds after TRUNCATE citation_links, when the statistics
+// say the table is empty and a nested loop that rescans it for every citation
+// looks cheapest. Then every probe rescans a table the workers are filling,
+// and the run slows without limit: on 2026-10-24 job 2920626 fell from 1,066
+// to 99 rows a second and linked 344,000 citations in its hour, where the
+// resubmitted job, planned after autovacuum had analyzed the table, linked the
+// other 54.2M in six minutes.
 func (s *CorpusStore) StreamUnprocessedCitations(ctx context.Context, batchSize int, fn func([]UnlinkedCitation) error) error {
 	if err := s.Prepare(ctx); err != nil {
 		return fmt.Errorf("preparing to stream unprocessed citations: %w", err)
 	}
-	rows, err := s.DB.Query(ctx, s.stream)
+	tx, err := s.DB.BeginTx(ctx, pgx.TxOptions{AccessMode: pgx.ReadOnly})
+	if err != nil {
+		return fmt.Errorf("opening the stream's transaction: %w", err)
+	}
+	// Nothing is written in it, so a rollback is the end of it either way.
+	defer func() { _ = tx.Rollback(context.Background()) }()
+	if _, err := tx.Exec(ctx, streamPlanSQL); err != nil {
+		return fmt.Errorf("setting the stream's plan: %w", err)
+	}
+	rows, err := tx.Query(ctx, s.stream)
 	if err != nil {
 		return fmt.Errorf("streaming unprocessed citations: %w", err)
 	}
