@@ -19,8 +19,8 @@ caffeinate -i ./scripts/pipeline.sh
 caffeinate -i ./scripts/pipeline.sh --corpus cap
 ```
 
-Run it from the repository root. A MOML rebuild takes well under an hour: the
-detector about 25 minutes (about 19 of them scanning, on 64 CPUs of a
+Run it from the repository root. A MOML rebuild takes about an hour and a half: the
+detector about 55 minutes (about 50 of them scanning, on 24 CPUs of a
 normal-partition node), each of the two linker passes about 10, and the maintenance
 about 12. A CAP rebuild is one detector job, one linker pass of a few
 minutes, and the same maintenance: about ten minutes in all (the first run,
@@ -38,7 +38,7 @@ For the MOML treatises, the default:
 | `preflight` | Checks tools, database, migrations, ssh, hopper's environment, and the queue; asks once before the truncates | local and hopper | seconds |
 | `sync` | `make sync-hopper`: build the linux binaries, rsync them and `slurm/` to hopper | local | a minute |
 | `truncate-citations` | `TRUNCATE moml_citations.citations_unlinked CASCADE`, which also empties `citation_links` | local psql | seconds |
-| `detect` | `sbatch` `cite-detector-moml`, wait, fetch its log | hopper | about 25 minutes, 19 of them scanning, on 64 CPUs of a normal-partition node (bigmem, used until 2026-10-23, queued for hours) |
+| `detect` | `sbatch` `cite-detector-moml`, wait, fetch its log | hopper | about 55 minutes, 50 of them scanning, on 24 CPUs of a normal-partition node, sized to start on a partly used node (19 minutes of scanning on 64 CPUs, which queued for hours on 2026-10-23) |
 | `link` | `sbatch` `cite-linker`, wait, fetch its log | hopper | about 10 minutes |
 | `stubs` | `make db-stubs`: rebuild `legalhist.stub_cases` from the linker's misses | local psql | about a minute |
 | `truncate-links` | `TRUNCATE moml_citations.citation_links` | local psql | seconds |
@@ -53,7 +53,7 @@ For the CAP opinions, `--corpus cap`, the phases keep their names so that
 | `preflight` | As above; the queue check covers the jobs of both corpora | local and hopper | seconds |
 | `sync` | As above | local | a minute |
 | `truncate-citations` | `TRUNCATE opinion_citations.citations_unlinked CASCADE`, which also empties `opinion_citations.citation_links` | local psql | seconds |
-| `detect` | `sbatch` `cite-detector-cap`, wait, fetch its log | hopper | a few minutes of scanning (3m10s on 2026-09-26), on 64 CPUs of a normal-partition node |
+| `detect` | `sbatch` `cite-detector-cap`, wait, fetch its log | hopper | about nine minutes of scanning on 24 CPUs of a normal-partition node (3m10s on 64 CPUs on 2026-09-26) |
 | `link` | `sbatch` `cite-linker-cap`, wait, fetch its log | hopper | minutes: about 6.5M citations at 100K+ rows a second, after the lookup tables load |
 | `stubs` | `make db-stubs`, the same script | local psql | a few minutes |
 | `truncate-links` | `TRUNCATE opinion_citations.citation_links` | local psql | seconds |
@@ -235,7 +235,7 @@ skipped phases are listed, and the run picks up at the named phase. A phase
 that failed partway is safe to repeat: the truncates are idempotent, the
 linker skips citations already linked, the detector rescans every page but
 inserts nothing twice (so a repeated `detect` still costs a full run: about
-about 25 minutes for MOML, the whole job for CAP), `make db-stubs` upserts, and
+about 55 minutes for MOML, the whole job for CAP), `make db-stubs` upserts, and
 maintenance is maintenance. The resume command carries `--corpus cap` when
 that is what was running.
 

@@ -9,8 +9,8 @@
 #   sync                make sync-hopper: build the linux binaries, rsync them
 #                       and the slurm scripts to hopper
 #   truncate-citations  TRUNCATE moml_citations.citations_unlinked CASCADE
-#   detect              sbatch cite-detector-moml on hopper and wait (~25m,
-#                       about 19 of them scanning on 64 CPUs)
+#   detect              sbatch cite-detector-moml on hopper and wait (~55m,
+#                       about 50 of them scanning on 24 CPUs)
 #   link                sbatch cite-linker and wait (~10m for a full rebuild)
 #   stubs               make db-stubs: rebuild legalhist.stub_cases from misses
 #   truncate-links      TRUNCATE moml_citations.citation_links
@@ -18,7 +18,7 @@
 #                       source covers link to the stubs
 #   maintenance         make db-maintenance: vacuum, refresh materialized views
 #
-# A full MOML rebuild takes well under an hour. A CAP run has the same
+# A full MOML rebuild takes about an hour and a half. A CAP run has the same
 # phases, so --from and --job read the same way. What differs: the tables are
 # opinion_citations.citations_unlinked and citation_links, and the jobs are
 # cite-detector-cap and cite-linker-cap. A CAP detector run takes a few
@@ -704,8 +704,8 @@ Rebuild all citation data for one corpus: sync the programs to $HOPPER,
 truncate the detections, run the detector and the linker there, then refresh
 the database. That includes building the stub cases from both corpora's
 misses, truncating the links and linking again. For the MOML treatises (the
-default) a full run takes well under an hour: the detector about 25 minutes,
-19 of them scanning, and each linker pass about 10. For the CAP opinions
+default) a full run takes about an hour and a half: the detector about 55
+minutes, 50 of them scanning, and each linker pass about 10. For the CAP opinions
 (--corpus cap) it takes about a quarter of an hour: a few minutes of scanning,
 two linker passes of about three, the stubs, and the maintenance. Run it from
 the repository root, under
