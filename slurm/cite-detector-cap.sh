@@ -18,7 +18,10 @@
 # run, job 1223521 on 2026-09-26, settled it: 1,558,490 opinions scanned in
 # 3m10s (09:52:26 to 09:55:36 by the program's own log, after 3m43s in the
 # queue), 10,340,323 citations saved, 9,763,117 distinct rows. The wall time
-# below is twenty times that. Peak RSS is still to be read off sacct.
+# below is twenty times that, and still ample on 32 CPUs. Like the MOML
+# detector it streams its documents to the workers and needs no bigmem node;
+# it moved to the normal partition with half the CPUs after job 2888344 sat
+# PENDING on bigmem for five hours (2026-10-23).
 #
 # Connection budget. The database allows 97 non-superuser connections
 # (max_connections 100, 3 reserved). This detector opens up to 64 (maxDBConns
@@ -45,10 +48,10 @@
 #SBATCH --error=/scratch/%u/logs/%j-%x-%N.log
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=64
+#SBATCH --cpus-per-task=32
 #SBATCH --time=01:00:00
-#SBATCH --mem=64GB
-#SBATCH --partition bigmem
+#SBATCH --mem=16GB
+#SBATCH --partition=normal
 #SBATCH --mail-user lmullen@gmu.edu
 #SBATCH --mail-type BEGIN
 #SBATCH --mail-type END
@@ -61,4 +64,4 @@
 # it issues per opinion -- so oversubscribing the cores keeps them fed. The
 # pool of database connections is capped independently, well below the
 # server's max_connections; see maxDBConns in cite-detector-cap/main.go.
-~/legal-modernism/bin/cite-detector-cap --workers 128 --max-year 1920
+~/legal-modernism/bin/cite-detector-cap --workers 64 --max-year 1920
